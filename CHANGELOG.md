@@ -2,6 +2,11 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto usa [versionado semántico](https://semver.org/lang/es/).
 
+## [1.1.2] - 2026-10-26
+
+### Añadido
+- La isla en reposo puede mostrar la hora y el porcentaje de batería (Configuración → "Hora y batería"). En equipos sin batería muestra solo la hora ([#7](https://github.com/Dysast3r/zenit/issues/7)).
+
 ## [1.1.1] - 2026-10-26
 
 ### Cambiado
@@ -48,6 +53,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 - Releases verificables: atestación de procedencia, sumas SHA-256, CodeQL, OpenSSF Scorecard y firma de código opcional.
 - Distribución con winget, sitio web en [danidev.cl/zenit](https://danidev.cl/zenit) y catálogo de traducción para Crowdin.
 
+[1.1.2]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.2
 [1.1.1]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.1
 [1.1.0]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.0
 [1.0.0]: https://github.com/Dysast3r/zenit/releases/tag/v1.0.0
