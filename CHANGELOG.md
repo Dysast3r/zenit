@@ -2,6 +2,15 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto usa [versionado semántico](https://semver.org/lang/es/).
 
+## [1.1.6] - 2026-10-26
+
+### Añadido
+- Widget del próximo lanzamiento de SpaceX: cuenta regresiva, misión y fecha desde Launch Library 2, sin clave ([#4](https://github.com/Dysast3r/zenit/issues/4)).
+- Los widgets formatean fechas: `"format": "relative"` muestra una cuenta regresiva que avanza cada minuto, y cualquier formato de fecha de .NET la muestra en tu hora local.
+
+### Cambiado
+- En los widgets, un campo sin etiqueta usa todo el ancho de la tarjeta.
+
 ## [1.1.5] - 2026-10-26
 
 ### Añadido
@@ -76,6 +85,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 - Releases verificables: atestación de procedencia, sumas SHA-256, CodeQL, OpenSSF Scorecard y firma de código opcional.
 - Distribución con winget, sitio web en [danidev.cl/zenit](https://danidev.cl/zenit) y catálogo de traducción para Crowdin.
 
+[1.1.6]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.6
 [1.1.5]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.5
 [1.1.4]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.4
 [1.1.3]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.3
