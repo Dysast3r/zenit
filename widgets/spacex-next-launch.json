@@ -1,0 +1,12 @@
+{
+  "name": "SpaceX",
+  "icon": "🚀",
+  "accent": "#1F6FEB",
+  "url": "https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=1&lsp__name=SpaceX",
+  "refreshMinutes": 30,
+  "fields": [
+    { "label": "Despegue", "path": "results[0].net", "format": "relative" },
+    { "label": "", "path": "results[0].mission.name" },
+    { "label": "", "path": "results[0].net", "format": "d MMM, HH:mm" }
+  ]
+}

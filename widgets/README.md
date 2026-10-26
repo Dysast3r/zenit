@@ -36,7 +36,8 @@ Se cargan hasta 8 widgets y la isla muestra 4 a la vez.
 | `refreshMinutes` | Cada cuánto se actualiza (1 a 1440). |
 | `fields` | Hasta 4 valores. El primero se muestra en grande. |
 | `fields[].path` | Ruta dentro del JSON: `data.items[0].price`. |
-| `fields[].format` | Formato numérico de .NET: `N0`, `N2`, `0.0`, `+0.00;-0.00`. |
+| `fields[].format` | Números: formato de .NET (`N0`, `N2`, `0.0`, `+0.00;-0.00`). Fechas (ISO 8601 o segundos Unix): `relative` para una cuenta regresiva que avanza cada minuto ("en 5 h 12 min", "hace 3 min"), o un formato de fecha de .NET (`d MMM, HH:mm`) en tu hora local. |
+| `fields[].label` | Texto junto al valor. Déjalo vacío (`""`) para que un valor largo use todo el ancho. |
 | `fields[].prefix` / `suffix` | Texto antes y después del valor. |
 
 ## Ejemplos incluidos
@@ -44,6 +45,7 @@ Se cargan hasta 8 widgets y la isla muestra 4 a la vez.
 - [`github-stars.json`](github-stars.json): estrellas, forks e issues de este repositorio.
 - [`bitcoin.json`](bitcoin.json): precio de BTC en dólares (Coinbase).
 - [`aire-santiago.json`](aire-santiago.json): calidad del aire en Santiago (Open-Meteo). Cambia `latitude` y `longitude` por tu ciudad.
+- [`spacex-next-launch.json`](spacex-next-launch.json): cuenta regresiva al próximo lanzamiento de SpaceX, con la misión y la fecha ([Launch Library 2](https://thespacedevs.com/llapi), sin clave; permite 15 consultas por hora, así que se actualiza cada 30 minutos).
 
 Otras ideas: indicadores de Chile con [mindicador.cl](https://mindicador.cl) (UF, dólar, UTM), estado de tus repositorios, precio de criptomonedas o resultados deportivos de APIs abiertas.
 

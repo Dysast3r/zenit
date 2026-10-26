@@ -36,6 +36,9 @@ public sealed class WidgetState(WidgetDefinition definition, string file)
     public WidgetDefinition Definition { get; } = definition;
     public string File { get; } = file;
     public IReadOnlyList<WidgetValue> Values { get; set; } = [];
+
+    /// <summary>Datos de la última consulta: permiten recalcular las cuentas regresivas sin volver a pedirlos.</summary>
+    internal IReadOnlyList<(WidgetField Field, JsonElement? Value)> Raw { get; set; } = [];
     public string? Error { get; set; }
     public DateTime LastRefresh { get; set; }
 }
@@ -46,7 +49,7 @@ public sealed class WidgetService
     private const long MaxFileBytes = 64 * 1024;
 
     private static readonly JsonSerializerOptions Json = new() { PropertyNameCaseInsensitive = true, ReadCommentHandling = JsonCommentHandling.Skip, AllowTrailingCommas = true };
-    private static readonly string[] Examples = ["github-stars.json", "bitcoin.json", "aire-santiago.json"];
+    private static readonly string[] Examples = ["github-stars.json", "bitcoin.json", "aire-santiago.json", "spacex-next-launch.json"];
 
     private readonly DispatcherTimer _timer;
 
@@ -131,11 +134,23 @@ public sealed class WidgetService
 
     private async Task RefreshDueAsync(bool force = false)
     {
+        // Las cuentas regresivas ("format": "relative") avanzan cada minuto con los datos que ya hay.
+        var ticking = false;
+        foreach (var widget in Widgets.Where(w => w.Raw.Any(r => r.Field.Format == RelativeFormat)))
+        {
+            widget.Values = FormatAll(widget.Raw);
+            ticking = true;
+        }
+
         var now = DateTime.Now;
         var due = Widgets.Where(w => w.Definition.Url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                          .Where(w => force || now - w.LastRefresh >= TimeSpan.FromMinutes(w.Definition.RefreshMinutes))
                          .ToList();
-        if (due.Count == 0) return;
+        if (due.Count == 0)
+        {
+            if (ticking) Updated?.Invoke();
+            return;
+        }
         await Task.WhenAll(due.Select(SafeRefreshAsync));
         Updated?.Invoke();
     }
@@ -164,15 +179,16 @@ public sealed class WidgetService
             return;
         }
 
-        var values = new List<WidgetValue>();
-        foreach (var field in widget.Definition.Fields.Take(4))
-        {
-            var element = Resolve(json.RootElement, field.Path);
-            values.Add(new WidgetValue(field.Label, element is null ? "—" : FormatValue(element.Value, field)));
-        }
-        widget.Values = values;
+        // Clone: los valores sobreviven al JsonDocument para recalcular las cuentas regresivas más tarde.
+        widget.Raw = widget.Definition.Fields.Take(4)
+            .Select(field => (field, Resolve(json.RootElement, field.Path)?.Clone()))
+            .ToList();
+        widget.Values = FormatAll(widget.Raw);
         widget.Error = null;
     }
+
+    private static List<WidgetValue> FormatAll(IEnumerable<(WidgetField Field, JsonElement? Value)> raw)
+        => raw.Select(r => new WidgetValue(r.Field.Label, r.Value is { } value ? FormatValue(value, r.Field) : "—")).ToList();
 
     /// <summary>Ruta tipo "data.items[0].price" sobre el JSON.</summary>
     private static JsonElement? Resolve(JsonElement root, string path)
@@ -205,11 +221,16 @@ public sealed class WidgetService
     {
         var text = element.ValueKind switch
         {
+            // Fechas: "relative" da una cuenta regresiva ("en 5 h 12 min"); otro formato, la fecha en hora local.
+            JsonValueKind.Number when field.Format == RelativeFormat && TryUnixTime(element.GetDouble(), out var unix) => Relative(unix),
             JsonValueKind.Number when field.Format is { Length: > 0 } format => SafeFormat(element.GetDouble(), format),
             JsonValueKind.Number => element.GetDouble().ToString("#,0.##", CultureInfo.CurrentCulture),
             // Muchas APIs envían números como texto ("79849.50"): también se formatean.
             JsonValueKind.String when field.Format is { Length: > 0 } format
                 && double.TryParse(element.GetString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var number) => SafeFormat(number, format),
+            JsonValueKind.String when field.Format is { Length: > 0 } format
+                && DateTimeOffset.TryParse(element.GetString(), CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var moment)
+                => format == RelativeFormat ? Relative(moment) : SafeFormat(moment.ToLocalTime(), format),
             JsonValueKind.String => element.GetString() ?? "",
             JsonValueKind.True => Strings.T("Sí", "Yes"),
             JsonValueKind.False => "No",
@@ -217,6 +238,41 @@ public sealed class WidgetService
         };
         if (text.Length > 40) text = text[..40] + "…";
         return $"{field.Prefix}{text}{field.Suffix}";
+    }
+
+    private const string RelativeFormat = "relative";
+
+    /// <summary>Segundos Unix dentro del rango que admite DateTimeOffset.</summary>
+    private static bool TryUnixTime(double seconds, out DateTimeOffset moment)
+    {
+        var valid = seconds is >= 0 and <= 253402300799;
+        moment = valid ? DateTimeOffset.FromUnixTimeSeconds((long)seconds) : default;
+        return valid;
+    }
+
+    /// <summary>"en 2 d 5 h", "en 5 h 12 min", "hace 3 min"…; la unidad más fina cambia según lo que falta.</summary>
+    private static string Relative(DateTimeOffset moment)
+    {
+        var span = moment - DateTimeOffset.Now;
+        var past = span < TimeSpan.Zero;
+        if (past) span = span.Negate();
+        if (span < TimeSpan.FromMinutes(1)) return Strings.T("ahora", "now");
+        var text = span.TotalDays >= 1 ? $"{(int)span.TotalDays} d {span.Hours} h"
+                 : span.TotalHours >= 1 ? $"{(int)span.TotalHours} h {span.Minutes} min"
+                 : $"{span.Minutes} min";
+        return past ? Strings.F("hace {0}", "{0} ago", text) : Strings.F("en {0}", "in {0}", text);
+    }
+
+    private static string SafeFormat(DateTimeOffset value, string format)
+    {
+        try
+        {
+            return value.ToString(format, CultureInfo.CurrentCulture);
+        }
+        catch (FormatException)
+        {
+            return value.ToString("g", CultureInfo.CurrentCulture);
+        }
     }
 
     private static string SafeFormat(double value, string format)

@@ -87,7 +87,8 @@ public partial class WidgetsPage : UserControl, IIslandPage
             {
                 stack.Children.Add(new TextBlock
                 {
-                    Text = $"{extra.Label}  {extra.Text}", FontSize = 11, Foreground = Brushes.White,
+                    // Sin etiqueta, el valor usa todo el ancho de la tarjeta (útil para nombres largos).
+                    Text = extra.Label.Length > 0 ? $"{extra.Label}  {extra.Text}" : extra.Text, FontSize = 11, Foreground = Brushes.White,
                     Margin = new Thickness(0, 3, 0, 0), TextTrimming = TextTrimming.CharacterEllipsis,
                 });
             }
