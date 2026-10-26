@@ -396,7 +396,7 @@ public partial class IslandWindow : Window
             : _snapshot?.Accent ?? Colors.White;
         var animation = new ColorAnimation(color, TimeSpan.FromMilliseconds(700)) { EasingFunction = EaseOut };
         _accent.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-        Glow.BeginAnimation(DropShadowEffect.ColorProperty, animation);
+        GlowShape.BeginAnimation(IslandGlow.ColorProperty, animation);
     }
 
     private static bool TryParseColor(string text, out Color color)

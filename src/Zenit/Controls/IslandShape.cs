@@ -27,14 +27,14 @@ public static class IslandShape
         using (var c = geometry.Open())
         {
             c.BeginFigure(new Point(left - e, 0), true, true);
-            c.LineTo(new Point(right + e, 0), false, false);
-            if (e > 0) c.ArcTo(new Point(right, e), new Size(e, e), 0, false, SweepDirection.Counterclockwise, false, false);
-            c.LineTo(new Point(right, h - bottom), false, false);
-            c.ArcTo(new Point(right - bottom, h), new Size(bottom, bottom), 0, false, SweepDirection.Clockwise, false, false);
-            c.LineTo(new Point(left + bottom, h), false, false);
-            c.ArcTo(new Point(left, h - bottom), new Size(bottom, bottom), 0, false, SweepDirection.Clockwise, false, false);
-            c.LineTo(new Point(left, e), false, false);
-            if (e > 0) c.ArcTo(new Point(left - e, 0), new Size(e, e), 0, false, SweepDirection.Counterclockwise, false, false);
+            c.LineTo(new Point(right + e, 0), true, false);
+            if (e > 0) c.ArcTo(new Point(right, e), new Size(e, e), 0, false, SweepDirection.Counterclockwise, true, false);
+            c.LineTo(new Point(right, h - bottom), true, false);
+            c.ArcTo(new Point(right - bottom, h), new Size(bottom, bottom), 0, false, SweepDirection.Clockwise, true, false);
+            c.LineTo(new Point(left + bottom, h), true, false);
+            c.ArcTo(new Point(left, h - bottom), new Size(bottom, bottom), 0, false, SweepDirection.Clockwise, true, false);
+            c.LineTo(new Point(left, e), true, false);
+            if (e > 0) c.ArcTo(new Point(left - e, 0), new Size(e, e), 0, false, SweepDirection.Counterclockwise, true, false);
         }
         geometry.Freeze();
         return geometry;

@@ -77,7 +77,7 @@ public partial class IslandWindow
         var shape = IslandShape.Build(w, h, r, _ear);
         Island.Width = GlowShape.Width = box;
         Island.Height = GlowShape.Height = h;
-        IslandFill.Data = GlowShape.Data = shape;
+        IslandFill.Data = GlowShape.Shape = shape;
         Island.Clip = shape;
 
         foreach (var panel in _panels)

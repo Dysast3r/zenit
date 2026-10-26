@@ -135,7 +135,7 @@ public partial class IslandWindow
             IslandMode.Compact => 0.22,
             _ => 0.0,
         };
-        Glow.BeginAnimation(DropShadowEffect.OpacityProperty,
+        GlowShape.BeginAnimation(IslandGlow.IntensityProperty,
             new DoubleAnimation(glow, TimeSpan.FromMilliseconds(500)) { EasingFunction = EaseOut });
 
         if (mode == IslandMode.Expanded) UpdateProgress();

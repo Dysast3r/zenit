@@ -2,6 +2,12 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto usa [versionado semántico](https://semver.org/lang/es/).
 
+## [1.1.3] - 2026-10-26
+
+### Corregido
+- El resplandor de color de la isla ya no parpadea ni muestra bordes cuadrados al expandirse: ahora se dibuja como capas del contorno en vez de con un efecto de desenfoque.
+- Al expandirse, el borde inferior ya no muestra una franja negra mientras la isla rebota: la carátula de fondo cubre toda la isla.
+
 ## [1.1.2] - 2026-10-26
 
 ### Añadido
@@ -53,6 +59,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 - Releases verificables: atestación de procedencia, sumas SHA-256, CodeQL, OpenSSF Scorecard y firma de código opcional.
 - Distribución con winget, sitio web en [danidev.cl/zenit](https://danidev.cl/zenit) y catálogo de traducción para Crowdin.
 
+[1.1.3]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.3
 [1.1.2]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.2
 [1.1.1]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.1
 [1.1.0]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.0

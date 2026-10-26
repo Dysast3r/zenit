@@ -97,11 +97,7 @@
     </Grid.RenderTransform>
 
     <!-- Resplandor teñido con el color de la carátula -->
-    <Path x:Name="GlowShape" HorizontalAlignment="Center" VerticalAlignment="Top" Fill="Black" IsHitTestVisible="False">
-      <Path.Effect>
-        <DropShadowEffect x:Name="Glow" BlurRadius="34" ShadowDepth="0" Opacity="0" Color="White" />
-      </Path.Effect>
-    </Path>
+    <c:IslandGlow x:Name="GlowShape" HorizontalAlignment="Center" VerticalAlignment="Top" IsHitTestVisible="False" />
 
     <Grid x:Name="Island" HorizontalAlignment="Center" VerticalAlignment="Top" Cursor="Hand"
           MouseEnter="Island_MouseEnter" MouseLeave="Island_MouseLeave"
@@ -179,7 +175,12 @@
 
         <!-- Expandida: carrusel de páginas -->
         <Grid x:Name="ExpandedPanel" Width="430" Height="204">
-          <Canvas Width="430" Height="204" ClipToBounds="True">
+          <!-- Recorta a lo ancho (las páginas vecinas), pero deja que la carátula de fondo sobresalga
+               arriba y abajo: así cubre la isla mientras rebota más alta que el panel. -->
+          <Canvas Width="430" Height="204">
+            <Canvas.Clip>
+              <RectangleGeometry Rect="0,-24,430,252" />
+            </Canvas.Clip>
             <StackPanel x:Name="PagesHost" Orientation="Horizontal">
               <StackPanel.RenderTransform>
                 <TranslateTransform x:Name="PagerShift" />
@@ -188,8 +189,8 @@
               <!-- Página de música (las demás se agregan desde el código) -->
               <Grid x:Name="MusicPage" Width="430" Height="204">
                 <!-- Carátula desenfocada de fondo, como en Apple Music -->
-                <Image x:Name="MusicBackdrop" Stretch="Fill" Opacity="0" IsHitTestVisible="False" />
-                <Rectangle IsHitTestVisible="False">
+                <Image x:Name="MusicBackdrop" Stretch="Fill" Opacity="0" IsHitTestVisible="False" Margin="0,-24" />
+                <Rectangle IsHitTestVisible="False" Margin="0,-24">
                   <Rectangle.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                       <GradientStop Color="#33000000" Offset="0" />
