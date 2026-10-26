@@ -47,7 +47,7 @@ Up to 8 widgets are loaded and the island shows 4 at a time.
 - [`github-stars.json`](github-stars.json): stars, forks and issues of this repository.
 - [`bitcoin.json`](bitcoin.json): the BTC price in US dollars (Coinbase).
 - [`aire-santiago.json`](aire-santiago.json): air quality in Santiago, Chile (Open-Meteo). Change `latitude` and `longitude` to your city.
-- [`spacex-next-launch.json`](spacex-next-launch.json): countdown to the next SpaceX launch, with the mission and date ([Launch Library 2](https://thespacedevs.com/llapi), no key; it allows 15 requests per hour, so it updates every 30 minutes).
+- [`spacex-next-launch.json`](spacex-next-launch.json): countdown to the next SpaceX launch, with its status and date ([Launch Library 2](https://thespacedevs.com/llapi), no key; it uses the lightweight `mode=list`, which answers in under a second, and since the API allows 15 requests per hour it updates every 30 minutes).
 
 The bundled examples use Spanish labels; change `label` to whatever you like.
 

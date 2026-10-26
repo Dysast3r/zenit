@@ -47,7 +47,7 @@ Se cargan hasta 8 widgets y la isla muestra 4 a la vez.
 - [`github-stars.json`](github-stars.json): estrellas, forks e issues de este repositorio.
 - [`bitcoin.json`](bitcoin.json): precio de BTC en dólares (Coinbase).
 - [`aire-santiago.json`](aire-santiago.json): calidad del aire en Santiago (Open-Meteo). Cambia `latitude` y `longitude` por tu ciudad.
-- [`spacex-next-launch.json`](spacex-next-launch.json): cuenta regresiva al próximo lanzamiento de SpaceX, con la misión y la fecha ([Launch Library 2](https://thespacedevs.com/llapi), sin clave; permite 15 consultas por hora, así que se actualiza cada 30 minutos).
+- [`spacex-next-launch.json`](spacex-next-launch.json): cuenta regresiva al próximo lanzamiento de SpaceX, con su estado y la fecha ([Launch Library 2](https://thespacedevs.com/llapi), sin clave; usa el modo liviano `mode=list`, que responde en menos de un segundo, y como la API permite 15 consultas por hora se actualiza cada 30 minutos).
 
 Otras ideas: indicadores de Chile con [mindicador.cl](https://mindicador.cl) (UF, dólar, UTM), estado de tus repositorios, precio de criptomonedas o resultados deportivos de APIs abiertas.
 

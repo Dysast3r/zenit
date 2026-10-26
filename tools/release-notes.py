@@ -1,4 +1,4 @@
-"""Arma las notas de una versión para GitHub Releases: sus cambios del CHANGELOG más cómo descargar y verificar.
+"""Arma las notas de una versión para GitHub Releases (en inglés): sus cambios del CHANGELOG más cómo descargar y verificar.
 
 Uso: python tools/release-notes.py 1.1.1 > notes.md
 El workflow build.yml lo usa al publicar cada etiqueta v*.
@@ -24,27 +24,27 @@ def changes(version: str) -> str:
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     version = sys.argv[1].removeprefix("v")
-    print(f"""## Novedades
+    print(f"""## What's new
 
 {changes(version)}
 
-## Descargar
+## Download
 
-| Tu equipo | Archivo |
+| Your PC | File |
 |---|---|
-| **Windows 10 / 11 (casi todos los PC)** | `Zenit-Setup-{version}-x64.exe` |
-| Windows en ARM (Surface Pro X, Snapdragon) | `Zenit-Setup-{version}-arm64.exe` |
+| **Windows 10 / 11 (almost every PC)** | `Zenit-Setup-{version}-x64.exe` |
+| Windows on ARM (Surface Pro X, Snapdragon) | `Zenit-Setup-{version}-arm64.exe` |
 
-Ábrelo con doble clic: se instala en segundos, sin permisos de administrador, y Zenit se actualiza sola desde ahí. Para desinstalar: Configuración de Windows → Aplicaciones → Zenit.
-¿Prefieres no instalar nada? Los `.zip` traen la versión portable.
+Double-click it: it installs in seconds, with no admin rights, and Zenit keeps itself up to date from there. To uninstall: Windows Settings → Apps → Zenit.
+Rather not install anything? The `.zip` files contain the portable version.
 
-## Verificar la descarga
+## Verify your download
 
-Cada archivo fue compilado por GitHub Actions desde este repositorio y lleva una atestación firmada.
+Every file was built by GitHub Actions from this repository and carries a signed attestation.
 
 ```powershell
 gh attestation verify .\\Zenit-Setup-{version}-x64.exe --repo {REPOSITORY}
-Get-FileHash .\\Zenit-Setup-{version}-x64.exe -Algorithm SHA256   # compara con SHA256SUMS.txt
+Get-FileHash .\\Zenit-Setup-{version}-x64.exe -Algorithm SHA256   # compare with SHA256SUMS.txt
 ```""")
 
 
