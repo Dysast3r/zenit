@@ -22,10 +22,10 @@
 
   <!-- Metadatos visibles en Propiedades → Detalles del .exe -->
   <PropertyGroup>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <Product>Zenit</Product>
     <AssemblyTitle>Zenit</AssemblyTitle>
-    <Description>Zenit: la isla dinámica del iPhone para Windows. Desarrollado por Danidev.cl.</Description>
+    <Description>Zenit: la isla dinámica para Windows. Desarrollado por Danidev.cl.</Description>
     <Authors>Daniel Moraga (Danidev.cl)</Authors>
     <Company>Danidev.cl</Company>
     <Copyright>Copyright © 2026 Daniel Moraga · Danidev.cl. Licencia MIT.</Copyright>

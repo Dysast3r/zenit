@@ -30,7 +30,7 @@ Cada versión se publica en [Releases](https://github.com/Dysast3r/zenit/release
 Publicar en la Store da tres ventajas: instalación con un clic, actualizaciones automáticas y **la firma de Microsoft**, que elimina el aviso de SmartScreen. Además habilita las **notificaciones de Windows dentro de la isla**, porque la app pasa a tener identidad de paquete.
 
 1. Crea una cuenta de desarrollador individual en [Partner Center](https://partner.microsoft.com/dashboard/registration). Para personas naturales hoy es gratuita.
-2. Reserva el nombre **Zenit** (o "Zenit – Dynamic Island").
+2. Reserva el nombre **Zenit**. No uses marcas de Apple en el nombre ni en las palabras clave (iPhone, Dynamic Island): la Store rechaza las fichas que pueden confundir con otro producto.
 3. Empaqueta como MSIX: en Visual Studio agrega un *Windows Application Packaging Project* que referencie `src/Zenit`, y declara la capacidad `userNotificationListener` en el manifiesto.
 4. Sube el `.msixupload`, completa la ficha con capturas, `docs/banner.png` y el video promocional (se genera en local con `marketing/motion`, no está en el repo), y envía a certificación.
 

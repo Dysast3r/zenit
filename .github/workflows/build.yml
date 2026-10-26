@@ -171,24 +171,17 @@ jobs:
         working-directory: dist
         run: sha256sum *.zip *.exe | tee SHA256SUMS.txt
 
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: repo
+          persist-credentials: false
+
+      # Notas: los cambios de esta versión en el CHANGELOG, más cómo descargar y verificar.
+      - name: Notas de la versión
+        run: python3 repo/tools/release-notes.py "$GITHUB_REF_NAME" > notes.md
+
       - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           files: dist/*
           generate_release_notes: true
-          body: |
-            ### Descargar
-            | Tu equipo | Archivo |
-            |---|---|
-            | **Windows 10 / 11 (casi todos los PC)** | `Zenit-Setup-<versión>-x64.exe` |
-            | Windows en ARM (Surface Pro X, Snapdragon) | `Zenit-Setup-<versión>-arm64.exe` |
-
-            Ábrelo con doble clic: se instala en segundos, sin permisos de administrador, y Zenit se actualiza sola desde ahí. Para desinstalar: Configuración de Windows → Aplicaciones → Zenit.
-            ¿Prefieres no instalar nada? Los `.zip` traen la versión portable.
-
-            ### Verificar la descarga
-            Cada archivo fue compilado por GitHub Actions desde este repositorio y lleva una atestación firmada.
-
-            ```powershell
-            gh attestation verify .\Zenit-Setup-<versión>-x64.exe --repo ${{ github.repository }}
-            Get-FileHash .\Zenit-Setup-<versión>-x64.exe -Algorithm SHA256   # compara con SHA256SUMS.txt
-            ```
+          body_path: notes.md

@@ -2,6 +2,13 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto usa [versionado semántico](https://semver.org/lang/es/).
 
+## [1.1.1] - 2026-10-26
+
+### Cambiado
+- Los estilos de la isla se llaman "Notch clásico" e "Isla flotante", y el lema pasa a ser "La isla dinámica para Windows": la app, el README y el banner ya no usan nombres de modelos de iPhone.
+- "Acerca de" y el README incluyen un aviso: Zenit es un proyecto independiente, sin relación con Apple ni Spotify, y sus marcas pertenecen a sus dueños.
+- Las notas de cada versión en GitHub Releases incluyen sus cambios del CHANGELOG, además de cómo descargar y verificar.
+
 ## [1.1.0] - 2026-10-26
 
 ### Añadido
@@ -25,7 +32,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 ## [1.0.0] - 2026-10-26
 
 ### Añadido
-- Isla con dos estilos: notch del iPhone 13 y flotante del iPhone 14 Pro, con tamaño y posición ajustables.
+- Isla con dos estilos: notch clásico pegado al borde y flotante, con tamaño y posición ajustables.
 - Música de Spotify (y de otros reproductores, opcional): carátula, progreso arrastrable, controles, carátula desenfocada de fondo y ecualizador reactivo al audio.
 - Letras sincronizadas desde LRCLIB.
 - Temporizador y cronómetro con actividad en vivo en la isla compacta.
@@ -41,5 +48,6 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 - Releases verificables: atestación de procedencia, sumas SHA-256, CodeQL, OpenSSF Scorecard y firma de código opcional.
 - Distribución con winget, sitio web en [danidev.cl/zenit](https://danidev.cl/zenit) y catálogo de traducción para Crowdin.
 
+[1.1.1]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.1
 [1.1.0]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.0
 [1.0.0]: https://github.com/Dysast3r/zenit/releases/tag/v1.0.0

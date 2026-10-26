@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.png" alt="Zenit: la isla dinámica del iPhone, nativa para Windows" width="100%">
+  <img src="docs/banner.png" alt="Zenit: la isla dinámica para Windows" width="100%">
 </p>
 
 <p align="center">
@@ -21,7 +21,7 @@
 
 ---
 
-**Zenit** lleva la isla dinámica del iPhone a Windows 10 y 11. Muestra lo que suena en Spotify con carátula, progreso y controles, y además el clima, tipos de cambio, relojes mundiales y la fecha. Todo con animaciones de resorte fluidas como las de iOS.
+**Zenit** es una isla dinámica para Windows 10 y 11, inspirada en la del iPhone. Muestra lo que suena en Spotify con carátula, progreso y controles, y además el clima, tipos de cambio, relojes mundiales y la fecha. Todo con animaciones de resorte fluidas como las de iOS.
 
 Es nativa (C# / .NET 10), liviana, de código abierto y **no pide cuentas, claves ni permisos de administrador**.
 
@@ -37,12 +37,12 @@ Es nativa (C# / .NET 10), liviana, de código abierto y **no pide cuentas, clave
 |---|---|
 | 🎵 **Música** | Spotify (y opcionalmente cualquier reproductor): carátula, título, progreso arrastrable y controles, con la carátula desenfocada de fondo. El ecualizador reacciona al audio real. |
 | 🎤 **Letras sincronizadas** | La línea que suena en el momento justo, desde [LRCLIB](https://lrclib.net). |
-| ⏱️ **Temporizador y cronómetro** | Actividad en vivo: la cuenta regresiva queda visible en la isla compacta, como en iOS. |
+| ⏱️ **Temporizador y cronómetro** | Actividad en vivo: la cuenta regresiva queda visible en la isla compacta. |
 | 📅 **Reuniones** | Avisa antes de cada reunión de Google Calendar u Outlook y muestra la cuenta regresiva en la isla. Basta con el enlace iCal privado: sin cuentas ni contraseñas. |
 | 🎚️ **Volumen por aplicación** | Una página con el volumen del sistema y de cada app que suena (Spotify, Chrome, Discord…), con su propio deslizador y silencio. |
 | 🔔 **Avisos del sistema** | Volumen (y la rueda del mouse sobre la isla para cambiarlo), carga de batería, puntos verde y naranja de cámara y micrófono, y notificaciones de Windows en la versión de la Microsoft Store. |
 | 🧩 **Widgets de la comunidad** | Datos de cualquier API pública con un simple archivo JSON, sin código. [Crea el tuyo](widgets/README.md). |
-| 🏝️ **Dos estilos** | Notch del iPhone 13 pegado al borde con curvas cóncavas, o isla flotante del iPhone 14 Pro. |
+| 🏝️ **Dos estilos** | Notch clásico pegado al borde con curvas cóncavas, o isla flotante separada del borde. |
 | 👆 **Gestos** | Cursor o clic para expandir · deslizar para cambiar de canción · deslizar la isla expandida para cambiar de página · touchpad horizontal. |
 | 🌦️ **Clima** | Ubicación actual o cualquier ciudad del mundo, pronóstico por horas e íconos vectoriales animados. |
 | 💱 **Monedas** | Más de 300 monedas y criptomonedas con su variación diaria. |
@@ -135,10 +135,10 @@ Proyecto independiente, sin relación con Apple ni Spotify. "Dynamic Island" y "
 
 ## English
 
-**Zenit** brings the iPhone Dynamic Island to Windows 10 and 11. It shows Spotify now-playing with album art, a seekable progress bar and controls, plus weather, 300+ currencies and crypto, world clocks and the date. Everything moves with iOS-style spring physics.
+**Zenit** is a dynamic island for Windows 10 and 11, inspired by the one on the iPhone. It shows Spotify now-playing with album art, a seekable progress bar and controls, plus weather, 300+ currencies and crypto, world clocks and the date. Everything moves with iOS-style spring physics.
 
 - **Native and light:** C# / .NET 10, no third-party packages, no admin rights, no accounts, no telemetry.
-- **Two looks:** an iPhone 13 notch or an iPhone 14 Pro floating island.
+- **Two looks:** a classic notch attached to the edge, or a floating island.
 - **Live activities:** synced lyrics, timer and stopwatch, a countdown to your next Google Calendar or Outlook meeting (from its private iCal link, no account needed), volume and battery HUDs, camera/mic privacy dots, and community widgets from any public API (plain JSON, no code).
 - **Per-app volume:** a page with the system volume and every app playing audio, each with its own slider and mute.
 - **Your setup:** pick the display for the island or show it on all of them, choose what the compact island shows in the middle (time, date, temperature or the scrolling song title), and it stays quiet while Windows Do not disturb is on.
@@ -147,6 +147,8 @@ Proyecto independiente, sin relación con Apple ni Spotify. "Dynamic Island" y "
 - **UI in English, Spanish and Portuguese:** it follows the Windows language, or you can pick one in Settings. Download the installer (`Zenit-Setup-<version>-x64.exe`) from Releases and double-click it: no admin rights needed.
 
 Download it from [Releases](https://github.com/Dysast3r/zenit/releases/latest). Licensed under [MIT](LICENSE).
+
+Independent project, not affiliated with Apple or Spotify. "Dynamic Island" and "iPhone" are trademarks of Apple Inc.; "Spotify" is a trademark of Spotify AB.
 
 ---
 

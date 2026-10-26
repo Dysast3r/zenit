@@ -503,7 +503,7 @@ public partial class SettingsWindow : Window
         PageKind.Weather => ("", Strings.T("Clima", "Weather"), Strings.T("Temperatura actual y próximas horas", "Current temperature and next hours")),
         PageKind.Currency => ("", Strings.T("Monedas", "Currencies"), Strings.T("Tipo de cambio y variación diaria", "Exchange rate and daily change")),
         PageKind.Lyrics => ("", Strings.T("Letras", "Lyrics"), Strings.T("Letra sincronizada de la canción (LRCLIB)", "Synced song lyrics (LRCLIB)")),
-        PageKind.Timer => ("", Strings.T("Temporizador y cronómetro", "Timer & stopwatch"), Strings.T("Cuenta regresiva en vivo, como en iOS", "Live countdown, like on iOS")),
+        PageKind.Timer => ("", Strings.T("Temporizador y cronómetro", "Timer & stopwatch"), Strings.T("Cuenta regresiva en vivo, visible en la isla compacta", "Live countdown, visible on the compact island")),
         PageKind.Volume => ("\uE767", Strings.T("Volumen", "Volume"), Strings.T("El sistema y cada aplicación con audio, con su propio deslizador", "The system and each app playing audio, each with its own slider")),
         PageKind.Widgets => ("", Strings.T("Widgets", "Widgets"), Strings.T("Datos de la comunidad desde cualquier API pública", "Community data from any public API")),
         _ => ("", Strings.T("Relojes mundiales", "World clocks"), Strings.T("Esferas analógicas de otras ciudades", "Analog faces for other cities")),

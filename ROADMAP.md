@@ -15,7 +15,7 @@ Ideas para hacer de Zenit la mejor isla dinámica de Windows. ¿Quieres tomar un
 - [x] Español, inglés y portugués; catálogo listo para Crowdin
 - [x] Sitio web en [danidev.cl/zenit](https://danidev.cl/zenit) con demo animada
 - [x] Etiquetas del repositorio y primeros `good first issue`
-- [x] Notch (iPhone 13) e isla flotante (iPhone 14 Pro), tamaño ajustable, oculta en capturas
+- [x] Notch clásico e isla flotante, tamaño ajustable, oculta en capturas
 
 ## 🔥 Próximo
 
@@ -28,7 +28,7 @@ Ideas para hacer de Zenit la mejor isla dinámica de Windows. ¿Quieres tomar un
 ## 🎨 Diferenciadores visuales
 
 - [ ] Temas: "Liquid Glass", neón, minimalista y uno claro.
-- [ ] Animación de carga al conectar el cargador, como la del iPhone.
+- [ ] Animación de carga al conectar el cargador.
 - [ ] Transición con la carátula al cambiar de canción.
 
 ## 🧩 Integraciones

@@ -267,7 +267,7 @@
                   <Path Fill="Black" HorizontalAlignment="Center" VerticalAlignment="Top"
                         Data="M 0,0 L 140,0 A 6,6 0 0 0 134,6 L 134,20 A 14,14 0 0 1 120,34 L 20,34 A 14,14 0 0 1 6,20 L 6,6 A 6,6 0 0 0 0,0 Z" />
                 </Border>
-                <TextBlock Text="{s:Tr Es='Notch · iPhone 13', En='Notch · iPhone 13'}" FontSize="13.5" FontWeight="SemiBold" Foreground="White" Margin="6,10,0,0" />
+                <TextBlock Text="{s:Tr Es='Notch clásico', En='Classic notch'}" FontSize="13.5" FontWeight="SemiBold" Foreground="White" Margin="6,10,0,0" />
                 <TextBlock Text="{s:Tr Es='Pegado al borde, con curvas que se funden con la pantalla', En='Attached to the edge, with curves that blend into the screen'}"
                            FontSize="12" Foreground="{StaticResource Muted}" Margin="6,2,0,6" TextWrapping="Wrap" />
               </StackPanel>
@@ -277,7 +277,7 @@
                 <Border Height="92" CornerRadius="6" Background="#FF12203A">
                   <Border Width="124" Height="30" CornerRadius="15" Background="Black" VerticalAlignment="Top" Margin="0,8,0,0" />
                 </Border>
-                <TextBlock Text="{s:Tr Es='Isla flotante · iPhone 14 Pro', En='Floating island · iPhone 14 Pro'}" FontSize="13.5" FontWeight="SemiBold" Foreground="White" Margin="6,10,0,0" />
+                <TextBlock Text="{s:Tr Es='Isla flotante', En='Floating island'}" FontSize="13.5" FontWeight="SemiBold" Foreground="White" Margin="6,10,0,0" />
                 <TextBlock Text="{s:Tr Es='Una píldora separada del borde superior', En='A pill floating below the top edge'}"
                            FontSize="12" Foreground="{StaticResource Muted}" Margin="6,2,0,6" TextWrapping="Wrap" />
               </StackPanel>
@@ -571,7 +571,7 @@
             <CheckBox x:Name="BatterySwitch" Style="{StaticResource Switch}" Click="Any_Changed" />
           </c:SettingCard>
           <c:SettingCard Glyph="&#xE720;" Header="{s:Tr Es='Cámara y micrófono en uso', En='Camera and microphone in use'}"
-                         Description="{s:Tr Es='Punto verde (cámara) y naranja (micrófono), como en el iPhone', En='Green (camera) and orange (microphone) dots, like on iPhone'}">
+                         Description="{s:Tr Es='Un punto verde cuando la cámara está en uso y uno naranja con el micrófono', En='A green dot while the camera is in use and an orange one for the microphone'}">
             <CheckBox x:Name="PrivacySwitch" Style="{StaticResource Switch}" Click="Any_Changed" />
           </c:SettingCard>
           <c:SettingCard Glyph="&#xE916;" Header="{s:Tr Es='Temporizador en vivo', En='Live timer'}"
@@ -617,7 +617,9 @@
                   </Hyperlink>
                 </TextBlock>
                 <TextBlock FontSize="13" Foreground="{StaticResource Muted}" Margin="0,6,0,0" TextWrapping="Wrap"
-                           Text="{s:Tr Es='La isla dinámica del iPhone, hecha para Windows. Código abierto con licencia MIT.', En='The iPhone Dynamic Island, built for Windows. Open source, MIT licensed.'}" />
+                           Text="{s:Tr Es='La isla dinámica para Windows. Código abierto con licencia MIT.', En='The dynamic island for Windows. Open source, MIT licensed.'}" />
+                <TextBlock FontSize="11.5" Foreground="{StaticResource Subtle}" Margin="0,6,0,0" TextWrapping="Wrap"
+                           Text="{s:Tr Es='Proyecto independiente, sin relación con Apple ni Spotify. iPhone y Dynamic Island son marcas de Apple Inc.; Spotify es marca de Spotify AB.', En='Independent project, not affiliated with Apple or Spotify. iPhone and Dynamic Island are trademarks of Apple Inc.; Spotify is a trademark of Spotify AB.'}" />
                 <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                   <Border CornerRadius="11" Background="#2934D399" BorderBrush="#6634D399" BorderThickness="1" Padding="10,3" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">

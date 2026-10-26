@@ -282,7 +282,7 @@ $word = New-Wordmark 70 ([System.Windows.Media.Brushes]::White)
 [System.Windows.Controls.Canvas]::SetLeft($word, 470); [System.Windows.Controls.Canvas]::SetTop($word, 262)
 [void]$banner.Children.Add($word)
 $subtitle = New-Object System.Windows.Controls.TextBlock
-$subtitle.Text = 'La isla dinámica del iPhone, nativa para Windows'
+$subtitle.Text = 'La isla dinámica para Windows'
 $subtitle.Foreground = New-Object System.Windows.Media.SolidColorBrush (C '#D9FFFFFF')
 $subtitle.FontFamily = $font; $subtitle.FontSize = 28
 [System.Windows.Controls.Canvas]::SetLeft($subtitle, 468); [System.Windows.Controls.Canvas]::SetTop($subtitle, 360)
