@@ -493,6 +493,11 @@ public partial class IslandWindow : Window
                 }
                 else main = TimeFormats.Time(now, _settings, seconds: false);
                 break;
+            case IdleContent.Battery:
+                main = TimeFormats.Time(now, _settings, seconds: false);
+                // En un equipo de escritorio no hay batería: queda solo la hora.
+                if (_services.Indicators.BatteryLevel is { } level) extra = $"{level * 100:0}%";
+                break;
         }
 
         IdleText.Text = main;

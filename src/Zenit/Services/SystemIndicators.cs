@@ -19,6 +19,9 @@ public sealed class SystemIndicators : IDisposable
     public bool CameraInUse { get; private set; }
     public bool MicrophoneInUse { get; private set; }
 
+    /// <summary>Nivel de batería (0..1), o null en equipos sin batería.</summary>
+    public float? BatteryLevel { get; private set; }
+
     /// <summary>Cambió el uso de cámara o micrófono.</summary>
     public event Action? PrivacyChanged;
 
@@ -44,10 +47,15 @@ public sealed class SystemIndicators : IDisposable
     private void CheckPower(bool initial)
     {
         var status = Forms.SystemInformation.PowerStatus;
-        if (status.BatteryChargeStatus.HasFlag(Forms.BatteryChargeStatus.NoSystemBattery)) return;
+        if (status.BatteryChargeStatus.HasFlag(Forms.BatteryChargeStatus.NoSystemBattery))
+        {
+            BatteryLevel = null;
+            return;
+        }
 
         var plugged = status.PowerLineStatus == Forms.PowerLineStatus.Online;
         var percent = Math.Clamp(status.BatteryLifePercent, 0f, 1f);
+        BatteryLevel = percent;
         if (!initial && plugged && _pluggedIn == false) ChargingStarted?.Invoke(percent);
         _pluggedIn = plugged;
 

@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace Zenit.Services;
 
 public enum IslandStyle { Notch, Floating }
-public enum IdleContent { Nothing, Time, Date, TimeAndWeather, Currency }
+public enum IdleContent { Nothing, Time, Date, TimeAndWeather, Currency, Battery }
 public enum CompactCenter { Nothing, Time, Date, Temperature, Track }
 public enum PageKind { Music, Clock, Weather, Currency, WorldClock, Lyrics, Timer, Widgets, Volume }
 public enum DateStyle { Long, Full, Medium, Short, Iso, Custom }

@@ -151,7 +151,8 @@ public partial class SettingsWindow : Window
             (IdleContent.Time, Strings.T("Hora", "Time")),
             (IdleContent.Date, Strings.T("Fecha", "Date")),
             (IdleContent.TimeAndWeather, Strings.T("Hora y clima", "Time and weather")),
-            (IdleContent.Currency, Strings.T("Moneda principal", "Main currency")));
+            (IdleContent.Currency, Strings.T("Moneda principal", "Main currency")),
+            (IdleContent.Battery, Strings.T("Hora y batería", "Time and battery")));
 
         Fill(CompactCenterCombo,
             (CompactCenter.Nothing, Strings.T("Nada", "Nothing")),
