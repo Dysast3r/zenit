@@ -123,6 +123,10 @@ src/Zenit
 
 Sin paquetes NuGet de terceros. ¿Quieres aportar? Lee [CONTRIBUTING.md](CONTRIBUTING.md), busca issues con la etiqueta [`good first issue`](https://github.com/Dysast3r/zenit/labels/good%20first%20issue) y revisa el [ROADMAP](ROADMAP.md). Las traducciones se hacen en [Crowdin](crowdin.yml) o con un pull request a `src/Zenit/Assets/i18n`.
 
+## 💙 Apoya el proyecto
+
+Zenit es gratis, sin anuncios ni rastreo, y seguirá así. Si te gusta, puedes apoyarlo en [**GitHub Sponsors**](https://github.com/sponsors/Dysast3r): ayuda a cubrir la firma de código (para que Windows deje de mostrar el aviso de SmartScreen), la publicación en la Microsoft Store y el tiempo de cada nueva función. Darle una ⭐ al repositorio y compartirlo también ayuda mucho.
+
 ## 📜 Licencia y avisos
 
 [MIT](LICENSE) © 2026 Daniel Moraga · [Danidev.cl](https://danidev.cl). Puedes usar, modificar y redistribuir el código libremente, manteniendo el aviso de copyright.
@@ -223,6 +227,10 @@ dotnet run --project src/Zenit
 Debug builds include shortcuts to try the UI without music: `--demo idle|compact|peek|expanded|marquee|meeting|mixer|lyrics|compact-lyrics|clock|timer|live|volume|expanded-volume|weather|currency|world|widgets|tour` and `--settings`.
 
 No third-party NuGet packages. Want to contribute? Read [CONTRIBUTING.md](CONTRIBUTING.md), look for issues labeled [`good first issue`](https://github.com/Dysast3r/zenit/labels/good%20first%20issue) and check the [roadmap](ROADMAP.md). Translations happen on [Crowdin](crowdin.yml) or through a pull request to `src/Zenit/Assets/i18n`.
+
+### 💙 Support the project
+
+Zenit is free, with no ads or tracking, and it will stay that way. If you like it, you can support it on [**GitHub Sponsors**](https://github.com/sponsors/Dysast3r): it helps cover code signing (so Windows stops showing the SmartScreen warning), a Microsoft Store release and the time behind every new feature. Starring the repository and sharing it helps a lot too.
 
 ### 📜 License and notices
 
