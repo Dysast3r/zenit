@@ -123,6 +123,18 @@ public partial class IslandWindow
             TimeSpan.FromSeconds(71), TimeSpan.FromSeconds(seconds), DateTimeOffset.Now, true, true, true);
     }
 
+    /// <summary>Letra inventada para el recorrido: cubre la posición de las canciones de ejemplo (desde 1:11).</summary>
+    private static IEnumerable<LyricLine> DemoLyrics()
+    {
+        string[] lines =
+        [
+            "Neon lights across the avenue", "Midnight drive, just me and you", "The city hums a quiet tune",
+            "We're chasing echoes of the moon", "Hold the moment, don't let go", "Every heartbeat soft and slow",
+        ];
+        for (var i = 0; i < 40; i++)
+            yield return new LyricLine(TimeSpan.FromSeconds(66 + i * 2.6), lines[i % lines.Length]);
+    }
+
     /// <summary>Recorrido automático para grabar el GIF del README sobre un fondo neutro.</summary>
     private async Task RunTourAsync()
     {
@@ -135,9 +147,16 @@ public partial class IslandWindow
                 [new GradientStop(Color.FromRgb(0x0A, 0x17, 0x30), 0), new GradientStop(Color.FromRgb(0x17, 0x46, 0xD8), 0.6), new GradientStop(Color.FromRgb(0x22, 0xD3, 0xEE), 1)],
                 new Point(0, 0), new Point(1, 1)),
         };
+        // El fondo va siempre encima del escritorio (así nunca se graba lo que hay detrás) y la isla, sobre él.
+        backdrop.Topmost = true;
         backdrop.Show();
         Topmost = false;
         Topmost = true;
+
+        // Solo en memoria: la página de letras con una letra de ejemplo, sin consultar LRCLIB.
+        _settings.Pages.First(p => p.Kind == PageKind.Lyrics).Enabled = true;
+        RebuildPages();
+        _services.Lyrics.UseDemoLines(DemoLyrics());
 
         async Task Wait(double seconds) => await Task.Delay(TimeSpan.FromSeconds(seconds));
         int PageOf(PageKind kind) => _pages.IndexOf(_allPages[kind]);
@@ -149,24 +168,36 @@ public partial class IslandWindow
         await Wait(2.2);
         OnMediaChanged(DemoSong("Ocean Lights", "Polar Sky", Color.FromRgb(0x22, 0xD3, 0xEE), Color.FromRgb(0x63, 0x66, 0xF1)));
         await Wait(1.8);
+        // Letras: la página, y al cerrar la isla la compacta sigue mostrando la línea.
+        if (PageOf(PageKind.Lyrics) >= 0) GoToPage(PageOf(PageKind.Lyrics), -900);
+        await Wait(2.6);
+        RequestExpand(false);
+        await Wait(3.6);
+        RequestExpand(true);
+        await Wait(0.6);
+        // Las páginas desactivadas en los ajustes se saltan sin esperar.
         foreach (var kind in new[] { PageKind.Weather, PageKind.Currency, PageKind.WorldClock })
         {
-            if (PageOf(kind) >= 0) GoToPage(PageOf(kind), -900);
+            if (PageOf(kind) < 0) continue;
+            GoToPage(PageOf(kind), -900);
             await Wait(1.7);
         }
         GoToPage(0, 1500);
-        await Wait(0.8);
-        RequestExpand(false);
-        await Wait(1.4);
+        await Wait(1.0);
+        // Volumen con la isla expandida: la barra reemplaza un momento a los puntos de página.
         for (var level = 0.46f; level <= 0.72f; level += 0.04f)
         {
             OnVolumeChanged(level, false);
             await Wait(0.09);
         }
-        await Wait(1.8);
+        await Wait(1.6);
+        RequestExpand(false);
+        await Wait(1.4);
         _timer.SetDuration(TimeSpan.FromMinutes(25));
         _timer.Toggle();
-        await Wait(2.5);
+        await Wait(3);
+        // Fin del recorrido: la app se cierra y así tools/record-demo.py sabe cuándo dejar de grabar.
+        Application.Current.Shutdown();
     }
 #endif
 }

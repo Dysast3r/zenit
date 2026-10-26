@@ -13,7 +13,7 @@ from ctypes import wintypes
 from PIL import Image, ImageGrab
 
 FPS = 15
-SECONDS = 21.5
+MAX_SECONDS = 60  # el recorrido cierra la app al terminar; esto es solo un tope
 WIDTH = 640
 
 ctypes.windll.shcore.SetProcessDpiAwareness(2)  # coordenadas en píxeles físicos
@@ -60,12 +60,16 @@ def main() -> None:
 
         frames = []
         start = time.perf_counter()
-        while time.perf_counter() - start < SECONDS:
+        while process.poll() is None and time.perf_counter() - start < MAX_SECONDS:
             tick = time.perf_counter()
             frames.append(ImageGrab.grab(bbox=bbox, all_screens=True))
             time.sleep(max(0.0, 1 / FPS - (time.perf_counter() - tick)))
     finally:
         process.kill()
+
+    # Mientras la app se cierra, sus ventanas desaparecen antes que el proceso: se descarta el último medio
+    # segundo (la pausa final del recorrido) para que nunca se cuele un cuadro del escritorio.
+    frames = frames[:-FPS // 2]
 
     height = round(frames[0].height * WIDTH / frames[0].width)
     scaled = [f.convert("RGB").resize((WIDTH, height), Image.LANCZOS) for f in frames]

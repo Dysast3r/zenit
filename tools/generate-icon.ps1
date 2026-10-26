@@ -2,7 +2,8 @@
 #   src/Zenit/Assets/icon.ico   multi-resolución 16–256 (cada tamaño dibujado a su escala)
 #   src/Zenit/Assets/logo.png   256 px para mostrar dentro de la app
 #   docs/icon.png                      1024 px
-#   docs/banner.png                    1280×640, vista previa social de GitHub
+#   docs/banner.png                    1280×640, vista previa social (español)
+#   docs/banner-en.png                 1280×640, vista previa social (inglés)
 # Identidad: la "Z" con el vértice del cénit en degradado cian → azul sobre azul marino.
 # Uso: powershell -ExecutionPolicy Bypass -File tools/generate-icon.ps1
 Add-Type -AssemblyName PresentationCore, PresentationFramework, WindowsBase
@@ -212,110 +213,115 @@ $w.Close()
 Save-Png (Render (New-IconCanvas 256 'full') 256 256) (Join-Path $assets 'logo.png')
 Save-Png (Render (New-IconCanvas 1024 'full') 1024 1024) (Join-Path $docs 'icon.png')
 
-# ── Banner para GitHub (1280×640) ──
+# ── Banners para GitHub (1280×640): banner.png en español (README.es.md y el sitio) y banner-en.png en inglés (README.md) ──
 $font = New-Object System.Windows.Media.FontFamily 'Segoe UI Variable Display, Segoe UI'
-$banner = New-Object System.Windows.Controls.Canvas
-$banner.Width = 1280; $banner.Height = 640
-$bgGrid = New-Object System.Windows.Controls.Grid
-$bgGrid.Width = 1280; $bgGrid.Height = 640
-foreach ($brush in @(
-        (Linear @('#0A1730', '#040814', '#02040B') 90),
-        (Radial '#992563EB' 0.0 0.0 0.65),
-        (Radial '#6622D3EE' 1.0 0.15 0.5),
-        (Radial '#552B7BFF' 0.24 0.62 0.38))) {
-    $r = New-Object System.Windows.Shapes.Rectangle
-    $r.Fill = $brush
-    [void]$bgGrid.Children.Add($r)
+function New-Banner([string]$File, [string]$Tagline, [string[]]$Labels, [string]$By) {
+    $banner = New-Object System.Windows.Controls.Canvas
+    $banner.Width = 1280; $banner.Height = 640
+    $bgGrid = New-Object System.Windows.Controls.Grid
+    $bgGrid.Width = 1280; $bgGrid.Height = 640
+    foreach ($brush in @(
+            (Linear @('#0A1730', '#040814', '#02040B') 90),
+            (Radial '#992563EB' 0.0 0.0 0.65),
+            (Radial '#6622D3EE' 1.0 0.15 0.5),
+            (Radial '#552B7BFF' 0.24 0.62 0.38))) {
+        $r = New-Object System.Windows.Shapes.Rectangle
+        $r.Fill = $brush
+        [void]$bgGrid.Children.Add($r)
+    }
+    [void]$banner.Children.Add($bgGrid)
+
+    # Círculos guía tenues detrás del símbolo, como en la lámina de construcción
+    foreach ($ring in @(@(300, 0.10), @(420, 0.06))) {
+        $e = New-Object System.Windows.Shapes.Ellipse
+        $e.Width = $ring[0]; $e.Height = $ring[0]
+        $e.Stroke = New-Object System.Windows.Media.SolidColorBrush (C '#38BDF8')
+        $e.StrokeThickness = 1; $e.Opacity = $ring[1]
+        [System.Windows.Controls.Canvas]::SetLeft($e, 270 - $ring[0] / 2); [System.Windows.Controls.Canvas]::SetTop($e, 380 - $ring[0] / 2)
+        [void]$banner.Children.Add($e)
+    }
+
+    # Notch colgando del borde superior, como en la app
+    $notch = New-Object System.Windows.Shapes.Path
+    $notchW = 470; $notchH = 64; $ear = 14; $nx = (1280 - $notchW) / 2
+    $right = $nx + $notchW
+    $notch.Data = [System.Windows.Media.Geometry]::Parse(
+        "M $($nx - $ear),0 L $($right + $ear),0 A $ear,$ear 0 0 0 $right,$ear L $right,$($notchH - 30) A 30,30 0 0 1 $($right - 30),$notchH L $($nx + 30),$notchH A 30,30 0 0 1 $nx,$($notchH - 30) L $nx,$ear A $ear,$ear 0 0 0 $($nx - $ear),0 Z")
+    $notch.Fill = New-Object System.Windows.Media.SolidColorBrush (C '#000000')
+    $notchGlow = New-Object System.Windows.Media.Effects.DropShadowEffect
+    $notchGlow.Color = C '#2B7BFF'; $notchGlow.BlurRadius = 40; $notchGlow.ShadowDepth = 0; $notchGlow.Opacity = 0.75
+    $notch.Effect = $notchGlow
+    [void]$banner.Children.Add($notch)
+    [void](Box $banner ($nx + 18) 12 40 40 11 (Linear @('#22D3EE', '#2563EB', '#1E3A8A') 45))
+    $song = New-Object System.Windows.Controls.TextBlock
+    $song.Text = 'Blinding Lights'; $song.Foreground = [System.Windows.Media.Brushes]::White
+    $song.FontFamily = $font; $song.FontSize = 17; $song.FontWeight = [System.Windows.FontWeights]::SemiBold
+    [System.Windows.Controls.Canvas]::SetLeft($song, $nx + 72); [System.Windows.Controls.Canvas]::SetTop($song, 12)
+    [void]$banner.Children.Add($song)
+    $artist = New-Object System.Windows.Controls.TextBlock
+    $artist.Text = 'The Weeknd'; $artist.Foreground = New-Object System.Windows.Media.SolidColorBrush (C '#A3FFFFFF')
+    $artist.FontFamily = $font; $artist.FontSize = 14
+    [System.Windows.Controls.Canvas]::SetLeft($artist, $nx + 72); [System.Windows.Controls.Canvas]::SetTop($artist, 33)
+    [void]$banner.Children.Add($artist)
+    $eq = @(0.4, 0.75, 0.55, 0.3)
+    for ($i = 0; $i -lt 4; $i++) {
+        $bh = 30 * $eq[$i]
+        [void](Box $banner ($nx + $notchW - 52 + $i * 8) (32 - $bh / 2) 5 $bh 2.5 (Linear @('#FFFFFF', '#7DD3FC') 90))
+    }
+
+    # Símbolo con su resplandor
+    $glow = New-Mark 250
+    $glowBlur = New-Object System.Windows.Media.Effects.BlurEffect
+    $glowBlur.Radius = 40
+    $glow.Effect = $glowBlur; $glow.Opacity = 0.6
+    [System.Windows.Controls.Canvas]::SetLeft($glow, 145); [System.Windows.Controls.Canvas]::SetTop($glow, 258)
+    [void]$banner.Children.Add($glow)
+    $mark = New-Mark 250
+    [System.Windows.Controls.Canvas]::SetLeft($mark, 145); [System.Windows.Controls.Canvas]::SetTop($mark, 258)
+    [void]$banner.Children.Add($mark)
+
+    $word = New-Wordmark 70 ([System.Windows.Media.Brushes]::White)
+    [System.Windows.Controls.Canvas]::SetLeft($word, 470); [System.Windows.Controls.Canvas]::SetTop($word, 262)
+    [void]$banner.Children.Add($word)
+    $subtitle = New-Object System.Windows.Controls.TextBlock
+    $subtitle.Text = $Tagline
+    $subtitle.Foreground = New-Object System.Windows.Media.SolidColorBrush (C '#D9FFFFFF')
+    $subtitle.FontFamily = $font; $subtitle.FontSize = 28
+    [System.Windows.Controls.Canvas]::SetLeft($subtitle, 468); [System.Windows.Controls.Canvas]::SetTop($subtitle, 360)
+    [void]$banner.Children.Add($subtitle)
+
+    $chips = New-Object System.Windows.Controls.StackPanel
+    $chips.Orientation = 'Horizontal'
+    foreach ($label in $Labels) {
+        $chip = New-Object System.Windows.Controls.Border
+        $chip.CornerRadius = New-Object System.Windows.CornerRadius 18
+        $chip.Background = New-Object System.Windows.Media.SolidColorBrush (C '#1A60A5FA')
+        $chip.BorderBrush = New-Object System.Windows.Media.SolidColorBrush (C '#4038BDF8')
+        $chip.BorderThickness = New-Object System.Windows.Thickness 1
+        $chip.Padding = New-Object System.Windows.Thickness 16, 7, 16, 8
+        $chip.Margin = New-Object System.Windows.Thickness 0, 0, 10, 0
+        $text = New-Object System.Windows.Controls.TextBlock
+        $text.Text = $label; $text.Foreground = [System.Windows.Media.Brushes]::White
+        $text.FontFamily = $font; $text.FontSize = 17
+        $chip.Child = $text
+        [void]$chips.Children.Add($chip)
+    }
+    [System.Windows.Controls.Canvas]::SetLeft($chips, 468); [System.Windows.Controls.Canvas]::SetTop($chips, 425)
+    [void]$banner.Children.Add($chips)
+    $credit = New-Object System.Windows.Controls.TextBlock
+    $credit.FontFamily = $font; $credit.FontSize = 20
+    $creditBy = New-Object System.Windows.Documents.Run $By
+    $creditBy.Foreground = New-Object System.Windows.Media.SolidColorBrush (C '#99FFFFFF')
+    $creditName = New-Object System.Windows.Documents.Run 'Danidev.cl'
+    $creditName.Foreground = New-Object System.Windows.Media.SolidColorBrush (C '#7DD3FC')
+    $creditName.FontWeight = [System.Windows.FontWeights]::SemiBold
+    $credit.Inlines.Add($creditBy); $credit.Inlines.Add($creditName)
+    [System.Windows.Controls.Canvas]::SetLeft($credit, 470); [System.Windows.Controls.Canvas]::SetTop($credit, 490)
+    [void]$banner.Children.Add($credit)
+
+    Save-Png (Render $banner 1280 640) (Join-Path $docs $File)
 }
-[void]$banner.Children.Add($bgGrid)
 
-# Círculos guía tenues detrás del símbolo, como en la lámina de construcción
-foreach ($ring in @(@(300, 0.10), @(420, 0.06))) {
-    $e = New-Object System.Windows.Shapes.Ellipse
-    $e.Width = $ring[0]; $e.Height = $ring[0]
-    $e.Stroke = New-Object System.Windows.Media.SolidColorBrush (C '#38BDF8')
-    $e.StrokeThickness = 1; $e.Opacity = $ring[1]
-    [System.Windows.Controls.Canvas]::SetLeft($e, 270 - $ring[0] / 2); [System.Windows.Controls.Canvas]::SetTop($e, 380 - $ring[0] / 2)
-    [void]$banner.Children.Add($e)
-}
-
-# Notch colgando del borde superior, como en la app
-$notch = New-Object System.Windows.Shapes.Path
-$notchW = 470; $notchH = 64; $ear = 14; $nx = (1280 - $notchW) / 2
-$right = $nx + $notchW
-$notch.Data = [System.Windows.Media.Geometry]::Parse(
-    "M $($nx - $ear),0 L $($right + $ear),0 A $ear,$ear 0 0 0 $right,$ear L $right,$($notchH - 30) A 30,30 0 0 1 $($right - 30),$notchH L $($nx + 30),$notchH A 30,30 0 0 1 $nx,$($notchH - 30) L $nx,$ear A $ear,$ear 0 0 0 $($nx - $ear),0 Z")
-$notch.Fill = New-Object System.Windows.Media.SolidColorBrush (C '#000000')
-$notchGlow = New-Object System.Windows.Media.Effects.DropShadowEffect
-$notchGlow.Color = C '#2B7BFF'; $notchGlow.BlurRadius = 40; $notchGlow.ShadowDepth = 0; $notchGlow.Opacity = 0.75
-$notch.Effect = $notchGlow
-[void]$banner.Children.Add($notch)
-[void](Box $banner ($nx + 18) 12 40 40 11 (Linear @('#22D3EE', '#2563EB', '#1E3A8A') 45))
-$song = New-Object System.Windows.Controls.TextBlock
-$song.Text = 'Blinding Lights'; $song.Foreground = [System.Windows.Media.Brushes]::White
-$song.FontFamily = $font; $song.FontSize = 17; $song.FontWeight = [System.Windows.FontWeights]::SemiBold
-[System.Windows.Controls.Canvas]::SetLeft($song, $nx + 72); [System.Windows.Controls.Canvas]::SetTop($song, 12)
-[void]$banner.Children.Add($song)
-$artist = New-Object System.Windows.Controls.TextBlock
-$artist.Text = 'The Weeknd'; $artist.Foreground = New-Object System.Windows.Media.SolidColorBrush (C '#A3FFFFFF')
-$artist.FontFamily = $font; $artist.FontSize = 14
-[System.Windows.Controls.Canvas]::SetLeft($artist, $nx + 72); [System.Windows.Controls.Canvas]::SetTop($artist, 33)
-[void]$banner.Children.Add($artist)
-$eq = @(0.4, 0.75, 0.55, 0.3)
-for ($i = 0; $i -lt 4; $i++) {
-    $bh = 30 * $eq[$i]
-    [void](Box $banner ($nx + $notchW - 52 + $i * 8) (32 - $bh / 2) 5 $bh 2.5 (Linear @('#FFFFFF', '#7DD3FC') 90))
-}
-
-# Símbolo con su resplandor
-$glow = New-Mark 250
-$glowBlur = New-Object System.Windows.Media.Effects.BlurEffect
-$glowBlur.Radius = 40
-$glow.Effect = $glowBlur; $glow.Opacity = 0.6
-[System.Windows.Controls.Canvas]::SetLeft($glow, 145); [System.Windows.Controls.Canvas]::SetTop($glow, 258)
-[void]$banner.Children.Add($glow)
-$mark = New-Mark 250
-[System.Windows.Controls.Canvas]::SetLeft($mark, 145); [System.Windows.Controls.Canvas]::SetTop($mark, 258)
-[void]$banner.Children.Add($mark)
-
-$word = New-Wordmark 70 ([System.Windows.Media.Brushes]::White)
-[System.Windows.Controls.Canvas]::SetLeft($word, 470); [System.Windows.Controls.Canvas]::SetTop($word, 262)
-[void]$banner.Children.Add($word)
-$subtitle = New-Object System.Windows.Controls.TextBlock
-$subtitle.Text = 'La isla dinámica para Windows'
-$subtitle.Foreground = New-Object System.Windows.Media.SolidColorBrush (C '#D9FFFFFF')
-$subtitle.FontFamily = $font; $subtitle.FontSize = 28
-[System.Windows.Controls.Canvas]::SetLeft($subtitle, 468); [System.Windows.Controls.Canvas]::SetTop($subtitle, 360)
-[void]$banner.Children.Add($subtitle)
-
-$chips = New-Object System.Windows.Controls.StackPanel
-$chips.Orientation = 'Horizontal'
-foreach ($label in 'Spotify · TIDAL · YouTube Music', 'Clima', 'Monedas', 'Código abierto · MIT') {
-    $chip = New-Object System.Windows.Controls.Border
-    $chip.CornerRadius = New-Object System.Windows.CornerRadius 18
-    $chip.Background = New-Object System.Windows.Media.SolidColorBrush (C '#1A60A5FA')
-    $chip.BorderBrush = New-Object System.Windows.Media.SolidColorBrush (C '#4038BDF8')
-    $chip.BorderThickness = New-Object System.Windows.Thickness 1
-    $chip.Padding = New-Object System.Windows.Thickness 16, 7, 16, 8
-    $chip.Margin = New-Object System.Windows.Thickness 0, 0, 10, 0
-    $text = New-Object System.Windows.Controls.TextBlock
-    $text.Text = $label; $text.Foreground = [System.Windows.Media.Brushes]::White
-    $text.FontFamily = $font; $text.FontSize = 17
-    $chip.Child = $text
-    [void]$chips.Children.Add($chip)
-}
-[System.Windows.Controls.Canvas]::SetLeft($chips, 468); [System.Windows.Controls.Canvas]::SetTop($chips, 425)
-[void]$banner.Children.Add($chips)
-$credit = New-Object System.Windows.Controls.TextBlock
-$credit.FontFamily = $font; $credit.FontSize = 20
-$creditBy = New-Object System.Windows.Documents.Run 'por '
-$creditBy.Foreground = New-Object System.Windows.Media.SolidColorBrush (C '#99FFFFFF')
-$creditName = New-Object System.Windows.Documents.Run 'Danidev.cl'
-$creditName.Foreground = New-Object System.Windows.Media.SolidColorBrush (C '#7DD3FC')
-$creditName.FontWeight = [System.Windows.FontWeights]::SemiBold
-$credit.Inlines.Add($creditBy); $credit.Inlines.Add($creditName)
-[System.Windows.Controls.Canvas]::SetLeft($credit, 470); [System.Windows.Controls.Canvas]::SetTop($credit, 490)
-[void]$banner.Children.Add($credit)
-
-Save-Png (Render $banner 1280 640) (Join-Path $docs 'banner.png')
-Write-Host "Listo: $icoPath, logo.png, docs/icon.png, docs/banner.png"
+New-Banner 'banner.png' 'La isla dinámica para Windows' @('Spotify · TIDAL · YouTube Music', 'Clima', 'Monedas', 'Código abierto · MIT') 'por '
+New-Banner 'banner-en.png' 'The dynamic island for Windows' @('Spotify · TIDAL · YouTube Music', 'Weather', 'Currencies', 'Open source · MIT') 'by '
+Write-Host "Listo: $icoPath, logo.png, docs/icon.png, docs/banner.png, docs/banner-en.png"

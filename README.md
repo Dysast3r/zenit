@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.png" alt="Zenit: the dynamic island for Windows" width="100%">
+  <img src="docs/banner-en.png" alt="Zenit: the dynamic island for Windows" width="100%">
 </p>
 
 <p align="center">
@@ -26,6 +26,10 @@
 It's native (C# / .NET 10), lightweight, open source, and **needs no accounts, API keys or admin rights**.
 
 > **Why "Zenit"?** The zenith is the highest point in the sky, right above you. That's where the island lives: at the very top of your screen.
+
+<p align="center">
+  <img src="docs/media/zenit-demo.gif" alt="Zenit in action: the island expands, changes songs, shows lyrics on their page and on the compact island, then the weather, currencies, world clocks, volume and a timer" width="720">
+</p>
 
 ## ✨ Features
 

@@ -28,7 +28,7 @@ Es nativa (C# / .NET 10), liviana, de código abierto y **no pide cuentas, clave
 > **¿Por qué Zenit?** El cénit es el punto más alto del cielo, justo encima de ti. Ahí vive la isla: en lo más alto de tu pantalla.
 
 <p align="center">
-  <img src="docs/media/zenit-demo.gif" alt="Zenit en acción: la isla se expande, cambia de canción, muestra el clima, las monedas, el volumen y un temporizador" width="720">
+  <img src="docs/media/zenit-demo.gif" alt="Zenit en acción: la isla se expande, cambia de canción, muestra la letra en la página y en la isla compacta, el clima, las monedas, los relojes, el volumen y un temporizador" width="720">
 </p>
 
 ## ✨ Funciones

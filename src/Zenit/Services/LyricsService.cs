@@ -26,6 +26,9 @@ public sealed partial class LyricsService
 
     public async Task LoadAsync(string title, string artist, TimeSpan duration)
     {
+#if DEBUG
+        if (_demo) return;
+#endif
         var key = $"{title}\u0001{artist}";
         if (key == _key) return;
         _key = key;
@@ -54,6 +57,21 @@ public sealed partial class LyricsService
         }
         Updated?.Invoke();
     }
+
+#if DEBUG
+    private bool _demo;
+
+    /// <summary>Solo desarrollo: letra de ejemplo para el modo demo, sin consultar LRCLIB.</summary>
+    public void UseDemoLines(IEnumerable<LyricLine> lines)
+    {
+        _demo = true;
+        _request?.Cancel();
+        Lines = lines.ToList();
+        IsLoading = false;
+        HasPlainOnly = false;
+        Updated?.Invoke();
+    }
+#endif
 
     /// <summary>Índice de la línea que corresponde a la posición actual (-1 antes de la primera).</summary>
     public int IndexAt(TimeSpan position)
