@@ -47,16 +47,27 @@ public partial class IslandWindow
     private void Art_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         e.Handled = true;
-        if (_snapshot is not null && !_snapshot.IsSpotify) return;
         try
         {
-            Process.Start(new ProcessStartInfo("spotify:") { UseShellExecute = true });
+            // Sin música, o con Spotify, se abre Spotify. Las demás apps se abren por su AppUserModelID, como
+            // desde el menú Inicio; una pestaña del navegador ("chrome.exe") no se puede abrir así.
+            var appId = _snapshot?.AppId ?? "";
+            if (_snapshot is null || _snapshot.App == MusicApp.Spotify)
+                Process.Start(new ProcessStartInfo("spotify:") { UseShellExecute = true });
+            else if (IsLaunchableAppId(appId))
+                Process.Start(new ProcessStartInfo("explorer.exe", @"shell:AppsFolder\" + appId) { UseShellExecute = true });
         }
         catch
         {
-            // Spotify no está instalado.
+            // La app no está instalada o no se pudo abrir.
         }
     }
+
+    /// <summary>Un AppUserModelID de app instalada: sin rutas ni comillas, y que no sea un .exe suelto (navegadores).</summary>
+    private static bool IsLaunchableAppId(string appId)
+        => appId.Length is > 0 and < 200
+           && !appId.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+           && appId.All(c => char.IsAsciiLetterOrDigit(c) || c is '.' or '_' or '-' or '!');
 
     private void SeekTrack_MouseEnter(object sender, MouseEventArgs e) => SetTrackThickness(8);
 

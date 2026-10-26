@@ -65,7 +65,14 @@ public partial class IslandWindow
             RebuildPages();
             _services.Widgets.InstallExamples();
         }
-        if (mode == "volume")
+        if (mode == "expanded-volume")
+        {
+            // Volumen simulado (no cambia el del sistema) con la isla expandida: la barra reemplaza a los puntos.
+            RequestExpand(true);
+            _ = Task.Delay(1200).ContinueWith(_ => Dispatcher.Invoke(() => OnVolumeChanged(0.42f, false)));
+            return;
+        }
+                if (mode == "volume")
         {
             OnVolumeChanged(0.64f, false);
             _peekUntil = DateTime.MaxValue;

@@ -21,7 +21,7 @@
 
 ---
 
-**Zenit** es una isla dinámica para Windows 10 y 11, inspirada en la del iPhone. Muestra lo que suena en Spotify con carátula, progreso y controles, y además el clima, tipos de cambio, relojes mundiales y la fecha. Todo con animaciones de resorte fluidas como las de iOS.
+**Zenit** es una isla dinámica para Windows 10 y 11, inspirada en la del iPhone. Muestra lo que suena en Spotify, TIDAL o YouTube Music con carátula, progreso y controles, y además el clima, tipos de cambio, relojes mundiales y la fecha. Todo con animaciones de resorte fluidas como las de iOS.
 
 Es nativa (C# / .NET 10), liviana, de código abierto y **no pide cuentas, claves ni permisos de administrador**.
 
@@ -35,7 +35,7 @@ Es nativa (C# / .NET 10), liviana, de código abierto y **no pide cuentas, clave
 
 | | |
 |---|---|
-| 🎵 **Música** | Spotify (y opcionalmente cualquier reproductor): carátula, título, progreso arrastrable y controles, con la carátula desenfocada de fondo. El ecualizador reacciona al audio real. |
+| 🎵 **Música** | Spotify, TIDAL y YouTube Music (y opcionalmente cualquier reproductor): carátula, título, progreso arrastrable y controles, con la carátula desenfocada de fondo. El ecualizador reacciona al audio real. |
 | 🎤 **Letras sincronizadas** | La línea que suena en el momento justo, desde [LRCLIB](https://lrclib.net). Si cierras la isla en la página de letras, la isla compacta sigue mostrando la línea actual. |
 | ⏱️ **Temporizador y cronómetro** | Actividad en vivo: la cuenta regresiva queda visible en la isla compacta. |
 | 📅 **Reuniones** | Avisa antes de cada reunión de Google Calendar u Outlook y muestra la cuenta regresiva en la isla. Basta con el enlace iCal privado: sin cuentas ni contraseñas. |
@@ -82,7 +82,7 @@ Get-FileHash .\Zenit-Setup-<versión>-x64.exe -Algorithm SHA256
 ## 🛡️ Privacidad y seguridad
 
 - **Sin cuentas, claves ni telemetría.**
-- La música se lee localmente con la API oficial de Windows (`GlobalSystemMediaTransportControls`), no con la API web de Spotify. Solo si activas la página **Letras** se envían el título y el artista a LRCLIB.
+- La música se lee localmente con la API oficial de Windows (`GlobalSystemMediaTransportControls`), no con la API web de cada servicio. Solo si activas la página **Letras** se envían el título y el artista a LRCLIB.
 - El ecualizador solo lee el **nivel** de volumen; nunca graba audio.
 - Se ejecuta sin privilegios elevados y no instala servicios.
 - Solo conecta por HTTPS, y solo si activas la página correspondiente:
@@ -110,7 +110,7 @@ cd zenit
 dotnet run --project src/Zenit
 ```
 
-En Debug existen atajos para probar la interfaz sin música: `--demo idle|compact|peek|expanded|marquee|meeting|mixer|lyrics|compact-lyrics|clock|timer|live|volume|weather|currency|world|widgets|tour` y `--settings`.
+En Debug existen atajos para probar la interfaz sin música: `--demo idle|compact|peek|expanded|marquee|meeting|mixer|lyrics|compact-lyrics|clock|timer|live|volume|expanded-volume|weather|currency|world|widgets|tour` y `--settings`.
 
 ```
 src/Zenit
@@ -127,7 +127,7 @@ Sin paquetes NuGet de terceros. ¿Quieres aportar? Lee [CONTRIBUTING.md](CONTRIB
 
 [MIT](LICENSE) © 2026 Daniel Moraga · [Danidev.cl](https://danidev.cl). Puedes usar, modificar y redistribuir el código libremente, manteniendo el aviso de copyright.
 
-Proyecto independiente, sin relación con Apple ni Spotify. "Dynamic Island" y "iPhone" son marcas de Apple Inc.; "Spotify" es marca de Spotify AB.
+Proyecto independiente, sin relación con Apple, Spotify, TIDAL ni Google. "Dynamic Island" y "iPhone" son marcas de Apple Inc.; "Spotify", de Spotify AB; "TIDAL", de TIDAL Music AS; "YouTube Music", de Google LLC.
 
 ---
 
@@ -135,7 +135,7 @@ Proyecto independiente, sin relación con Apple ni Spotify. "Dynamic Island" y "
 
 ## English
 
-**Zenit** is a dynamic island for Windows 10 and 11, inspired by the one on the iPhone. It shows what's playing on Spotify with album art, progress and controls, plus the weather, exchange rates, world clocks and the date, all with smooth, springy animations.
+**Zenit** is a dynamic island for Windows 10 and 11, inspired by the one on the iPhone. It shows what's playing on Spotify, TIDAL or YouTube Music with album art, progress and controls, plus the weather, exchange rates, world clocks and the date, all with smooth, springy animations.
 
 It's native (C# / .NET 10), lightweight, open source, and **needs no accounts, API keys or admin rights**.
 
@@ -145,7 +145,7 @@ It's native (C# / .NET 10), lightweight, open source, and **needs no accounts, A
 
 | | |
 |---|---|
-| 🎵 **Music** | Spotify (and optionally any other player): album art, title, a draggable progress bar and controls, with the blurred artwork as a backdrop. The equalizer reacts to the actual audio. |
+| 🎵 **Music** | Spotify, TIDAL and YouTube Music (and optionally any other player): album art, title, a draggable progress bar and controls, with the blurred artwork as a backdrop. The equalizer reacts to the actual audio. |
 | 🎤 **Synced lyrics** | The current line, right on time, from [LRCLIB](https://lrclib.net). Close the island on the lyrics page and the compact island keeps showing the current line. |
 | ⏱️ **Timer and stopwatch** | A live activity: the countdown stays visible on the compact island. |
 | 📅 **Meetings** | Get a heads-up before every Google Calendar or Outlook meeting, with a countdown on the island. All it needs is the calendar's private iCal link: no accounts or passwords. |
@@ -192,7 +192,7 @@ Get-FileHash .\Zenit-Setup-<version>-x64.exe -Algorithm SHA256
 ### 🛡️ Privacy and security
 
 - **No accounts, no API keys, no telemetry.**
-- Music info is read locally through the official Windows API (`GlobalSystemMediaTransportControls`), not Spotify's web API. Only if you turn on the **Lyrics** page are the song title and artist sent to LRCLIB.
+- Music info is read locally through the official Windows API (`GlobalSystemMediaTransportControls`), not each service's web API. Only if you turn on the **Lyrics** page are the song title and artist sent to LRCLIB.
 - The equalizer only reads the volume **level**; it never records audio.
 - It runs without elevated privileges and installs no services.
 - It only connects over HTTPS, and only when you enable the related feature:
@@ -220,7 +220,7 @@ cd zenit
 dotnet run --project src/Zenit
 ```
 
-Debug builds include shortcuts to try the UI without music: `--demo idle|compact|peek|expanded|marquee|meeting|mixer|lyrics|compact-lyrics|clock|timer|live|volume|weather|currency|world|widgets|tour` and `--settings`.
+Debug builds include shortcuts to try the UI without music: `--demo idle|compact|peek|expanded|marquee|meeting|mixer|lyrics|compact-lyrics|clock|timer|live|volume|expanded-volume|weather|currency|world|widgets|tour` and `--settings`.
 
 No third-party NuGet packages. Want to contribute? Read [CONTRIBUTING.md](CONTRIBUTING.md), look for issues labeled [`good first issue`](https://github.com/Dysast3r/zenit/labels/good%20first%20issue) and check the [roadmap](ROADMAP.md). Translations happen on [Crowdin](crowdin.yml) or through a pull request to `src/Zenit/Assets/i18n`.
 
@@ -228,7 +228,7 @@ No third-party NuGet packages. Want to contribute? Read [CONTRIBUTING.md](CONTRI
 
 [MIT](LICENSE) © 2026 Daniel Moraga · [Danidev.cl](https://danidev.cl). You're free to use, modify and redistribute the code as long as you keep the copyright notice.
 
-Independent project, not affiliated with Apple or Spotify. "Dynamic Island" and "iPhone" are trademarks of Apple Inc.; "Spotify" is a trademark of Spotify AB.
+Independent project, not affiliated with Apple, Spotify, TIDAL or Google. "Dynamic Island" and "iPhone" are trademarks of Apple Inc.; "Spotify" of Spotify AB; "TIDAL" of TIDAL Music AS; "YouTube Music" of Google LLC.
 
 ---
 

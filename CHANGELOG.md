@@ -2,6 +2,18 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto usa [versionado semántico](https://semver.org/lang/es/).
 
+## [1.1.5] - 2026-10-26
+
+### Añadido
+- Compatibilidad con TIDAL y YouTube Music (la app instalada y las de escritorio de la comunidad): tienen la misma prioridad que Spotify, y un clic en la carátula abre la app que está sonando.
+
+### Cambiado
+- La isla muestra primero lo que está sonando: Spotify en pausa ya no tapa a otra app de música que esté reproduciendo.
+- El ajuste "Solo Spotify" pasa a ser "Solo apps de música" (Spotify, TIDAL y YouTube Music) y conserva lo que tenías elegido.
+
+### Corregido
+- La barra de volumen al girar la rueda del mouse sobre la isla vuelve a verse: girar la rueda cancela la expansión por el cursor, y con la isla ya expandida la barra reemplaza un momento a los puntos de página.
+
 ## [1.1.4] - 2026-10-26
 
 ### Añadido
@@ -64,6 +76,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 - Releases verificables: atestación de procedencia, sumas SHA-256, CodeQL, OpenSSF Scorecard y firma de código opcional.
 - Distribución con winget, sitio web en [danidev.cl/zenit](https://danidev.cl/zenit) y catálogo de traducción para Crowdin.
 
+[1.1.5]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.5
 [1.1.4]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.4
 [1.1.3]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.3
 [1.1.2]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.2

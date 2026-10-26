@@ -102,7 +102,7 @@ public partial class IslandWindow : Window
     private double _wheelAccumulator;
     private DateTime _lastWheelAction;
 
-    private readonly DispatcherTimer _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _weatherTimer, _currencyTimer, _calendarTimer;
+    private readonly DispatcherTimer _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _expandedVolumeTimer, _weatherTimer, _currencyTimer, _calendarTimer;
     private bool _loopAttached;
     private TimeSpan _lastFrame;
     private double _time;
@@ -177,6 +177,7 @@ public partial class IslandWindow : Window
             _alert = null;
             Evaluate();
         });
+        _expandedVolumeTimer = OneShot(1600, HideExpandedVolume);
         _weatherTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher);
         _weatherTimer.Tick += (_, _) => _ = _weather.RefreshAsync();
         _currencyTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher);
@@ -280,9 +281,9 @@ public partial class IslandWindow : Window
 
         if (_hwnd != 0) NativeMethods.ExcludeFromCapture(_hwnd, s.HideFromCapture && !_demo);
 
-        if (_primary && _media.SpotifyOnly != s.SpotifyOnly)
+        if (_primary && _media.MusicAppsOnly != s.MusicAppsOnly)
         {
-            _media.SpotifyOnly = s.SpotifyOnly;
+            _media.MusicAppsOnly = s.MusicAppsOnly;
             _media.Reselect();
         }
 
@@ -423,7 +424,9 @@ public partial class IslandWindow : Window
         }
         else if (msg == WM_MOUSEWHEEL && _settings.WheelControlsVolume && Island.IsMouseOver && _volume.IsAvailable)
         {
-            // Rueda sobre la isla: volumen del sistema en pasos de 2 %.
+            // Rueda sobre la isla: volumen del sistema en pasos de 2 %. Si la isla aún no se expandió por
+            // el cursor, se cancela: quien gira la rueda quiere ver la barra de volumen, no la isla abierta.
+            _hoverTimer.Stop();
             _volume.Adjust(delta / 120f * 0.02f);
             handled = true;
         }
@@ -450,7 +453,11 @@ public partial class IslandWindow : Window
             Evaluate();
         }
 
-        if (++_tick % 2 == 0) _media.PollTimeline();
+        if (++_tick % 2 == 0)
+        {
+            _media.PollTimeline();
+            if (_primary) _media.Refresh();
+        }
     }
 
     private void RefreshPages()

@@ -99,7 +99,9 @@ public sealed class AppSettings
     public List<PageEntry> Pages { get; set; } = DefaultPages();
 
     // Música
-    public bool SpotifyOnly { get; set; }
+    // Conserva el nombre del ajuste de cuando solo se reconocía Spotify.
+    [JsonPropertyName("SpotifyOnly")]
+    public bool MusicAppsOnly { get; set; }
     public bool ShowTrackPeek { get; set; } = true;
     public double PeekSeconds { get; set; } = 3;
     public bool ReactiveEqualizer { get; set; } = true;

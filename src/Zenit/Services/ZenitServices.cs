@@ -6,7 +6,7 @@ namespace Zenit.Services;
 public sealed class ZenitServices(AppSettings settings, Dispatcher dispatcher) : IDisposable
 {
     public AppSettings Settings { get; } = settings;
-    public MediaService Media { get; } = new() { SpotifyOnly = settings.SpotifyOnly };
+    public MediaService Media { get; } = new() { MusicAppsOnly = settings.MusicAppsOnly };
     public WeatherService Weather { get; } = new(settings);
     public CurrencyService Currency { get; } = new(settings);
     public VolumeService Volume { get; } = new(dispatcher);

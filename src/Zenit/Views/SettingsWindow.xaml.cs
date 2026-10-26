@@ -246,7 +246,7 @@ public partial class SettingsWindow : Window
         CaptureSwitch.IsChecked = s.HideFromCapture;
         StartupSwitch.IsChecked = StartupService.IsEnabled;
 
-        SpotifyOnlySwitch.IsChecked = s.SpotifyOnly;
+        MusicAppsOnlySwitch.IsChecked = s.MusicAppsOnly;
         PeekSwitch.IsChecked = s.ShowTrackPeek;
         PeekSlider.Value = s.PeekSeconds;
         ReactiveSwitch.IsChecked = s.ReactiveEqualizer;
@@ -363,7 +363,7 @@ public partial class SettingsWindow : Window
             }
         }
 
-        s.SpotifyOnly = SpotifyOnlySwitch.IsChecked == true;
+        s.MusicAppsOnly = MusicAppsOnlySwitch.IsChecked == true;
         s.ShowTrackPeek = PeekSwitch.IsChecked == true;
         s.PeekSeconds = PeekSlider.Value;
         s.ReactiveEqualizer = ReactiveSwitch.IsChecked == true;

@@ -372,9 +372,9 @@
 
         <!-- ═════════════ Música ═════════════ -->
         <StackPanel x:Name="MusicSection" Margin="0,18,0,0">
-          <c:SettingCard Glyph="&#xE8D6;" Header="{s:Tr Es='Solo Spotify', En='Spotify only'}"
-                         Description="{s:Tr Es='Si se desactiva, también muestra YouTube, navegadores y otros reproductores (Spotify siempre tiene prioridad)', En='When off, also shows YouTube, browsers and other players (Spotify always comes first)'}">
-            <CheckBox x:Name="SpotifyOnlySwitch" Style="{StaticResource Switch}" Click="Any_Changed" />
+          <c:SettingCard Glyph="&#xE8D6;" Header="{s:Tr Es='Solo apps de música', En='Music apps only'}"
+                         Description="{s:Tr Es='Spotify, TIDAL y la app de YouTube Music. Si se desactiva, también muestra el navegador y otros reproductores (las apps de música tienen prioridad)', En='Spotify, TIDAL and the YouTube Music app. When off, also shows browsers and other players (music apps come first)'}">
+            <CheckBox x:Name="MusicAppsOnlySwitch" Style="{StaticResource Switch}" Click="Any_Changed" />
           </c:SettingCard>
           <c:SettingCard Glyph="&#xE7E7;" Header="{s:Tr Es='Aviso al cambiar de canción', En='Notify on track change'}"
                          Description="{s:Tr Es='La isla se agranda un momento con el título y el artista', En='The island briefly grows to show title and artist'}">
@@ -400,7 +400,7 @@
               <TextBlock Foreground="White" FontSize="13" Margin="0,0,0,6" Text="{s:Tr Es='• Clic o pasar el cursor: expandir', En='• Click or hover: expand'}" />
               <TextBlock Foreground="White" FontSize="13" Margin="0,0,0,6" Text="{s:Tr Es='• Deslizar la isla compacta a la izquierda / derecha: siguiente / anterior canción', En='• Swipe the compact island left / right: next / previous track'}" />
               <TextBlock Foreground="White" FontSize="13" Margin="0,0,0,6" Text="{s:Tr Es='• Arrastrar la barra de progreso: adelantar o retroceder', En='• Drag the progress bar: seek'}" />
-              <TextBlock Foreground="White" FontSize="13" Margin="0,0,0,6" Text="{s:Tr Es='• Clic en la carátula: abrir Spotify', En='• Click the album art: open Spotify'}" />
+              <TextBlock Foreground="White" FontSize="13" Margin="0,0,0,6" Text="{s:Tr Es='• Clic en la carátula: abrir la app de música', En='• Click the album art: open the music app'}" />
               <TextBlock Foreground="White" FontSize="13" Text="{s:Tr Es='• Clic derecho en la isla: menú rápido', En='• Right-click the island: quick menu'}" />
             </StackPanel>
           </Border>
@@ -619,7 +619,7 @@
                 <TextBlock FontSize="13" Foreground="{StaticResource Muted}" Margin="0,6,0,0" TextWrapping="Wrap"
                            Text="{s:Tr Es='La isla dinámica para Windows. Código abierto con licencia MIT.', En='The dynamic island for Windows. Open source, MIT licensed.'}" />
                 <TextBlock FontSize="11.5" Foreground="{StaticResource Subtle}" Margin="0,6,0,0" TextWrapping="Wrap"
-                           Text="{s:Tr Es='Proyecto independiente, sin relación con Apple ni Spotify. iPhone y Dynamic Island son marcas de Apple Inc.; Spotify es marca de Spotify AB.', En='Independent project, not affiliated with Apple or Spotify. iPhone and Dynamic Island are trademarks of Apple Inc.; Spotify is a trademark of Spotify AB.'}" />
+                           Text="{s:Tr Es='Proyecto independiente, sin relación con Apple, Spotify, TIDAL ni Google. iPhone y Dynamic Island son marcas de Apple Inc.; Spotify, de Spotify AB; TIDAL, de TIDAL Music AS; YouTube Music, de Google LLC.', En='Independent project, not affiliated with Apple, Spotify, TIDAL or Google. iPhone and Dynamic Island are trademarks of Apple Inc.; Spotify of Spotify AB; TIDAL of TIDAL Music AS; YouTube Music of Google LLC.'}" />
                 <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                   <Border CornerRadius="11" Background="#2934D399" BorderBrush="#6634D399" BorderThickness="1" Padding="10,3" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">

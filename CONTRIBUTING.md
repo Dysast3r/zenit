@@ -17,7 +17,7 @@ En Debug existen atajos para probar la interfaz sin música:
 
 ```powershell
 dotnet run --project src/Zenit -- --demo expanded
-# idle | compact | peek | expanded | lyrics | compact-lyrics | clock | timer | live | volume | weather | currency | world | widgets | tour
+# idle | compact | peek | expanded | lyrics | compact-lyrics | clock | timer | live | volume | expanded-volume | weather | currency | world | widgets | tour
 dotnet run --project src/Zenit -- --settings
 ```
 

@@ -6,6 +6,9 @@ using Windows.Storage.Streams;
 
 namespace Zenit.Services;
 
+/// <summary>Apps de música que Zenit reconoce: tienen prioridad sobre el navegador y los demás reproductores.</summary>
+public enum MusicApp { Other, Spotify, Tidal, YouTubeMusic }
+
 /// <summary>Estado inmutable de lo que se está reproduciendo.</summary>
 public sealed record MediaSnapshot(
     string AppId,
@@ -26,7 +29,7 @@ public sealed record MediaSnapshot(
     /// <summary>Orden de publicación: crece con cada estado leído.</summary>
     public long Sequence { get; init; }
 
-    public bool IsSpotify => AppId.Contains("Spotify", StringComparison.OrdinalIgnoreCase);
+    public MusicApp App => MediaService.Identify(AppId);
 
     /// <summary>Posición interpolada: las apps solo informan la posición de vez en cuando.</summary>
     public TimeSpan CurrentPosition
@@ -42,7 +45,7 @@ public sealed record MediaSnapshot(
 
 /// <summary>
 /// Lee la sesión multimedia del sistema (la misma que usa el panel de Windows 11).
-/// No requiere cuenta, claves ni conexión: Spotify publica sus datos localmente.
+/// No requiere cuenta, claves ni conexión: Spotify, TIDAL y YouTube Music publican sus datos localmente.
 /// </summary>
 public sealed class MediaService : IDisposable
 {
@@ -63,7 +66,26 @@ public sealed class MediaService : IDisposable
     /// <summary>Se dispara desde hilos de fondo; null significa que no hay nada reproduciéndose.</summary>
     public event Action<MediaSnapshot?>? Changed;
 
-    public bool SpotifyOnly { get; set; }
+    /// <summary>Ignora el navegador y los demás reproductores: solo Spotify, TIDAL y YouTube Music.</summary>
+    public bool MusicAppsOnly { get; set; }
+
+    /// <summary>
+    /// Reconoce la app por su AppUserModelID: "Spotify.exe", el de TIDAL ("…TIDAL…") y los de YouTube Music
+    /// (la app instalada desde el navegador y las de escritorio de la comunidad). Una pestaña del navegador
+    /// no se distingue de cualquier otro video, así que cuenta como reproductor genérico.
+    /// </summary>
+    public static MusicApp Identify(string appId)
+    {
+        if (appId.Contains("Spotify", StringComparison.OrdinalIgnoreCase)) return MusicApp.Spotify;
+        if (appId.Contains("TIDAL", StringComparison.OrdinalIgnoreCase)) return MusicApp.Tidal;
+        return YouTubeMusicIds.Any(id => appId.Contains(id, StringComparison.OrdinalIgnoreCase)) ? MusicApp.YouTubeMusic : MusicApp.Other;
+    }
+
+    private static readonly string[] YouTubeMusicIds =
+        ["youtube-music", "youtubemusic", "youtube music", "ytmusic", "ytmd", "cinhimbnkkaeohfgghhklpoalkkpdjmlno"];
+
+    /// <summary>Vuelve a elegir la sesión si otra empezó a sonar (Windows no avisa de las que no están enganchadas).</summary>
+    public void Refresh() => SelectSession();
 
     public async Task StartAsync()
     {
@@ -127,9 +149,22 @@ public sealed class MediaService : IDisposable
         GlobalSystemMediaTransportControlsSession? chosen = null;
         try
         {
-            chosen = manager.GetSessions().FirstOrDefault(s =>
-                s.SourceAppUserModelId.Contains("Spotify", StringComparison.OrdinalIgnoreCase));
-            if (chosen is null && !SpotifyOnly) chosen = manager.GetCurrentSession();
+            // Primero lo que está sonando, y entre eso las apps de música; a igualdad se mantiene la sesión
+            // actual (para no saltar entre dos que suenan a la vez) y luego la que Windows considera principal.
+            var current = manager.GetCurrentSession();
+            var best = int.MaxValue;
+            foreach (var session in manager.GetSessions())
+            {
+                var music = Identify(session.SourceAppUserModelId) != MusicApp.Other;
+                if (MusicAppsOnly && !music) continue;
+                var playing = session.GetPlaybackInfo().PlaybackStatus == GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing;
+                var rank = ((playing ? 0 : 2) + (music ? 0 : 1)) * 4
+                           + (ReferenceEquals(session, _session) ? 0 : 1) * 2
+                           + (ReferenceEquals(session, current) ? 0 : 1);
+                if (rank >= best) continue;
+                best = rank;
+                chosen = session;
+            }
         }
         catch
         {

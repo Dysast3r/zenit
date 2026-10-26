@@ -208,14 +208,50 @@ public partial class IslandWindow
             Strings.F("Temporizador de {0}", "{0} timer", TimerService.Format(_timer.Duration)), 6,
             Glyph: "", GlyphBackground: Orange), force: true);
 
+    private const string VolumeGlyph = "", MutedGlyph = "";
+
     private void OnVolumeChanged(float level, bool muted)
     {
         if (!_settings.VolumeHud) return;
         var percent = (int)Math.Round(level * 100);
+        var glyph = muted || percent == 0 ? MutedGlyph : VolumeGlyph;
+        // Con la isla expandida no se interrumpe la página: la barra reemplaza un momento a los puntos.
+        if (_mode == IslandMode.Expanded)
+        {
+            ShowExpandedVolume(muted ? 0 : level, glyph, muted ? "" : $"{percent}%");
+            return;
+        }
         ShowAlert(new IslandAlert("volume",
             muted ? Strings.T("Silencio", "Muted") : Strings.T("Volumen", "Volume"),
             muted ? "" : $"{percent}%", 1.6,
-            Glyph: muted || percent == 0 ? "" : "", GlyphBackground: Subtle, Progress: muted ? 0 : level));
+            Glyph: glyph, GlyphBackground: Subtle, Progress: muted ? 0 : level));
+    }
+
+    private void ShowExpandedVolume(float level, string glyph, string percent)
+    {
+        var shown = ExpandedVolume.Opacity > 0.5;
+        ExpandedVolumeGlyph.Text = glyph;
+        ExpandedVolumeText.Text = percent;
+        var width = ExpandedVolumeTrack.Width * Math.Clamp(level, 0, 1);
+        if (shown) ExpandedVolumeFill.BeginAnimation(WidthProperty, new DoubleAnimation(width, TimeSpan.FromMilliseconds(160)) { EasingFunction = EaseOut });
+        else
+        {
+            ExpandedVolumeFill.BeginAnimation(WidthProperty, null);
+            ExpandedVolumeFill.Width = width;
+        }
+
+        var fade = TimeSpan.FromMilliseconds(180);
+        ExpandedVolume.BeginAnimation(OpacityProperty, new DoubleAnimation(1, fade) { EasingFunction = EaseOut });
+        DotsHost.BeginAnimation(OpacityProperty, new DoubleAnimation(0, fade) { EasingFunction = EaseOut });
+        _expandedVolumeTimer.Stop();
+        _expandedVolumeTimer.Start();
+    }
+
+    private void HideExpandedVolume()
+    {
+        var fade = TimeSpan.FromMilliseconds(260);
+        ExpandedVolume.BeginAnimation(OpacityProperty, new DoubleAnimation(0, fade) { EasingFunction = EaseOut });
+        DotsHost.BeginAnimation(OpacityProperty, new DoubleAnimation(1, fade) { EasingFunction = EaseOut });
     }
 
     private void OnChargingStarted(float percent)
