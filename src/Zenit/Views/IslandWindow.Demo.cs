@@ -51,6 +51,13 @@ public partial class IslandWindow
             _peekUntil = DateTime.MaxValue;
             _peekTimer.Stop();
         }
+        if (mode == "compact-lyrics")
+        {
+            // Solo en memoria: la isla compacta muestra la letra si la última página fue Letras.
+            _settings.Pages.First(p => p.Kind == PageKind.Lyrics).Enabled = true;
+            RebuildPages();
+            LoadLyricsIfNeeded();
+        }
         if (mode == "widgets")
         {
             // Solo en memoria: no se guarda en los ajustes del usuario.
@@ -84,14 +91,14 @@ public partial class IslandWindow
             "currency" => PageKind.Currency,
             "world" => PageKind.WorldClock,
             "timer" => PageKind.Timer,
-            "lyrics" => PageKind.Lyrics,
+            "lyrics" or "compact-lyrics" => PageKind.Lyrics,
             "widgets" => PageKind.Widgets,
             "mixer" => PageKind.Volume,
             _ => PageKind.Music,
         };
         var index = _pages.IndexOf(_allPages[kind]);
         if (index >= 0) GoToPage(index, 0);
-        RequestExpand(mode is not ("idle" or "compact" or "peek" or "marquee"));
+        RequestExpand(mode is not ("idle" or "compact" or "peek" or "marquee" or "compact-lyrics"));
     }
 
     private static MediaSnapshot DemoSong(string title, string artist, Color from, Color to, int seconds = 214)

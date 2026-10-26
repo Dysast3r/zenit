@@ -110,7 +110,7 @@ cd zenit
 dotnet run --project src/Zenit
 ```
 
-En Debug existen atajos para probar la interfaz sin música: `--demo idle|compact|peek|expanded|marquee|meeting|mixer|lyrics|clock|timer|live|volume|weather|currency|world|widgets|tour` y `--settings`.
+En Debug existen atajos para probar la interfaz sin música: `--demo idle|compact|peek|expanded|marquee|meeting|mixer|lyrics|compact-lyrics|clock|timer|live|volume|weather|currency|world|widgets|tour` y `--settings`.
 
 ```
 src/Zenit
@@ -220,7 +220,7 @@ cd zenit
 dotnet run --project src/Zenit
 ```
 
-Debug builds include shortcuts to try the UI without music: `--demo idle|compact|peek|expanded|marquee|meeting|mixer|lyrics|clock|timer|live|volume|weather|currency|world|widgets|tour` and `--settings`.
+Debug builds include shortcuts to try the UI without music: `--demo idle|compact|peek|expanded|marquee|meeting|mixer|lyrics|compact-lyrics|clock|timer|live|volume|weather|currency|world|widgets|tour` and `--settings`.
 
 No third-party NuGet packages. Want to contribute? Read [CONTRIBUTING.md](CONTRIBUTING.md), look for issues labeled [`good first issue`](https://github.com/Dysast3r/zenit/labels/good%20first%20issue) and check the [roadmap](ROADMAP.md). Translations happen on [Crowdin](crowdin.yml) or through a pull request to `src/Zenit/Assets/i18n`.
 

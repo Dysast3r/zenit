@@ -54,8 +54,7 @@ public partial class LyricsPage : UserControl, IIslandPage
         var lines = _lyrics.Lines;
         if (snapshot is null || lines.Count == 0) return;
 
-        // Medio segundo de adelanto: se lee mejor si la línea aparece un instante antes de cantarse.
-        var index = _lyrics.IndexAt(snapshot.CurrentPosition + TimeSpan.FromMilliseconds(500));
+        var index = _lyrics.IndexAt(snapshot.CurrentPosition + LyricsService.Lead);
         if (index == _index) return;
         var forward = index > _index && _index != int.MinValue;
         _index = index;

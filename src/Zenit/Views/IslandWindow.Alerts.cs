@@ -49,6 +49,8 @@ public partial class IslandWindow
         CompactTimerIcon.Visibility = !music && activity ? Visibility.Visible : Visibility.Hidden;
         CompactBars.Visibility = music && !activity ? Visibility.Visible : Visibility.Hidden;
         CompactTimer.Visibility = activity ? Visibility.Visible : Visibility.Collapsed;
+        SetCompactLyrics(music && !activity && _services.Lyrics.Lines.Count > 0
+                         && _page < _pages.Count && _pages[_page] is LyricsPage);
         UpdateCompactCenter(meeting, narrow: activity);
         if (!activity) return;
 
@@ -81,7 +83,7 @@ public partial class IslandWindow
     {
         var now = DateTime.Now;
         var weather = _weather.Reports.FirstOrDefault();
-        var text = meeting?.Title ?? _settings.CompactCenter switch
+        var text = _compactLyrics ? "" : meeting?.Title ?? _settings.CompactCenter switch
         {
             CompactCenter.Time => TimeFormats.Time(now, _settings, seconds: false),
             CompactCenter.Date => TimeFormats.Date(now, DateStyle.Medium, ""),
@@ -126,6 +128,45 @@ public partial class IslandWindow
         CompactCenterShift.BeginAnimation(TranslateTransform.XProperty, null);
         CompactCenterShift.X = 0;
         ApplyMarquee();
+    }
+
+    private bool _compactLyrics;
+    private int _compactLyricIndex = int.MinValue;
+
+    /// <summary>Ancho de la isla compacta: más ancha cuando muestra la letra en vez del contenido elegido.</summary>
+    private double CompactWidth() => _compactLyrics ? 390 : 284;
+
+    /// <summary>Si la última página abierta fue Letras, la isla compacta sigue mostrando la línea que se canta.</summary>
+    private void SetCompactLyrics(bool show)
+    {
+        if (show == _compactLyrics) return;
+        _compactLyrics = show;
+        _compactLyricIndex = int.MinValue;
+        CompactLyric.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+        CompactPanel.Width = CompactWidth();
+        if (_mode == IslandMode.Compact)
+        {
+            _width.Target = CompactWidth();
+            EnsureLoop();
+        }
+        UpdateCompactLyric();
+    }
+
+    /// <summary>Se revisa en cada frame, como la página de letras, para que el cambio caiga justo en el tiempo.</summary>
+    private void UpdateCompactLyric()
+    {
+        var lines = _services.Lyrics.Lines;
+        if (!_compactLyrics || _snapshot is not { } snapshot || lines.Count == 0) return;
+
+        var index = _services.Lyrics.IndexAt(snapshot.CurrentPosition + LyricsService.Lead);
+        if (index == _compactLyricIndex) return;
+        var forward = index > _compactLyricIndex && _compactLyricIndex != int.MinValue;
+        _compactLyricIndex = index;
+        CompactLyric.Text = index >= 0 ? lines[index].Text : "♪";
+
+        if (!forward) return;
+        CompactLyricShift.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(8, 0, TimeSpan.FromMilliseconds(320)) { EasingFunction = EaseOut });
+        CompactLyric.BeginAnimation(OpacityProperty, new DoubleAnimation(0.2, 1, TimeSpan.FromMilliseconds(320)) { EasingFunction = EaseOut });
     }
 
     private void ApplyMarquee()

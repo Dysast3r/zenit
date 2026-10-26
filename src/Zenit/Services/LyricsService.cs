@@ -14,6 +14,9 @@ public sealed partial class LyricsService
     private string _key = "";
     private CancellationTokenSource? _request;
 
+    /// <summary>Adelanto con que se muestra cada línea: se lee mejor si aparece un instante antes de cantarse.</summary>
+    public static readonly TimeSpan Lead = TimeSpan.FromMilliseconds(500);
+
     public IReadOnlyList<LyricLine> Lines { get; private set; } = [];
     public bool IsLoading { get; private set; }
     public bool HasPlainOnly { get; private set; }

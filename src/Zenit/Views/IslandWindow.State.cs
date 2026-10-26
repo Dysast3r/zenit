@@ -88,7 +88,7 @@ public partial class IslandWindow
     {
         IslandMode.Hidden => (64, 14, 7),
         IslandMode.Idle => (IdleWidth(), 32, 16),
-        IslandMode.Compact => (284, 36, 18),
+        IslandMode.Compact => (CompactWidth(), 36, 18),
         IslandMode.Peek => (372, 72, 32),
         _ => (430, 204, 42),
     };

@@ -136,6 +136,12 @@
                          VerticalAlignment="Center" Margin="36,0,0,0" Visibility="Collapsed" />
             </StackPanel>
           </Canvas>
+          <!-- Letra en curso, si la última página abierta fue Letras -->
+          <TextBlock x:Name="CompactLyric" MaxWidth="290" FontSize="12.5" FontWeight="SemiBold" Foreground="White"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+                     TextTrimming="CharacterEllipsis" Visibility="Collapsed">
+            <TextBlock.RenderTransform><TranslateTransform x:Name="CompactLyricShift" /></TextBlock.RenderTransform>
+          </TextBlock>
           <Grid x:Name="CompactTimerIcon" Width="24" Height="24" HorizontalAlignment="Left" Margin="9,0,0,0" Visibility="Hidden">
             <Ellipse x:Name="CompactTimerIconCircle" Fill="#FF9F0A" />
             <TextBlock x:Name="CompactTimerIconGlyph" Text="&#xE916;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="12" Foreground="Black"

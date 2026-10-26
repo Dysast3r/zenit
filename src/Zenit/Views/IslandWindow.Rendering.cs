@@ -50,6 +50,7 @@ public partial class IslandWindow
         ApplyGeometry();
 
         var barsActive = UpdateBars(dt);
+        if (_mode == IslandMode.Compact) UpdateCompactLyric();
         if (_mode == IslandMode.Expanded)
         {
             UpdateProgress();
