@@ -70,13 +70,13 @@ Zenit se actualiza sola y se desinstala desde **Configuración de Windows → Ap
 Cada versión se compila **públicamente en GitHub Actions** desde este código. Lleva una [atestación de procedencia](https://docs.github.com/actions/security-for-github-actions/using-artifact-attestations) firmada con Sigstore, que prueba que el archivo salió de este repositorio y nadie lo modificó:
 
 ```powershell
-gh attestation verify .\Zenit-1.0.0-win-x64.zip --repo Dysast3r/zenit
+gh attestation verify .\Zenit-Setup-<versión>-x64.exe --repo Dysast3r/zenit
 ```
 
 También puedes comparar el hash con `SHA256SUMS.txt`, que viene en cada Release:
 
 ```powershell
-Get-FileHash .\Zenit-1.0.0-win-x64.zip -Algorithm SHA256
+Get-FileHash .\Zenit-Setup-<versión>-x64.exe -Algorithm SHA256
 ```
 
 ## 🛡️ Privacidad y seguridad
@@ -110,7 +110,7 @@ cd zenit
 dotnet run --project src/Zenit
 ```
 
-En Debug existen atajos para probar la interfaz sin música: `--demo idle|compact|peek|expanded|lyrics|clock|timer|live|volume|weather|currency|world|widgets|tour` y `--settings`.
+En Debug existen atajos para probar la interfaz sin música: `--demo idle|compact|peek|expanded|marquee|meeting|mixer|lyrics|clock|timer|live|volume|weather|currency|world|widgets|tour` y `--settings`.
 
 ```
 src/Zenit
@@ -135,18 +135,98 @@ Proyecto independiente, sin relación con Apple ni Spotify. "Dynamic Island" y "
 
 ## English
 
-**Zenit** is a dynamic island for Windows 10 and 11, inspired by the one on the iPhone. It shows Spotify now-playing with album art, a seekable progress bar and controls, plus weather, 300+ currencies and crypto, world clocks and the date. Everything moves with iOS-style spring physics.
+**Zenit** is a dynamic island for Windows 10 and 11, inspired by the one on the iPhone. It shows what's playing on Spotify with album art, progress and controls, plus the weather, exchange rates, world clocks and the date, all with smooth, springy animations.
 
-- **Native and light:** C# / .NET 10, no third-party packages, no admin rights, no accounts, no telemetry.
-- **Two looks:** a classic notch attached to the edge, or a floating island.
-- **Live activities:** synced lyrics, timer and stopwatch, a countdown to your next Google Calendar or Outlook meeting (from its private iCal link, no account needed), volume and battery HUDs, camera/mic privacy dots, and community widgets from any public API (plain JSON, no code).
-- **Per-app volume:** a page with the system volume and every app playing audio, each with its own slider and mute.
-- **Your setup:** pick the display for the island or show it on all of them, choose what the compact island shows in the middle (time, date, temperature or the scrolling song title), and it stays quiet while Windows Do not disturb is on.
-- **Private:** hidden from screenshots and screen sharing; music info is read locally through Windows (only title and artist go to LRCLIB if you enable the Lyrics page).
-- **Verifiable:** every release is built by GitHub Actions with signed provenance. Check a download with `gh attestation verify <file> --repo Dysast3r/zenit`.
-- **UI in English, Spanish and Portuguese:** it follows the Windows language, or you can pick one in Settings. Download the installer (`Zenit-Setup-<version>-x64.exe`) from Releases and double-click it: no admin rights needed.
+It's native (C# / .NET 10), lightweight, open source, and **needs no accounts, API keys or admin rights**.
 
-Download it from [Releases](https://github.com/Dysast3r/zenit/releases/latest). Licensed under [MIT](LICENSE).
+> **Why "Zenit"?** The zenith is the highest point in the sky, right above you. That's where the island lives: at the very top of your screen.
+
+### ✨ Features
+
+| | |
+|---|---|
+| 🎵 **Music** | Spotify (and optionally any other player): album art, title, a draggable progress bar and controls, with the blurred artwork as a backdrop. The equalizer reacts to the actual audio. |
+| 🎤 **Synced lyrics** | The current line, right on time, from [LRCLIB](https://lrclib.net). |
+| ⏱️ **Timer and stopwatch** | A live activity: the countdown stays visible on the compact island. |
+| 📅 **Meetings** | Get a heads-up before every Google Calendar or Outlook meeting, with a countdown on the island. All it needs is the calendar's private iCal link: no accounts or passwords. |
+| 🎚️ **Per-app volume** | A page with the system volume and every app playing audio (Spotify, Chrome, Discord…), each with its own slider and mute. |
+| 🔔 **System alerts** | Volume (scroll over the island to change it), battery charging, green and orange camera and microphone dots, and Windows notifications in the Microsoft Store version. |
+| 🧩 **Community widgets** | Data from any public API with a plain JSON file, no code. [Make your own](widgets/README.md). |
+| 🏝️ **Two looks** | A classic notch attached to the top edge with concave curves, or a floating island. |
+| 👆 **Gestures** | Hover or click to expand · swipe to change songs · swipe the expanded island to switch pages · horizontal touchpad scrolling. |
+| 🌦️ **Weather** | Your current location or any city in the world, an hourly forecast and animated vector icons. |
+| 💱 **Currencies** | 300+ currencies and cryptocurrencies with their daily change. |
+| 🕐 **Clock and date** | 12/24-hour time, seconds, six date formats plus a custom one, week and day of the year. |
+| 🌍 **World clocks** | Up to 4 cities with analog faces for day and night. |
+| 🙈 **Discreet** | Hidden from screenshots, recordings and screen sharing. It steps aside for full-screen games and videos, and respects Windows Do not disturb. |
+| 🖥️ **Multiple displays** | Choose which screen shows the island, or show it on all of them. |
+| ⚙️ **Customizable** | A Windows 11-style settings panel: language, size, position, color, pages, what the compact island shows in the middle (time, date, temperature or the scrolling song title) and more. |
+| 🔄 **Verified updates** | Lets you know when a new version is out and checks its SHA-256 before installing it. |
+| 🌐 **English, Spanish and Portuguese** | Follows your Windows language, or pick one yourself. Speak another language? [Help translate](CONTRIBUTING.md). |
+
+### 📥 Installation
+
+1. Download **`Zenit-Setup-<version>-x64.exe`** from [**Releases**](https://github.com/Dysast3r/zenit/releases/latest) (`arm64` if your PC runs on ARM, like a Surface Pro X).
+2. Double-click it. It installs in seconds, with no admin rights and no separate .NET install.
+3. The island appears at the top of your screen. Double-click the tray icon to open Settings.
+
+Zenit keeps itself up to date and can be uninstalled from **Windows Settings → Apps**. Rather not install anything? Grab the portable `.zip` from the same page and run `Zenit.exe`.
+
+> [!NOTE]
+> Until the installer is code-signed, Windows SmartScreen may show "Windows protected your PC". Click **More info → Run anyway**. Before you do, you can check that the file is genuine (see below).
+
+### 🔐 Verify your download
+
+Every release is **built in the open on GitHub Actions** from this code. Each file carries a [build provenance attestation](https://docs.github.com/actions/security-for-github-actions/using-artifact-attestations) signed with Sigstore, which proves it came from this repository and hasn't been tampered with:
+
+```powershell
+gh attestation verify .\Zenit-Setup-<version>-x64.exe --repo Dysast3r/zenit
+```
+
+You can also compare its hash with the `SHA256SUMS.txt` included in every release:
+
+```powershell
+Get-FileHash .\Zenit-Setup-<version>-x64.exe -Algorithm SHA256
+```
+
+### 🛡️ Privacy and security
+
+- **No accounts, no API keys, no telemetry.**
+- Music info is read locally through the official Windows API (`GlobalSystemMediaTransportControls`), not Spotify's web API. Only if you turn on the **Lyrics** page are the song title and artist sent to LRCLIB.
+- The equalizer only reads the volume **level**; it never records audio.
+- It runs without elevated privileges and installs no services.
+- It only connects over HTTPS, and only when you enable the related feature:
+
+  | Data | Service |
+  |---|---|
+  | Weather and city search | [Open-Meteo](https://open-meteo.com) |
+  | Your location's name | [BigDataCloud](https://www.bigdatacloud.com) or [ipapi.co](https://ipapi.co) |
+  | Currencies | [currency-api](https://github.com/fawazahmed0/exchange-api) (jsDelivr / Cloudflare) |
+  | Lyrics | [LRCLIB](https://lrclib.net) |
+  | Updates | GitHub Releases |
+  | Widgets | Only the URLs of the widgets you install |
+  | Meetings | Only the iCal links of the calendars you add |
+
+- Automated analysis with **CodeQL** and **OpenSSF Scorecard**. CI dependencies are kept current by Dependabot, and every action is pinned to a commit.
+- Found a security issue? See [SECURITY.md](SECURITY.md).
+
+### 🛠️ Build from source
+
+Requirements: Windows 10 2004 or later and the [.NET 10 SDK](https://dotnet.microsoft.com/download).
+
+```powershell
+git clone https://github.com/Dysast3r/zenit
+cd zenit
+dotnet run --project src/Zenit
+```
+
+Debug builds include shortcuts to try the UI without music: `--demo idle|compact|peek|expanded|marquee|meeting|mixer|lyrics|clock|timer|live|volume|weather|currency|world|widgets|tour` and `--settings`.
+
+No third-party NuGet packages. Want to contribute? Read [CONTRIBUTING.md](CONTRIBUTING.md), look for issues labeled [`good first issue`](https://github.com/Dysast3r/zenit/labels/good%20first%20issue) and check the [roadmap](ROADMAP.md). Translations happen on [Crowdin](crowdin.yml) or through a pull request to `src/Zenit/Assets/i18n`.
+
+### 📜 License and notices
+
+[MIT](LICENSE) © 2026 Daniel Moraga · [Danidev.cl](https://danidev.cl). You're free to use, modify and redistribute the code as long as you keep the copyright notice.
 
 Independent project, not affiliated with Apple or Spotify. "Dynamic Island" and "iPhone" are trademarks of Apple Inc.; "Spotify" is a trademark of Spotify AB.
 
