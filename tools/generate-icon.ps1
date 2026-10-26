@@ -290,7 +290,7 @@ $subtitle.FontFamily = $font; $subtitle.FontSize = 28
 
 $chips = New-Object System.Windows.Controls.StackPanel
 $chips.Orientation = 'Horizontal'
-foreach ($label in 'Spotify', 'Clima', 'Monedas', 'Relojes', 'Código abierto · MIT') {
+foreach ($label in 'Spotify · TIDAL · YouTube Music', 'Clima', 'Monedas', 'Código abierto · MIT') {
     $chip = New-Object System.Windows.Controls.Border
     $chip.CornerRadius = New-Object System.Windows.CornerRadius 18
     $chip.Background = New-Object System.Windows.Media.SolidColorBrush (C '#1A60A5FA')
