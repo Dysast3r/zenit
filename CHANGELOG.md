@@ -2,6 +2,11 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project uses [semantic versioning](https://semver.org/).
 
+## [1.1.7] - 2026-10-26
+
+### Fixed
+- The SpaceX launch widget no longer shows "Unavailable": it uses Launch Library 2's lightweight mode, which answers in under a second instead of about 20. It now shows the launch status instead of the mission name. If you installed it with 1.1.6, delete `spacex-next-launch.json` from the widgets folder and click "Install examples" again.
+
 ## [1.1.6] - 2026-10-26
 
 ### Added
@@ -85,6 +90,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Verifiable releases: build provenance attestation, SHA-256 sums, CodeQL, OpenSSF Scorecard and optional code signing.
 - Distribution through winget, a website at [danidev.cl/zenit](https://danidev.cl/zenit) and a translation catalog for Crowdin.
 
+[1.1.7]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.7
 [1.1.6]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.6
 [1.1.5]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.5
 [1.1.4]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.4
