@@ -36,7 +36,7 @@ Es nativa (C# / .NET 10), liviana, de código abierto y **no pide cuentas, clave
 | | |
 |---|---|
 | 🎵 **Música** | Spotify (y opcionalmente cualquier reproductor): carátula, título, progreso arrastrable y controles, con la carátula desenfocada de fondo. El ecualizador reacciona al audio real. |
-| 🎤 **Letras sincronizadas** | La línea que suena en el momento justo, desde [LRCLIB](https://lrclib.net). |
+| 🎤 **Letras sincronizadas** | La línea que suena en el momento justo, desde [LRCLIB](https://lrclib.net). Si cierras la isla en la página de letras, la isla compacta sigue mostrando la línea actual. |
 | ⏱️ **Temporizador y cronómetro** | Actividad en vivo: la cuenta regresiva queda visible en la isla compacta. |
 | 📅 **Reuniones** | Avisa antes de cada reunión de Google Calendar u Outlook y muestra la cuenta regresiva en la isla. Basta con el enlace iCal privado: sin cuentas ni contraseñas. |
 | 🎚️ **Volumen por aplicación** | Una página con el volumen del sistema y de cada app que suena (Spotify, Chrome, Discord…), con su propio deslizador y silencio. |
@@ -50,7 +50,7 @@ Es nativa (C# / .NET 10), liviana, de código abierto y **no pide cuentas, clave
 | 🌍 **Relojes mundiales** | Hasta 4 ciudades con esferas analógicas de día y de noche. |
 | 🙈 **Discreta** | No aparece en capturas, grabaciones ni al compartir pantalla. Se oculta en juegos y videos a pantalla completa, y respeta el modo No molestar de Windows. |
 | 🖥️ **Varios monitores** | Elige en qué pantalla aparece la isla, o tenla en todas a la vez. |
-| ⚙️ **Configurable** | Panel con el estilo de Windows 11: idioma, tamaño, posición, color, páginas, lo que muestra la isla compacta al centro (hora, fecha, temperatura o la canción) y más. |
+| ⚙️ **Configurable** | Panel con el estilo de Windows 11: idioma, tamaño, posición, color, páginas, lo que muestra la isla en reposo (hora, fecha, clima, moneda o batería) y la compacta al centro (hora, fecha, temperatura o la canción), y más. |
 | 🔄 **Actualizaciones verificadas** | Avisa cuando hay una versión nueva y comprueba su SHA-256 antes de instalarla. |
 | 🌐 **Español, inglés y portugués** | Sigue el idioma de Windows o elige uno. ¿Hablas otro idioma? [Ayuda a traducir](CONTRIBUTING.md). |
 
@@ -146,7 +146,7 @@ It's native (C# / .NET 10), lightweight, open source, and **needs no accounts, A
 | | |
 |---|---|
 | 🎵 **Music** | Spotify (and optionally any other player): album art, title, a draggable progress bar and controls, with the blurred artwork as a backdrop. The equalizer reacts to the actual audio. |
-| 🎤 **Synced lyrics** | The current line, right on time, from [LRCLIB](https://lrclib.net). |
+| 🎤 **Synced lyrics** | The current line, right on time, from [LRCLIB](https://lrclib.net). Close the island on the lyrics page and the compact island keeps showing the current line. |
 | ⏱️ **Timer and stopwatch** | A live activity: the countdown stays visible on the compact island. |
 | 📅 **Meetings** | Get a heads-up before every Google Calendar or Outlook meeting, with a countdown on the island. All it needs is the calendar's private iCal link: no accounts or passwords. |
 | 🎚️ **Per-app volume** | A page with the system volume and every app playing audio (Spotify, Chrome, Discord…), each with its own slider and mute. |
@@ -160,7 +160,7 @@ It's native (C# / .NET 10), lightweight, open source, and **needs no accounts, A
 | 🌍 **World clocks** | Up to 4 cities with analog faces for day and night. |
 | 🙈 **Discreet** | Hidden from screenshots, recordings and screen sharing. It steps aside for full-screen games and videos, and respects Windows Do not disturb. |
 | 🖥️ **Multiple displays** | Choose which screen shows the island, or show it on all of them. |
-| ⚙️ **Customizable** | A Windows 11-style settings panel: language, size, position, color, pages, what the compact island shows in the middle (time, date, temperature or the scrolling song title) and more. |
+| ⚙️ **Customizable** | A Windows 11-style settings panel: language, size, position, color, pages, what the idle island shows (time, date, weather, currency or battery) and what the compact island shows in the middle (time, date, temperature or the scrolling song title), and more. |
 | 🔄 **Verified updates** | Lets you know when a new version is out and checks its SHA-256 before installing it. |
 | 🌐 **English, Spanish and Portuguese** | Follows your Windows language, or pick one yourself. Speak another language? [Help translate](CONTRIBUTING.md). |
 
