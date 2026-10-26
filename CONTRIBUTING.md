@@ -1,49 +1,52 @@
-# Cómo contribuir
+# Contributing
 
-¡Gracias por querer mejorar Zenit! Las contribuciones en español o inglés son bienvenidas.
+**English** · [Español](CONTRIBUTING.es.md)
 
-## Antes de empezar
+Thanks for wanting to make Zenit better! Contributions in English or Spanish are welcome.
 
-- Para cambios grandes, abre primero un issue y conversemos el enfoque.
-- Los errores de seguridad se reportan en privado (ver [SECURITY.md](SECURITY.md)).
+## Before you start
 
-## Entorno
+- For big changes, open an issue first so we can agree on the approach.
+- Security issues are reported privately (see [SECURITY.md](SECURITY.md)).
+- Looking for something to do? Check the [`good first issue`](https://github.com/Dysast3r/zenit/labels/good%20first%20issue) and [`help wanted`](https://github.com/Dysast3r/zenit/labels/help%20wanted) labels, or the [roadmap](ROADMAP.md).
 
-1. Windows 10 2004 o posterior.
-2. [SDK de .NET 10](https://dotnet.microsoft.com/download).
+## Setup
+
+1. Windows 10 2004 or later.
+2. [.NET 10 SDK](https://dotnet.microsoft.com/download).
 3. `dotnet run --project src/Zenit`
 
-En Debug existen atajos para probar la interfaz sin música:
+Debug builds include shortcuts to try the UI with sample data, no music needed:
 
 ```powershell
 dotnet run --project src/Zenit -- --demo expanded
-# idle | compact | peek | expanded | lyrics | compact-lyrics | clock | timer | live | volume | expanded-volume | weather | currency | world | widgets | tour
+# idle | compact | peek | expanded | marquee | meeting | mixer | lyrics | compact-lyrics | clock | timer | live | volume | expanded-volume | weather | currency | world | widgets | tour
 dotnet run --project src/Zenit -- --settings
 ```
 
-## Pautas
+## Guidelines
 
-- Sigue el estilo del código existente: C# moderno, nombres en inglés y comentarios en español que expliquen el *porqué*.
-- Sin dependencias NuGet de terceros, salvo que se justifique en el PR.
-- Todo texto visible va en español e inglés (`Strings.T("…", "…")` o `{s:Tr Es='…', En='…'}`).
-- Las animaciones usan los resortes de `Animation/Spring.cs`, no curvas con duración fija.
-- Las conexiones externas solo por HTTPS, a través de `Services/Net.cs`.
-- El build Release no debe tener advertencias (están configuradas como error).
+- Follow the existing code style: modern C# and English names. Code comments are in Spanish and explain the *why*; comments in English are fine in your contributions.
+- No third-party NuGet dependencies unless the PR explains why.
+- Every visible text comes in Spanish and English (`Strings.T("…", "…")` or `{s:Tr Es='…', En='…'}`).
+- Animations use the springs in `Animation/Spring.cs`, not fixed-duration curves.
+- External connections only over HTTPS, through `Services/Net.cs`.
+- The Release build must have no warnings (they're treated as errors).
 
-## Traducciones
+## Translations
 
-Los textos están en el código en español e inglés, y los demás idiomas viven en `src/Zenit/Assets/i18n/<código>.json`, con el texto en inglés como clave.
+Texts live in the code in Spanish and English, and every other language lives in `src/Zenit/Assets/i18n/<code>.json`, keyed by the English text.
 
-1. Ejecuta `python tools/extract-strings.py` para regenerar `en.json` y ver qué falta traducir en cada idioma.
-2. Traduce los valores vacíos (o hazlo en Crowdin, que usa `crowdin.yml`).
-3. Para un idioma nuevo, súmalo a `Catalogs` y a `AppLanguage` en `Services/Strings.cs`.
+1. Run `python tools/extract-strings.py` to regenerate `en.json` and see what's missing in each language.
+2. Translate the empty values (or do it on Crowdin, which uses `crowdin.yml`).
+3. For a new language, add it to `Catalogs` and `AppLanguage` in `Services/Strings.cs`, plus the option in the language picker (`BuildStaticChoices` in `Views/SettingsWindow.xaml.cs`).
 
-Para probar una traducción sin recompilar, copia el `.json` a `%AppData%\Zenit\i18n\`.
+To try a translation without rebuilding, copy the `.json` to `%AppData%\Zenit\i18n\`.
 
 ## Pull requests
 
-1. Crea una rama desde `main`.
-2. Comprueba que `dotnet build -c Release` pase sin advertencias.
-3. Describe qué cambia y por qué, con capturas si afecta la interfaz.
+1. Create a branch from `main`.
+2. Make sure `dotnet build -c Release` passes with no warnings.
+3. Describe what changes and why, with screenshots if it affects the UI.
 
-Al contribuir aceptas que tu aporte se publique bajo la [licencia MIT](LICENSE) del proyecto.
+By contributing, you agree that your work is published under the project's [MIT license](LICENSE).

@@ -1,17 +1,17 @@
-name: Proponer una mejora
-description: Una idea para hacer la isla más útil
+name: Suggest an improvement
+description: An idea to make the island more useful
 labels: [enhancement]
 body:
   - type: textarea
     id: problem
     attributes:
-      label: ¿Qué problema resuelve?
+      label: What problem does it solve?
     validations:
       required: true
   - type: textarea
     id: idea
     attributes:
-      label: Tu propuesta
-      description: Cómo te imaginas que funcione. Las capturas o bocetos ayudan mucho.
+      label: Your proposal
+      description: How you picture it working. Screenshots or sketches help a lot.
     validations:
       required: true

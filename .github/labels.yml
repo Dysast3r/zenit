@@ -1,31 +1,31 @@
-# Etiquetas del repositorio (las sincroniza .github/workflows/labels.yml)
+# Etiquetas del repositorio (las sincroniza .github/workflows/labels.yml). Las descripciones van en inglés, porque se ven en GitHub.
 - name: good first issue
   color: "7057ff"
-  description: Ideal para tu primera contribución
+  description: Great for your first contribution
 - name: help wanted
   color: "008672"
-  description: Se busca ayuda de la comunidad
+  description: Help from the community is welcome
 - name: bug
   color: "d73a4a"
-  description: Algo no funciona
+  description: Something isn't working
 - name: enhancement
   color: "a2eeef"
-  description: Nueva función o mejora
+  description: New feature or improvement
 - name: widget
   color: "f9a8d4"
-  description: Widgets de la comunidad
+  description: Community widgets
 - name: translation
   color: "fbca04"
-  description: Traducciones e idiomas
+  description: Translations and languages
 - name: design
   color: "ec4899"
-  description: Animaciones, interfaz y estilo
+  description: Animations, UI and style
 - name: documentation
   color: "0075ca"
-  description: Documentación
+  description: Documentation
 - name: security
   color: "b60205"
-  description: Seguridad y privacidad
+  description: Security and privacy
 - name: dependencies
   color: "0366d6"
-  description: Actualizaciones de dependencias
+  description: Dependency updates

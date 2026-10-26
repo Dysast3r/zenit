@@ -1,42 +1,42 @@
-name: Reportar un error
-description: Algo no funciona como debería
+name: Report a bug
+description: Something isn't working as it should
 labels: [bug]
 body:
   - type: markdown
     attributes:
-      value: "Gracias por reportarlo. Los problemas de seguridad **no** van aquí: usa la pestaña Security."
+      value: "Thanks for reporting it. Security issues **don't** go here: use the Security tab."
   - type: textarea
     id: what
     attributes:
-      label: ¿Qué pasó?
-      description: Qué esperabas y qué ocurrió en realidad.
+      label: What happened?
+      description: What you expected and what actually happened.
     validations:
       required: true
   - type: textarea
     id: steps
     attributes:
-      label: Pasos para reproducirlo
+      label: Steps to reproduce
       placeholder: |
-        1. Abre Spotify y reproduce una canción
-        2. Pasa el cursor sobre la isla
+        1. Open Spotify and play a song
+        2. Hover over the island
         3. …
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: Versión de Zenit
-      description: Configuración → Acerca de
+      label: Zenit version
+      description: Settings → About
     validations:
       required: true
   - type: input
     id: windows
     attributes:
-      label: Versión de Windows
+      label: Windows version
       placeholder: Windows 11 24H2
   - type: textarea
     id: log
     attributes:
-      label: Registro de errores
-      description: Contenido de %AppData%\Zenit\error.log, si existe.
+      label: Error log
+      description: Contents of %AppData%\Zenit\error.log, if it exists.
       render: text

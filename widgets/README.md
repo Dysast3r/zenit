@@ -1,18 +1,20 @@
-# Widgets de la comunidad
+# Community widgets
 
-Un widget es un archivo `.json` que le dice a Zenit qué API pública consultar y qué datos mostrar. Aparece en la página **Widgets** de la isla expandida.
+**English** · [Español](README.es.md)
 
-**Es seguro por diseño:** un widget no puede ejecutar código. Solo hace una petición HTTPS de lectura (GET), extrae algunos valores y los muestra como texto.
+A widget is a `.json` file that tells Zenit which public API to query and what data to show. It appears on the **Widgets** page of the expanded island.
 
-## Instalar
+**Safe by design:** a widget can't run code. It only makes a read-only HTTPS request (GET), picks a few values and shows them as text.
 
-1. Configuración → **Widgets** → **Abrir carpeta**. Es `%AppData%\Zenit\widgets`.
-2. Copia ahí el `.json` y pulsa **Recargar**.
-3. Activa la página **Widgets** en Configuración → Páginas.
+## Install
 
-Se cargan hasta 8 widgets y la isla muestra 4 a la vez.
+1. Settings → **Widgets** → **Open folder**. It's `%AppData%\Zenit\widgets`.
+2. Copy the `.json` there and click **Reload**.
+3. Turn on the **Widgets** page in Settings → Pages.
 
-## Formato
+Up to 8 widgets are loaded and the island shows 4 at a time.
+
+## Format
 
 ```json
 {
@@ -22,31 +24,33 @@ Se cargan hasta 8 widgets y la isla muestra 4 a la vez.
   "url": "https://api.coinbase.com/v2/prices/BTC-USD/spot",
   "refreshMinutes": 5,
   "fields": [
-    { "label": "Precio", "path": "data.amount", "format": "N0", "prefix": "$", "suffix": " USD" }
+    { "label": "Price", "path": "data.amount", "format": "N0", "prefix": "$", "suffix": " USD" }
   ]
 }
 ```
 
-| Campo | Descripción |
+| Field | Description |
 |---|---|
-| `name` | Título del widget. |
-| `icon` | Un carácter o emoji para la insignia. |
-| `accent` | Color de la insignia, en hexadecimal. |
-| `url` | API pública que devuelve JSON. **Debe ser HTTPS** y no requerir clave. |
-| `refreshMinutes` | Cada cuánto se actualiza (1 a 1440). |
-| `fields` | Hasta 4 valores. El primero se muestra en grande. |
-| `fields[].path` | Ruta dentro del JSON: `data.items[0].price`. |
-| `fields[].format` | Números: formato de .NET (`N0`, `N2`, `0.0`, `+0.00;-0.00`). Fechas (ISO 8601 o segundos Unix): `relative` para una cuenta regresiva que avanza cada minuto ("en 5 h 12 min", "hace 3 min"), o un formato de fecha de .NET (`d MMM, HH:mm`) en tu hora local. |
-| `fields[].label` | Texto junto al valor. Déjalo vacío (`""`) para que un valor largo use todo el ancho. |
-| `fields[].prefix` / `suffix` | Texto antes y después del valor. |
+| `name` | The widget's title. |
+| `icon` | A character or emoji for the badge. |
+| `accent` | The badge color, in hex. |
+| `url` | A public API that returns JSON. **Must be HTTPS** and need no key. |
+| `refreshMinutes` | How often it updates (1 to 1440). |
+| `fields` | Up to 4 values. The first one is shown large. |
+| `fields[].path` | Path inside the JSON: `data.items[0].price`. |
+| `fields[].format` | Numbers: a .NET format (`N0`, `N2`, `0.0`, `+0.00;-0.00`). Dates (ISO 8601 or Unix seconds): `relative` for a countdown that ticks every minute ("in 5 h 12 min", "3 min ago"), or a .NET date format (`d MMM, HH:mm`) in your local time. |
+| `fields[].label` | Text next to the value. Leave it empty (`""`) so a long value can use the full width. |
+| `fields[].prefix` / `suffix` | Text before and after the value. |
 
-## Ejemplos incluidos
+## Included examples
 
-- [`github-stars.json`](github-stars.json): estrellas, forks e issues de este repositorio.
-- [`bitcoin.json`](bitcoin.json): precio de BTC en dólares (Coinbase).
-- [`aire-santiago.json`](aire-santiago.json): calidad del aire en Santiago (Open-Meteo). Cambia `latitude` y `longitude` por tu ciudad.
-- [`spacex-next-launch.json`](spacex-next-launch.json): cuenta regresiva al próximo lanzamiento de SpaceX, con la misión y la fecha ([Launch Library 2](https://thespacedevs.com/llapi), sin clave; permite 15 consultas por hora, así que se actualiza cada 30 minutos).
+- [`github-stars.json`](github-stars.json): stars, forks and issues of this repository.
+- [`bitcoin.json`](bitcoin.json): the BTC price in US dollars (Coinbase).
+- [`aire-santiago.json`](aire-santiago.json): air quality in Santiago, Chile (Open-Meteo). Change `latitude` and `longitude` to your city.
+- [`spacex-next-launch.json`](spacex-next-launch.json): countdown to the next SpaceX launch, with the mission and date ([Launch Library 2](https://thespacedevs.com/llapi), no key; it allows 15 requests per hour, so it updates every 30 minutes).
 
-Otras ideas: indicadores de Chile con [mindicador.cl](https://mindicador.cl) (UF, dólar, UTM), estado de tus repositorios, precio de criptomonedas o resultados deportivos de APIs abiertas.
+The bundled examples use Spanish labels; change `label` to whatever you like.
 
-¿Creaste uno útil? Compártelo con un pull request en esta carpeta.
+More ideas: Chilean indicators from [mindicador.cl](https://mindicador.cl) (UF, dollar, UTM), the status of your repositories, crypto prices or sports results from open APIs.
+
+Made a useful one? Share it with a pull request to this folder.

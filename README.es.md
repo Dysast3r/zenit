@@ -41,7 +41,7 @@ Es nativa (C# / .NET 10), liviana, de código abierto y **no pide cuentas, clave
 | 📅 **Reuniones** | Avisa antes de cada reunión de Google Calendar u Outlook y muestra la cuenta regresiva en la isla. Basta con el enlace iCal privado: sin cuentas ni contraseñas. |
 | 🎚️ **Volumen por aplicación** | Una página con el volumen del sistema y de cada app que suena (Spotify, Chrome, Discord…), con su propio deslizador y silencio. |
 | 🔔 **Avisos del sistema** | Volumen (y la rueda del mouse sobre la isla para cambiarlo), carga de batería, puntos verde y naranja de cámara y micrófono, y notificaciones de Windows en la versión de la Microsoft Store. |
-| 🧩 **Widgets de la comunidad** | Datos de cualquier API pública con un simple archivo JSON, sin código. [Crea el tuyo](widgets/README.md). |
+| 🧩 **Widgets de la comunidad** | Datos de cualquier API pública con un simple archivo JSON, sin código. [Crea el tuyo](widgets/README.es.md). |
 | 🏝️ **Dos estilos** | Notch clásico pegado al borde con curvas cóncavas, o isla flotante separada del borde. |
 | 👆 **Gestos** | Cursor o clic para expandir · deslizar para cambiar de canción · deslizar la isla expandida para cambiar de página · touchpad horizontal. |
 | 🌦️ **Clima** | Ubicación actual o cualquier ciudad del mundo, pronóstico por horas e íconos vectoriales animados. |
@@ -52,7 +52,7 @@ Es nativa (C# / .NET 10), liviana, de código abierto y **no pide cuentas, clave
 | 🖥️ **Varios monitores** | Elige en qué pantalla aparece la isla, o tenla en todas a la vez. |
 | ⚙️ **Configurable** | Panel con el estilo de Windows 11: idioma, tamaño, posición, color, páginas, lo que muestra la isla en reposo (hora, fecha, clima, moneda o batería) y la compacta al centro (hora, fecha, temperatura o la canción), y más. |
 | 🔄 **Actualizaciones verificadas** | Avisa cuando hay una versión nueva y comprueba su SHA-256 antes de instalarla. |
-| 🌐 **Español, inglés y portugués** | Sigue el idioma de Windows o elige uno. ¿Hablas otro idioma? [Ayuda a traducir](CONTRIBUTING.md). |
+| 🌐 **Español, inglés y portugués** | Sigue el idioma de Windows o elige uno. ¿Hablas otro idioma? [Ayuda a traducir](CONTRIBUTING.es.md). |
 
 ## 📥 Instalación
 
@@ -121,7 +121,7 @@ src/Zenit
 └── Views/       Isla, páginas del carrusel, configuración y bandeja
 ```
 
-Sin paquetes NuGet de terceros. ¿Quieres aportar? Lee [CONTRIBUTING.md](CONTRIBUTING.md), busca issues con la etiqueta [`good first issue`](https://github.com/Dysast3r/zenit/labels/good%20first%20issue) y revisa el [ROADMAP](ROADMAP.md). Las traducciones se hacen en [Crowdin](crowdin.yml) o con un pull request a `src/Zenit/Assets/i18n`.
+Sin paquetes NuGet de terceros. ¿Quieres aportar? Lee la [guía para contribuir](CONTRIBUTING.es.md), busca issues con la etiqueta [`good first issue`](https://github.com/Dysast3r/zenit/labels/good%20first%20issue) y revisa el [ROADMAP](ROADMAP.md). Las traducciones se hacen en [Crowdin](crowdin.yml) o con un pull request a `src/Zenit/Assets/i18n`.
 
 ## 💙 Apoya el proyecto
 

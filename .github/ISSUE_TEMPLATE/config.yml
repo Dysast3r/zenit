@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Reportar una vulnerabilidad de seguridad
+  - name: Report a security vulnerability
     url: https://github.com/Dysast3r/zenit/security/advisories/new
-    about: Repórtala en privado, nunca en un issue público.
+    about: Report it privately, never in a public issue.

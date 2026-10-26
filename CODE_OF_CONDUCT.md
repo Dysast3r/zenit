@@ -1,24 +1,24 @@
-# Código de conducta
+# Code of conduct
 
-Este proyecto adopta el [Contributor Covenant, versión 2.1](https://www.contributor-covenant.org/es/version/2/1/code_of_conduct/).
+This project adopts the [Contributor Covenant, version 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
 
-## Nuestro compromiso
+## Our pledge
 
-Queremos que participar en este proyecto sea una experiencia libre de acoso para todas las personas, sin importar edad, tamaño corporal, discapacidad, etnia, identidad o expresión de género, nivel de experiencia, educación, nivel socioeconómico, nacionalidad, apariencia, raza, religión u orientación sexual.
+We want taking part in this project to be a harassment-free experience for everyone, regardless of age, body size, disability, ethnicity, gender identity or expression, level of experience, education, socioeconomic status, nationality, appearance, race, religion or sexual orientation.
 
-## Lo que esperamos
+## What we expect
 
-- Usar un lenguaje amable e inclusivo.
-- Respetar puntos de vista y experiencias diferentes.
-- Aceptar con elegancia la crítica constructiva.
-- Enfocarnos en lo mejor para la comunidad.
+- Using kind and inclusive language.
+- Respecting different viewpoints and experiences.
+- Gracefully accepting constructive criticism.
+- Focusing on what's best for the community.
 
-## Lo que no aceptamos
+## What we don't accept
 
-- Comentarios ofensivos, insultos o ataques personales.
-- Acoso público o privado.
-- Publicar información privada de otras personas sin su permiso.
+- Offensive comments, insults or personal attacks.
+- Public or private harassment.
+- Publishing other people's private information without their permission.
 
-## Aplicación
+## Enforcement
 
-Los casos de comportamiento inaceptable se pueden reportar de forma privada al responsable del proyecto mediante el reporte privado de GitHub (pestaña **Security**) o por mensaje directo en GitHub. Todos los reportes se revisan con confidencialidad.
+Unacceptable behavior can be reported privately to the project maintainer through GitHub's private reporting (the **Security** tab) or by direct message on GitHub. Every report is reviewed confidentially.

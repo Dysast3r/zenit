@@ -1,49 +1,50 @@
-# Política de seguridad
+# Security policy
 
-## Versiones con soporte
+## Supported versions
 
-Solo la última versión publicada en [Releases](https://github.com/Dysast3r/zenit/releases) recibe correcciones de seguridad.
+Only the latest version published in [Releases](https://github.com/Dysast3r/zenit/releases) receives security fixes.
 
-## Reportar una vulnerabilidad
+## Reporting a vulnerability
 
-**No abras un issue público.** Usa el reporte privado de GitHub:
+**Don't open a public issue.** Use GitHub's private reporting:
 
-1. Ve a la pestaña **Security** del repositorio.
-2. Pulsa **Report a vulnerability**.
-3. Describe el problema, cómo reproducirlo y su impacto.
+1. Go to the repository's **Security** tab.
+2. Click **Report a vulnerability**.
+3. Describe the problem, how to reproduce it and its impact.
 
-Respondo en un plazo de 7 días. Una vez corregido el problema, se publica un aviso de seguridad y se reconoce a quien lo reportó, si así lo desea.
+I reply within 7 days. Once the issue is fixed, a security advisory is published and the reporter is credited, if they wish.
 
-## Qué hace la app y qué no
+## What the app does and doesn't do
 
-- No pide permisos de administrador (`asInvoker`) ni instala servicios ni controladores.
-- No guarda contraseñas, tokens ni datos personales. Sus ajustes viven en `%AppData%\Zenit\settings.json`.
-- La información de música se lee localmente con la API de Windows `GlobalSystemMediaTransportControls`. Solo si activas la página **Letras**, el título, el artista y la duración de la canción se envían a LRCLIB para buscar la letra.
-- El ecualizador solo lee el nivel de volumen del sistema; nunca graba audio. Los indicadores de cámara y micrófono leen el registro de privacidad de Windows y no acceden a los dispositivos.
-- Todas las conexiones son HTTPS y solo ocurren si la función correspondiente está activa:
+- It doesn't ask for admin rights (`asInvoker`) and installs no services or drivers.
+- It stores no passwords, tokens or personal data. Its settings live in `%AppData%\Zenit\settings.json`.
+- Music info is read locally through the Windows `GlobalSystemMediaTransportControls` API. Only if you turn on the **Lyrics** page are the song's title, artist and duration sent to LRCLIB to look up the lyrics.
+- The equalizer only reads the system volume level; it never records audio. The camera and microphone indicators read the Windows privacy registry and never access the devices.
+- Every connection uses HTTPS and only happens when the related feature is on:
 
-  | Función | Servidores |
+  | Feature | Servers |
   |---|---|
-  | Clima y búsqueda de ciudades | `api.open-meteo.com`, `geocoding-api.open-meteo.com` |
-  | Nombre de tu ubicación | `api.bigdatacloud.net` o `ipapi.co` |
-  | Monedas | `cdn.jsdelivr.net`, `currency-api.pages.dev` |
-  | Letras | `lrclib.net` |
-  | Actualizaciones | `api.github.com`, `github.com` |
-  | Widgets | Solo las URL de los widgets que tú instales |
+  | Weather and city search | `api.open-meteo.com`, `geocoding-api.open-meteo.com` |
+  | Your location's name | `api.bigdatacloud.net` or `ipapi.co` |
+  | Currencies | `cdn.jsdelivr.net`, `currency-api.pages.dev` |
+  | Lyrics | `lrclib.net` |
+  | Updates | `api.github.com`, `github.com` |
+  | Widgets | Only the URLs of the widgets you install |
+  | Meetings | Only the iCal links of the calendars you add |
 
-- Los widgets no ejecutan código: son archivos JSON que declaran una URL HTTPS y qué campos mostrar.
-- Las actualizaciones se instalan solo si el SHA-256 del archivo coincide con `SHA256SUMS.txt` de la misma versión.
+- Widgets don't run code: they're JSON files that declare an HTTPS URL and which fields to show. Widget and calendar URLs can only reach public addresses.
+- Updates are installed only if the file's SHA-256 matches the `SHA256SUMS.txt` of the same version.
 
-## Verificar que una descarga es auténtica
+## Verifying a download is genuine
 
-Cada versión se compila en GitHub Actions desde este repositorio y lleva una atestación de procedencia firmada con Sigstore:
+Every version is built on GitHub Actions from this repository and carries a build provenance attestation signed with Sigstore:
 
 ```powershell
-gh attestation verify .\Zenit-1.0.0-win-x64.zip --repo Dysast3r/zenit
+gh attestation verify .\Zenit-Setup-<version>-x64.exe --repo Dysast3r/zenit
 ```
 
-También puedes comparar el hash con `SHA256SUMS.txt`:
+You can also compare its hash with `SHA256SUMS.txt`:
 
 ```powershell
-Get-FileHash .\Zenit-1.0.0-win-x64.zip -Algorithm SHA256
+Get-FileHash .\Zenit-Setup-<version>-x64.exe -Algorithm SHA256
 ```

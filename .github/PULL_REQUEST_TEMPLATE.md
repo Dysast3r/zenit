@@ -1,10 +1,10 @@
-## Qué cambia y por qué
+## What changes and why
 
-<!-- Describe el cambio. Si afecta la interfaz, agrega capturas. -->
+<!-- Describe the change. If it affects the UI, add screenshots. -->
 
-## Comprobaciones
+## Checklist
 
-- [ ] `dotnet build -c Release` pasa sin advertencias
-- [ ] Probado en Windows (indica la versión)
-- [ ] Los textos nuevos están en español e inglés
-- [ ] No agrega dependencias de terceros, o se justifican arriba
+- [ ] `dotnet build -c Release` passes with no warnings
+- [ ] Tested on Windows (say which version)
+- [ ] New texts are in Spanish and English
+- [ ] It adds no third-party dependencies, or they're explained above

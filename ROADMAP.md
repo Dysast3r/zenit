@@ -1,46 +1,55 @@
-# Hoja de ruta
+# Roadmap
 
-Ideas para hacer de Zenit la mejor isla dinámica de Windows. ¿Quieres tomar una? Busca las etiquetas [`good first issue`](https://github.com/Dysast3r/zenit/labels/good%20first%20issue) y [`help wanted`](https://github.com/Dysast3r/zenit/labels/help%20wanted), o abre un issue nuevo.
+Ideas to make Zenit the best dynamic island on Windows. Want to pick one up? Look for the [`good first issue`](https://github.com/Dysast3r/zenit/labels/good%20first%20issue) and [`help wanted`](https://github.com/Dysast3r/zenit/labels/help%20wanted) labels, or open a new issue.
 
-## ✅ Hecho en 1.0
+## ✅ Done in 1.0
 
-- [x] GIF en el README y video promocional de 15 s (horizontal y vertical)
-- [x] Instalador con doble clic en cada versión de GitHub Releases, sin permisos de administrador (`docs/DISTRIBUTION.md`)
-- [x] Notificaciones de Windows dentro de la isla (activas en la versión MSIX / Microsoft Store)
-- [x] Temporizador y cronómetro como actividad en vivo
-- [x] Indicadores del sistema: volumen (y rueda del mouse), carga de batería, puntos de cámara y micrófono
-- [x] Letras sincronizadas y fondo con la carátula desenfocada
-- [x] Widgets de la comunidad: cualquier API pública con un JSON, sin código
-- [x] Actualizaciones automáticas que verifican el SHA-256 antes de instalar
-- [x] Español, inglés y portugués; catálogo listo para Crowdin
-- [x] Sitio web en [danidev.cl/zenit](https://danidev.cl/zenit) con demo animada
-- [x] Etiquetas del repositorio y primeros `good first issue`
-- [x] Notch clásico e isla flotante, tamaño ajustable, oculta en capturas
+- [x] GIF in the README and a 15-second promo video (landscape and portrait)
+- [x] Double-click installer in every GitHub release, no admin rights needed (`docs/DISTRIBUTION.md`)
+- [x] Windows notifications inside the island (on in the MSIX / Microsoft Store version)
+- [x] Timer and stopwatch as a live activity
+- [x] System indicators: volume (and the mouse wheel), battery charging, camera and microphone dots
+- [x] Synced lyrics and a blurred album-art backdrop
+- [x] Community widgets: any public API with a JSON file, no code
+- [x] Automatic updates that check the SHA-256 before installing
+- [x] Spanish, English and Portuguese; catalog ready for Crowdin
+- [x] Website at [danidev.cl/zenit](https://danidev.cl/zenit) with an animated demo
+- [x] Repository labels and the first `good first issue`s
+- [x] Classic notch and floating island, adjustable size, hidden from screenshots
 
-## 🔥 Próximo
+## ✅ Done in 1.1
 
-- [ ] **Paquete MSIX y Microsoft Store**: firma de Microsoft, sin aviso de SmartScreen y notificaciones activas.
-- [ ] **Firma de código** del `.exe` portable: el workflow ya está listo para SignPath y Azure; falta la aprobación o la cuenta (ver `docs/SIGNING.md`).
-- [ ] Verificar la atestación de procedencia dentro del actualizador, además del SHA-256.
-- [x] Soporte para varios monitores: elegir en cuál aparece, o en todos.
-- [ ] Visualizador de audio real por bandas de frecuencia (FFT con captura loopback).
+- [x] Support for several displays: choose which one shows the island, or all of them
+- [x] Battery level on the idle island
+- [x] Lyrics keep showing on the compact island
+- [x] TIDAL and YouTube Music, with the music that's playing taking priority
+- [x] Volume bar while the island is expanded
+- [x] Smoother glow when the island expands
+- [x] Dates and live countdowns in widgets, and a SpaceX launch widget
 
-## 🎨 Diferenciadores visuales
+## 🔥 Next
 
-- [ ] Temas: "Liquid Glass", neón, minimalista y uno claro.
-- [ ] Animación de carga al conectar el cargador.
-- [ ] Transición con la carátula al cambiar de canción.
+- [ ] **MSIX package and Microsoft Store**: Microsoft signing, no SmartScreen warning and notifications on.
+- [ ] **Code signing** for the portable `.exe`: the workflow is ready for SignPath and Azure; it needs the approval or the account (see `docs/SIGNING.md`).
+- [ ] Verify the build provenance attestation inside the updater, not just the SHA-256 ([#14](https://github.com/Dysast3r/zenit/issues/14)).
+- [ ] A real audio visualizer by frequency band (FFT with loopback capture).
 
-## 🧩 Integraciones
+## 🎨 Visual touches
 
-- [x] Control de volumen por aplicación.
-- [ ] Selector de salida de audio (parlantes, audífonos, Bluetooth).
-- [x] Calendario de Outlook o Google: "Reunión en 5 min".
-- [ ] Discord: quién habla en el canal de voz.
-- [ ] Pomodoro con estadísticas.
+- [ ] Themes: "Liquid Glass", neon, minimal and a light one ([#15](https://github.com/Dysast3r/zenit/issues/15)).
+- [ ] Charging animation when the charger is plugged in ([#16](https://github.com/Dysast3r/zenit/issues/16)).
+- [ ] Album-art transition when the song changes.
 
-## 🧑‍💻 Comunidad
+## 🧩 Integrations
 
-- [ ] Más idiomas: francés, alemán, italiano, japonés… (con Crowdin).
-- [ ] Galería de widgets de la comunidad en el sitio web.
-- [ ] Pruebas automatizadas de los servicios (clima, monedas, formatos de fecha, widgets).
+- [x] Per-app volume control.
+- [ ] Audio output picker (speakers, headphones, Bluetooth).
+- [x] Outlook or Google calendar: "Meeting in 5 min".
+- [ ] Discord: who's talking in the voice channel.
+- [ ] Pomodoro with stats.
+
+## 🧑‍💻 Community
+
+- [ ] More languages: French, German, Italian, Japanese… (with Crowdin) ([#1](https://github.com/Dysast3r/zenit/issues/1), [#2](https://github.com/Dysast3r/zenit/issues/2), [#9](https://github.com/Dysast3r/zenit/issues/9), [#10](https://github.com/Dysast3r/zenit/issues/10)).
+- [ ] Community widget gallery on the website.
+- [ ] Automated tests for the services: weather, currencies, date formats, widgets ([#13](https://github.com/Dysast3r/zenit/issues/13)).
