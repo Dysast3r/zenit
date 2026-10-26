@@ -1,0 +1,11 @@
+﻿{
+  "name": "Bitcoin",
+  "icon": "₿",
+  "accent": "#F7931A",
+  "url": "https://api.coinbase.com/v2/prices/BTC-USD/spot",
+  "refreshMinutes": 5,
+  "fields": [
+    { "label": "BTC en USD", "path": "data.amount", "format": "N0", "prefix": "$" },
+    { "label": "Fuente", "path": "data.base", "suffix": " · Coinbase" }
+  ]
+}

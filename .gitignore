@@ -1,0 +1,18 @@
+bin/
+obj/
+publish/
+artifacts/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+.codegraph/
+.playwright-mcp/
+out/
+_site/
+__pycache__/
+
+# Videos promocionales y sus pósters: se generan con marketing/motion y no se versionan
+docs/media/*.mp4
+docs/media/zenit-promo-*.png

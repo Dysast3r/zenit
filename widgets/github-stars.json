@@ -1,0 +1,12 @@
+{
+  "name": "GitHub",
+  "icon": "★",
+  "accent": "#F5C518",
+  "url": "https://api.github.com/repos/Dysast3r/zenit",
+  "refreshMinutes": 30,
+  "fields": [
+    { "label": "Estrellas", "path": "stargazers_count", "format": "N0" },
+    { "label": "Forks", "path": "forks_count", "format": "N0" },
+    { "label": "Issues abiertos", "path": "open_issues_count", "format": "N0" }
+  ]
+}

@@ -1,0 +1,15 @@
+# Mantiene al día las acciones de GitHub (y sus SHA fijados) y los paquetes NuGet.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: nuget
+    directory: /src/Zenit
+    schedule:
+      interval: weekly

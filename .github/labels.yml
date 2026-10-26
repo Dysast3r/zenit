@@ -1,0 +1,31 @@
+# Etiquetas del repositorio (las sincroniza .github/workflows/labels.yml)
+- name: good first issue
+  color: "7057ff"
+  description: Ideal para tu primera contribución
+- name: help wanted
+  color: "008672"
+  description: Se busca ayuda de la comunidad
+- name: bug
+  color: "d73a4a"
+  description: Algo no funciona
+- name: enhancement
+  color: "a2eeef"
+  description: Nueva función o mejora
+- name: widget
+  color: "f9a8d4"
+  description: Widgets de la comunidad
+- name: translation
+  color: "fbca04"
+  description: Traducciones e idiomas
+- name: design
+  color: "ec4899"
+  description: Animaciones, interfaz y estilo
+- name: documentation
+  color: "0075ca"
+  description: Documentación
+- name: security
+  color: "b60205"
+  description: Seguridad y privacidad
+- name: dependencies
+  color: "0366d6"
+  description: Actualizaciones de dependencias

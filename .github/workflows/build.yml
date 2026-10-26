@@ -1,0 +1,194 @@
+# Compila en cada cambio y, al subir un tag v*, publica un Release verificable:
+# firma opcional (Azure Artifact Signing), atestación de procedencia SLSA y sumas SHA-256.
+name: Build & Release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  # Falla si alguien agregó textos sin actualizar los catálogos; los que faltan por traducir solo avisan.
+  i18n:
+    name: Traducciones
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Revisar catálogos
+        run: python3 tools/extract-strings.py --check
+
+  build:
+    name: Build (${{ matrix.rid }})
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rid: [win-x64, win-arm64]
+    permissions:
+      contents: read
+      id-token: write          # firma de la atestación (Sigstore)
+      attestations: write      # guardar la atestación en el repositorio
+      artifact-metadata: write # registro del artefacto
+      actions: read            # SignPath descarga el .exe sin firmar desde los artefactos de este run
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Versión
+        id: version
+        shell: pwsh
+        run: |
+          $version = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME.TrimStart('v') } else { "0.0.0-ci.$env:GITHUB_RUN_NUMBER" }
+          "value=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Publicar
+        shell: pwsh
+        run: >
+          dotnet publish src/Zenit -c Release -r ${{ matrix.rid }} --self-contained
+          -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:DebugType=none -p:Version=${{ steps.version.outputs.value }}
+          -o out
+
+      # Opción de pago (Azure Artifact Signing): se activa con la variable SIGNING_ENABLED=true (ver docs/SIGNING.md).
+      - name: Firmar ejecutable (Azure)
+        if: startsWith(github.ref, 'refs/tags/v') && vars.SIGNING_ENABLED == 'true'
+        uses: azure/artifact-signing-action@c7ab2a863ab5f9a846ddb8265964877ef296ee82 # v2.0.0
+        env:
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        with:
+          endpoint: ${{ vars.SIGNING_ENDPOINT }}
+          signing-account-name: ${{ vars.SIGNING_ACCOUNT }}
+          certificate-profile-name: ${{ vars.SIGNING_PROFILE }}
+          files-folder: ${{ github.workspace }}\out
+          files-folder-filter: exe
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
+
+      # Opción gratuita para código abierto: se activa con la variable SIGNPATH_ENABLED=true (ver docs/SIGNING.md).
+      # SignPath recibe el .exe como artefacto de este run, lo firma y lo devuelve a out/.
+      - name: Subir ejecutable sin firmar (SignPath)
+        id: unsigned
+        if: startsWith(github.ref, 'refs/tags/v') && vars.SIGNPATH_ENABLED == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: unsigned-${{ matrix.rid }}
+          path: out/Zenit.exe
+          if-no-files-found: error
+
+      - name: Firmar ejecutable (SignPath)
+        if: startsWith(github.ref, 'refs/tags/v') && vars.SIGNPATH_ENABLED == 'true'
+        uses: signpath/github-action-submit-signing-request@c92b958760219087e01f8d67a1669ed57afe2627 # v2
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'zenit' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG || 'release-signing' }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: out
+
+      # Con cualquiera de las dos firmas activa, no se publica un .exe sin firma válida.
+      - name: Verificar firma
+        if: startsWith(github.ref, 'refs/tags/v') && (vars.SIGNING_ENABLED == 'true' || vars.SIGNPATH_ENABLED == 'true')
+        shell: pwsh
+        run: |
+          $signature = Get-AuthenticodeSignature out/Zenit.exe
+          "Firma: $($signature.Status) · $($signature.SignerCertificate.Subject)"
+          if ($signature.Status -ne 'Valid') { throw "Zenit.exe no tiene una firma válida ($($signature.Status))" }
+
+      - name: Empaquetar
+        shell: pwsh
+        run: |
+          Copy-Item LICENSE, README.md out/
+          Compress-Archive -Path out/* -DestinationPath "Zenit-${{ steps.version.outputs.value }}-${{ matrix.rid }}.zip"
+
+      # Instalador por usuario (Inno Setup): la descarga principal de cada versión.
+      - name: Instalador
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup --no-progress -y | Out-Null }
+          $version = "${{ steps.version.outputs.value }}"
+          $numeric = ($version -split '-')[0]
+          $arch = "${{ matrix.rid }}".Replace('win-', '')
+          & $iscc /Q "/DAppVersion=$version" "/DNumericVersion=$numeric" "/DArch=$arch" `
+            "/DSourceDir=$PWD\out" "/DOutputDir=$PWD" packaging\installer\Zenit.iss
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup falló ($LASTEXITCODE)" }
+          Get-Item Zenit-Setup-*.exe | Format-Table Name, Length
+
+      - name: Atestación de procedencia
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: |
+            out/Zenit.exe
+            Zenit-*.zip
+            Zenit-Setup-*.exe
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: Zenit-${{ matrix.rid }}
+          path: |
+            Zenit-*.zip
+            Zenit-Setup-*.exe
+          if-no-files-found: error
+
+  release:
+    name: Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Sumas SHA-256
+        working-directory: dist
+        run: sha256sum *.zip *.exe | tee SHA256SUMS.txt
+
+      - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+        with:
+          files: dist/*
+          generate_release_notes: true
+          body: |
+            ### Descargar
+            | Tu equipo | Archivo |
+            |---|---|
+            | **Windows 10 / 11 (casi todos los PC)** | `Zenit-Setup-<versión>-x64.exe` |
+            | Windows en ARM (Surface Pro X, Snapdragon) | `Zenit-Setup-<versión>-arm64.exe` |
+
+            Ábrelo con doble clic: se instala en segundos, sin permisos de administrador, y Zenit se actualiza sola desde ahí. Para desinstalar: Configuración de Windows → Aplicaciones → Zenit.
+            ¿Prefieres no instalar nada? Los `.zip` traen la versión portable.
+
+            ### Verificar la descarga
+            Cada archivo fue compilado por GitHub Actions desde este repositorio y lleva una atestación firmada.
+
+            ```powershell
+            gh attestation verify .\Zenit-Setup-<versión>-x64.exe --repo ${{ github.repository }}
+            Get-FileHash .\Zenit-Setup-<versión>-x64.exe -Algorithm SHA256   # compara con SHA256SUMS.txt
+            ```

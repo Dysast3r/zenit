@@ -1,0 +1,65 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.22621.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>Zenit</AssemblyName>
+    <RootNamespace>Zenit</RootNamespace>
+    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <TieredPGO>true</TieredPGO>
+    <!-- WFO0003: el DPI lo gestiona WPF vía app.manifest. WPF0001: tema Fluent (ThemeMode) aún marcado experimental. -->
+    <NoWarn>$(NoWarn);WFO0003;WPF0001</NoWarn>
+    <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- Metadatos visibles en Propiedades → Detalles del .exe -->
+  <PropertyGroup>
+    <Version>1.1.0</Version>
+    <Product>Zenit</Product>
+    <AssemblyTitle>Zenit</AssemblyTitle>
+    <Description>Zenit: la isla dinámica del iPhone para Windows. Desarrollado por Danidev.cl.</Description>
+    <Authors>Daniel Moraga (Danidev.cl)</Authors>
+    <Company>Danidev.cl</Company>
+    <Copyright>Copyright © 2026 Daniel Moraga · Danidev.cl. Licencia MIT.</Copyright>
+    <NeutralLanguage>es</NeutralLanguage>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/Dysast3r/zenit</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/Dysast3r/zenit</PackageProjectUrl>
+  </PropertyGroup>
+
+  <!-- Compilaciones reproducibles: el mismo código produce el mismo binario, y CI lo marca como tal -->
+  <PropertyGroup>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WPF y WinForms comparten nombres (Application, Color, Point...). Usamos WinForms solo para la bandeja. -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <!-- Las partes de la isla se muestran anidadas bajo IslandWindow.xaml en el explorador de soluciones -->
+  <ItemGroup>
+    <Compile Update="Views\IslandWindow.*.cs" DependentUpon="IslandWindow.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\icon.ico" />
+    <Resource Include="Assets\logo.png" />
+    <Resource Include="..\..\LICENSE" Link="Assets\LICENSE.txt" />
+    <Resource Include="..\..\widgets\*.json" Link="Assets\widgets\%(Filename)%(Extension)" />
+    <Resource Include="Assets\i18n\*.json" />
+  </ItemGroup>
+
+</Project>

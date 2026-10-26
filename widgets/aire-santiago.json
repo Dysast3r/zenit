@@ -1,0 +1,12 @@
+﻿{
+  "name": "Aire",
+  "icon": "≋",
+  "accent": "#10B981",
+  "url": "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=-33.45&longitude=-70.66&current=us_aqi,pm2_5,pm10",
+  "refreshMinutes": 30,
+  "fields": [
+    { "label": "Índice AQI · Santiago", "path": "current.us_aqi", "format": "N0" },
+    { "label": "PM2.5", "path": "current.pm2_5", "format": "0.0", "suffix": " µg/m³" },
+    { "label": "PM10", "path": "current.pm10", "format": "0.0", "suffix": " µg/m³" }
+  ]
+}

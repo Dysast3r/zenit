@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="Zenit.Views.Pages.WeatherPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:Zenit.Controls"
+             Width="430" Height="204">
+  <Grid>
+    <!-- Luz ambiental según el clima: cálida si hay sol, fría si llueve o es de noche -->
+    <Border IsHitTestVisible="False">
+      <Border.Background>
+        <RadialGradientBrush Center="0.12,0.05" GradientOrigin="0.12,0.05" RadiusX="0.75" RadiusY="1.2">
+          <GradientStop x:Name="AmbientStop" Color="#55FF9F1C" Offset="0" />
+          <GradientStop Color="#00000000" Offset="1" />
+        </RadialGradientBrush>
+      </Border.Background>
+    </Border>
+
+    <Grid x:Name="MainBlock" Margin="22,18,24,0" VerticalAlignment="Top" Height="74">
+      <StackPanel Orientation="Horizontal">
+        <c:WeatherGlyph x:Name="MainGlyph" Width="66" Height="66" VerticalAlignment="Center" />
+        <TextBlock x:Name="TempText" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="52" FontWeight="Light"
+                   Foreground="White" VerticalAlignment="Center" Margin="8,-4,0,0" />
+      </StackPanel>
+      <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+        <StackPanel x:Name="PlaceButton" Orientation="Horizontal" HorizontalAlignment="Right" Cursor="Hand" Background="Transparent">
+          <Path x:Name="PinIcon" Data="M 4,0 C 1.8,0 0,1.8 0,4 C 0,7 4,10.5 4,10.5 C 4,10.5 8,7 8,4 C 8,1.8 6.2,0 4,0 Z M 4,2.6 A 1.4,1.4 0 1 1 4,5.4 A 1.4,1.4 0 1 1 4,2.6 Z"
+                Fill="White" Width="8" Height="11" Margin="0,1,6,0" VerticalAlignment="Center" />
+          <TextBlock x:Name="PlaceText" FontSize="14.5" FontWeight="SemiBold" Foreground="White" MaxWidth="170" TextTrimming="CharacterEllipsis" />
+          <TextBlock x:Name="PlaceCounter" FontSize="11" Foreground="#80FFFFFF" Margin="6,2,0,0" VerticalAlignment="Center" />
+        </StackPanel>
+        <TextBlock x:Name="ConditionText" FontSize="12.5" Foreground="#CCFFFFFF" HorizontalAlignment="Right" Margin="0,1,0,0" />
+        <TextBlock x:Name="DetailText" FontSize="11.5" Foreground="#80FFFFFF" HorizontalAlignment="Right" Margin="0,2,0,0" />
+      </StackPanel>
+    </Grid>
+
+    <UniformGrid x:Name="HoursGrid" Rows="1" Margin="16,106,16,0" Height="70" VerticalAlignment="Top" />
+
+    <TextBlock x:Name="StatusText" FontSize="13" Foreground="#A3FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"
+               TextAlignment="Center" Visibility="Collapsed" />
+  </Grid>
+</UserControl>

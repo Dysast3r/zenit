@@ -1,0 +1,42 @@
+name: Reportar un error
+description: Algo no funciona como debería
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Gracias por reportarlo. Los problemas de seguridad **no** van aquí: usa la pestaña Security."
+  - type: textarea
+    id: what
+    attributes:
+      label: ¿Qué pasó?
+      description: Qué esperabas y qué ocurrió en realidad.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducirlo
+      placeholder: |
+        1. Abre Spotify y reproduce una canción
+        2. Pasa el cursor sobre la isla
+        3. …
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versión de Zenit
+      description: Configuración → Acerca de
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Versión de Windows
+      placeholder: Windows 11 24H2
+  - type: textarea
+    id: log
+    attributes:
+      label: Registro de errores
+      description: Contenido de %AppData%\Zenit\error.log, si existe.
+      render: text

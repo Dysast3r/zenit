@@ -1,0 +1,5 @@
+# Traducción colaborativa con Crowdin (https://crowdin.com, gratis para código abierto).
+# Fuente: textos en inglés extraídos del código con tools/extract-strings.py.
+files:
+  - source: /src/Zenit/Assets/i18n/en.json
+    translation: /src/Zenit/Assets/i18n/%two_letters_code%.json

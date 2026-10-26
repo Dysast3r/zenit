@@ -1,0 +1,269 @@
+<Window x:Class="Zenit.Views.IslandWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:Zenit.Controls"
+        Title="Zenit"
+        Width="560" Height="300"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" ShowActivated="False"
+        FontFamily="Segoe UI Variable Text, Segoe UI"
+        TextOptions.TextFormattingMode="Ideal">
+
+  <Window.Resources>
+    <SolidColorBrush x:Key="Secondary" Color="#A3FFFFFF" />
+
+    <Style x:Key="IslandButton" TargetType="Button">
+      <Setter Property="Focusable" Value="False" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Width" Value="56" />
+      <Setter Property="Height" Value="44" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Grid x:Name="Root" Background="Transparent" RenderTransformOrigin="0.5,0.5">
+              <Grid.RenderTransform>
+                <ScaleTransform x:Name="Scale" />
+              </Grid.RenderTransform>
+              <Ellipse x:Name="Halo" Width="{TemplateBinding Height}" Height="{TemplateBinding Height}"
+                       Fill="White" Opacity="0" />
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Grid>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Trigger.EnterActions>
+                  <BeginStoryboard>
+                    <Storyboard>
+                      <DoubleAnimation Storyboard.TargetName="Halo" Storyboard.TargetProperty="Opacity" To="0.1" Duration="0:0:0.15" />
+                    </Storyboard>
+                  </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                  <BeginStoryboard>
+                    <Storyboard>
+                      <DoubleAnimation Storyboard.TargetName="Halo" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.3" />
+                    </Storyboard>
+                  </BeginStoryboard>
+                </Trigger.ExitActions>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Trigger.EnterActions>
+                  <BeginStoryboard>
+                    <Storyboard>
+                      <DoubleAnimation Storyboard.TargetName="Scale" Storyboard.TargetProperty="ScaleX" To="0.84" Duration="0:0:0.09" />
+                      <DoubleAnimation Storyboard.TargetName="Scale" Storyboard.TargetProperty="ScaleY" To="0.84" Duration="0:0:0.09" />
+                      <DoubleAnimation Storyboard.TargetName="Halo" Storyboard.TargetProperty="Opacity" To="0.18" Duration="0:0:0.09" />
+                    </Storyboard>
+                  </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                  <BeginStoryboard>
+                    <Storyboard>
+                      <DoubleAnimation Storyboard.TargetName="Scale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.45">
+                        <DoubleAnimation.EasingFunction><ElasticEase Oscillations="1" Springiness="5" EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+                      </DoubleAnimation>
+                      <DoubleAnimation Storyboard.TargetName="Scale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.45">
+                        <DoubleAnimation.EasingFunction><ElasticEase Oscillations="1" Springiness="5" EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
+                      </DoubleAnimation>
+                    </Storyboard>
+                  </BeginStoryboard>
+                </Trigger.ExitActions>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="Root" Property="Opacity" Value="0.3" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style x:Key="TimeText" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="{StaticResource Secondary}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
+    </Style>
+  </Window.Resources>
+
+  <!-- Sin fondo: las zonas vacías dejan pasar los clics a las ventanas de abajo. -->
+  <Grid x:Name="Host" RenderTransformOrigin="0.5,0">
+    <Grid.RenderTransform>
+      <TransformGroup>
+        <ScaleTransform x:Name="UserScale" />
+        <ScaleTransform x:Name="HostScale" />
+        <TranslateTransform x:Name="HostShift" />
+      </TransformGroup>
+    </Grid.RenderTransform>
+
+    <!-- Resplandor teñido con el color de la carátula -->
+    <Path x:Name="GlowShape" HorizontalAlignment="Center" VerticalAlignment="Top" Fill="Black" IsHitTestVisible="False">
+      <Path.Effect>
+        <DropShadowEffect x:Name="Glow" BlurRadius="34" ShadowDepth="0" Opacity="0" Color="White" />
+      </Path.Effect>
+    </Path>
+
+    <Grid x:Name="Island" HorizontalAlignment="Center" VerticalAlignment="Top" Cursor="Hand"
+          MouseEnter="Island_MouseEnter" MouseLeave="Island_MouseLeave"
+          MouseLeftButtonDown="Island_MouseLeftButtonDown" MouseMove="Island_MouseMove"
+          MouseLeftButtonUp="Island_MouseLeftButtonUp" LostMouseCapture="Island_LostMouseCapture"
+          MouseRightButtonUp="Island_MouseRightButtonUp">
+      <Path x:Name="IslandFill" Fill="Black" />
+
+      <Canvas x:Name="Stage">
+
+        <!-- Reposo: hora, fecha, clima o moneda (configurable) -->
+        <Grid x:Name="IdlePanel" Width="170" Height="32">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock x:Name="IdleText" FontSize="13" FontWeight="SemiBold" Foreground="White"
+                       VerticalAlignment="Center" Typography.NumeralAlignment="Tabular" />
+            <Ellipse x:Name="IdleDot" Width="3" Height="3" Fill="#66FFFFFF" Margin="8,0" VerticalAlignment="Center" />
+            <c:WeatherGlyph x:Name="IdleGlyph" Width="17" Height="17" VerticalAlignment="Center" Margin="0,0,4,0" />
+            <TextBlock x:Name="IdleExtra" FontSize="13" FontWeight="SemiBold" Foreground="White"
+                       VerticalAlignment="Center" Typography.NumeralAlignment="Tabular" />
+          </StackPanel>
+        </Grid>
+
+        <!-- Compacta: carátula a la izquierda, contenido al centro (configurable), ecualizador a la derecha -->
+        <Grid x:Name="CompactPanel" Width="284" Height="36">
+          <Border x:Name="CompactArt" Width="24" Height="24" CornerRadius="7"
+                  HorizontalAlignment="Left" Margin="9,0,0,0" />
+          <!-- Centro: hora, fecha, temperatura o canción (en marquesina si no cabe) -->
+          <!-- Un Canvas no recorta a sus hijos a su ancho: así el texto largo y su copia se dibujan completos -->
+          <Canvas x:Name="CompactCenterHost" Width="176" Height="36" HorizontalAlignment="Center" ClipToBounds="True" Visibility="Collapsed">
+            <StackPanel x:Name="CompactCenterContent" Orientation="Horizontal">
+              <StackPanel.RenderTransform><TranslateTransform x:Name="CompactCenterShift" /></StackPanel.RenderTransform>
+              <c:WeatherGlyph x:Name="CompactCenterGlyph" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,5,0" Visibility="Collapsed" />
+              <TextBlock x:Name="CompactCenterText" FontSize="13" FontWeight="SemiBold" Foreground="White"
+                         VerticalAlignment="Center" Typography.NumeralAlignment="Tabular" />
+              <TextBlock x:Name="CompactCenterEcho" FontSize="13" FontWeight="SemiBold" Foreground="White"
+                         VerticalAlignment="Center" Margin="36,0,0,0" Visibility="Collapsed" />
+            </StackPanel>
+          </Canvas>
+          <Grid x:Name="CompactTimerIcon" Width="24" Height="24" HorizontalAlignment="Left" Margin="9,0,0,0" Visibility="Hidden">
+            <Ellipse x:Name="CompactTimerIconCircle" Fill="#FF9F0A" />
+            <TextBlock x:Name="CompactTimerIconGlyph" Text="&#xE916;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="12" Foreground="Black"
+                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Grid>
+          <c:EqualizerBars x:Name="CompactBars" Width="18" Height="13"
+                           HorizontalAlignment="Right" Margin="0,0,14,0" />
+          <!-- Actividad en vivo: cuenta regresiva del temporizador, cronómetro o próxima reunión -->
+          <StackPanel x:Name="CompactTimer" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                      Margin="0,0,14,0" Visibility="Collapsed">
+            <TextBlock x:Name="CompactTimerGlyph" Text="&#xE916;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="12"
+                       Foreground="#FF9F0A" VerticalAlignment="Center" Margin="0,1,6,0" />
+            <TextBlock x:Name="CompactTimerText" FontSize="14" FontWeight="SemiBold" Foreground="#FF9F0A"
+                       Typography.NumeralAlignment="Tabular" VerticalAlignment="Center" />
+          </StackPanel>
+        </Grid>
+
+        <!-- Aviso breve al cambiar de canción -->
+        <Grid x:Name="PeekPanel" Width="372" Height="72">
+          <Border x:Name="PeekArt" Width="48" Height="48" CornerRadius="12"
+                  HorizontalAlignment="Left" Margin="12,0,0,0">
+            <TextBlock x:Name="PeekGlyph" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="20" Foreground="White"
+                       HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" />
+          </Border>
+          <StackPanel Margin="72,0,116,0" VerticalAlignment="Center">
+            <TextBlock x:Name="PeekTitle" FontSize="14.5" FontWeight="SemiBold" Foreground="White" TextTrimming="CharacterEllipsis" />
+            <TextBlock x:Name="PeekArtist" FontSize="12.5" Foreground="{StaticResource Secondary}" TextTrimming="CharacterEllipsis" Margin="0,1,0,0" />
+          </StackPanel>
+          <c:EqualizerBars x:Name="PeekBars" Width="22" Height="16"
+                           HorizontalAlignment="Right" Margin="0,0,20,0" />
+          <!-- Barra para avisos con nivel (volumen, batería) -->
+          <Grid x:Name="PeekProgress" Width="84" Height="6" HorizontalAlignment="Right" Margin="0,0,22,0" Visibility="Collapsed">
+            <Border CornerRadius="3" Background="#33FFFFFF" />
+            <Border x:Name="PeekProgressFill" CornerRadius="3" Background="White" HorizontalAlignment="Left" Width="0" />
+          </Grid>
+        </Grid>
+
+        <!-- Expandida: carrusel de páginas -->
+        <Grid x:Name="ExpandedPanel" Width="430" Height="204">
+          <Canvas Width="430" Height="204" ClipToBounds="True">
+            <StackPanel x:Name="PagesHost" Orientation="Horizontal">
+              <StackPanel.RenderTransform>
+                <TranslateTransform x:Name="PagerShift" />
+              </StackPanel.RenderTransform>
+
+              <!-- Página de música (las demás se agregan desde el código) -->
+              <Grid x:Name="MusicPage" Width="430" Height="204">
+                <!-- Carátula desenfocada de fondo, como en Apple Music -->
+                <Image x:Name="MusicBackdrop" Stretch="Fill" Opacity="0" IsHitTestVisible="False" />
+                <Rectangle IsHitTestVisible="False">
+                  <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                      <GradientStop Color="#33000000" Offset="0" />
+                      <GradientStop Color="#B3000000" Offset="1" />
+                    </LinearGradientBrush>
+                  </Rectangle.Fill>
+                </Rectangle>
+                <Grid Margin="24,22,24,0" Height="62" VerticalAlignment="Top">
+                  <Border x:Name="ExpandedArt" Width="62" Height="62" CornerRadius="15"
+                          HorizontalAlignment="Left" RenderTransformOrigin="0.5,0.5"
+                          MouseLeftButtonDown="Art_MouseLeftButtonDown">
+                    <Border.RenderTransform>
+                      <ScaleTransform x:Name="ArtScale" />
+                    </Border.RenderTransform>
+                    <TextBlock x:Name="ArtPlaceholder" Text="♪" FontSize="28" Foreground="#CCFFFFFF"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <StackPanel Margin="78,0,44,0" VerticalAlignment="Center">
+                    <TextBlock x:Name="TitleText" FontSize="15.5" FontWeight="SemiBold" Foreground="White" TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="ArtistText" FontSize="13" Foreground="{StaticResource Secondary}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                  </StackPanel>
+                  <c:EqualizerBars x:Name="ExpandedBars" Width="24" Height="20"
+                                   HorizontalAlignment="Right" VerticalAlignment="Center" />
+                </Grid>
+
+                <Grid Margin="24,102,24,0" Height="22" VerticalAlignment="Top">
+                  <TextBlock x:Name="ElapsedText" Style="{StaticResource TimeText}" HorizontalAlignment="Left" Text="0:00" />
+                  <Grid x:Name="SeekTrack" Margin="46,0,46,0" Background="Transparent" Cursor="Hand"
+                        MouseEnter="SeekTrack_MouseEnter" MouseLeave="SeekTrack_MouseLeave"
+                        MouseLeftButtonDown="SeekTrack_MouseLeftButtonDown" MouseMove="SeekTrack_MouseMove"
+                        MouseLeftButtonUp="SeekTrack_MouseLeftButtonUp">
+                    <Border x:Name="TrackBackground" Height="5" CornerRadius="2.5" Background="#33FFFFFF" VerticalAlignment="Center" />
+                    <Border x:Name="TrackFill" Height="5" CornerRadius="2.5" Background="White"
+                            HorizontalAlignment="Left" VerticalAlignment="Center" Width="0" />
+                  </Grid>
+                  <TextBlock x:Name="RemainingText" Style="{StaticResource TimeText}" HorizontalAlignment="Right" Text="-0:00" />
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,134,0,0">
+                  <Button x:Name="PreviousButton" Style="{StaticResource IslandButton}" Click="PreviousButton_Click" VerticalAlignment="Center">
+                    <Path Data="M 23,3 L 23,17 L 12,10 Z M 12,3 L 12,17 L 1,10 Z" Fill="White" Stroke="White"
+                          StrokeThickness="1.6" StrokeLineJoin="Round" Width="24" Height="20" />
+                  </Button>
+                  <Button x:Name="PlayButton" Style="{StaticResource IslandButton}" Click="PlayButton_Click"
+                          Width="68" Height="52" Margin="14,0">
+                    <Grid Width="22" Height="24">
+                      <Path x:Name="PlayGlyph" Data="M 3,1.5 L 3,22.5 L 21,12 Z" Fill="White" Stroke="White"
+                            StrokeThickness="2" StrokeLineJoin="Round" RenderTransformOrigin="0.5,0.5">
+                        <Path.RenderTransform><ScaleTransform /></Path.RenderTransform>
+                      </Path>
+                      <Path x:Name="PauseGlyph" Data="M 3,2 L 8,2 L 8,22 L 3,22 Z M 14,2 L 19,2 L 19,22 L 14,22 Z" Fill="White" Stroke="White"
+                            StrokeThickness="1.6" StrokeLineJoin="Round" RenderTransformOrigin="0.5,0.5" Opacity="0">
+                        <Path.RenderTransform><ScaleTransform /></Path.RenderTransform>
+                      </Path>
+                    </Grid>
+                  </Button>
+                  <Button x:Name="NextButton" Style="{StaticResource IslandButton}" Click="NextButton_Click" VerticalAlignment="Center">
+                    <Path Data="M 1,3 L 1,17 L 12,10 Z M 12,3 L 12,17 L 23,10 Z" Fill="White" Stroke="White"
+                          StrokeThickness="1.6" StrokeLineJoin="Round" Width="24" Height="20" />
+                  </Button>
+                </StackPanel>
+              </Grid>
+            </StackPanel>
+          </Canvas>
+
+          <!-- Indicador de página -->
+          <StackPanel x:Name="DotsHost" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                      Margin="0,0,0,9" IsHitTestVisible="False" />
+        </Grid>
+
+        <!-- Indicadores de privacidad: cámara (verde) y micrófono (naranja) en uso -->
+        <Ellipse x:Name="CameraDot" Width="6" Height="6" Fill="#30D158" Visibility="Collapsed" IsHitTestVisible="False" />
+        <Ellipse x:Name="MicDot" Width="6" Height="6" Fill="#FF9F0A" Visibility="Collapsed" IsHitTestVisible="False" />
+      </Canvas>
+    </Grid>
+  </Grid>
+</Window>
