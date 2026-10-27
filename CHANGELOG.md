@@ -2,6 +2,16 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project uses [semantic versioning](https://semver.org/).
 
+## [1.2.0] - 2026-10-27
+
+### Added
+- Move the island: hold the right mouse button on it and drag it along the top edge. It stays where you leave it (snapping to the center when you get close), and Settings → General has a "Center" button. A plain right click still opens the menu.
+- Light theme for the island ([#15](https://github.com/Dysast3r/zenit/issues/15)): dark, light or following the Windows app mode, in Settings → General.
+- Neon edge settings: turn the glow on or off, give it your own color or a two-color gradient, and animate it with a pulse, a spin around the edge or a rainbow.
+- Audio output picker on the volume page: switch between speakers, headphones, Bluetooth or the monitor without leaving the island.
+- Pomodoro in the timer page: 25 minutes of focus, 5-minute breaks and a 15-minute one every 4, with a live activity on the compact island and stats (today, streak and the last 7 days).
+- The album art crossfades when the song changes.
+
 ## [1.1.9] - 2026-10-27
 
 ### Fixed
@@ -104,6 +114,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Verifiable releases: build provenance attestation, SHA-256 sums, CodeQL, OpenSSF Scorecard and optional code signing.
 - Distribution through winget, a website at [danidev.cl/zenit](https://danidev.cl/zenit) and a translation catalog for Crowdin.
 
+[1.2.0]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.0
 [1.1.9]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.9
 [1.1.8]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.8
 [1.1.7]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.7
