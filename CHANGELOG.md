@@ -2,6 +2,13 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project uses [semantic versioning](https://semver.org/).
 
+## [1.2.3] - 2026-10-27
+
+### Fixed
+- "Hide in full screen" now works with games in borderless full screen, which Windows doesn't report as full screen. Each island checks its own monitor, so a game on another screen no longer hides it, and while hidden it stops placing itself above the game.
+- "Hide when nothing is playing" no longer hides the island while a song is paused: it only hides when no music app is open, so you can still reach it to resume playback. Hovering over the island opens it again with paused music.
+- Taskbar style: the island no longer closes right after expanding when the cursor stays on the taskbar below it. It stays open while the cursor is under it and closes once the cursor leaves.
+
 ## [1.2.2] - 2026-10-27
 
 ### Added
@@ -125,6 +132,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Verifiable releases: build provenance attestation, SHA-256 sums, CodeQL, OpenSSF Scorecard and optional code signing.
 - Distribution through winget, a website at [danidev.cl/zenit](https://danidev.cl/zenit) and a translation catalog for Crowdin.
 
+[1.2.3]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.3
 [1.2.2]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.2
 [1.2.1]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.1
 [1.2.0]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.0

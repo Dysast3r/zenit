@@ -22,7 +22,7 @@
 
   <!-- Metadatos visibles en Propiedades → Detalles del .exe -->
   <PropertyGroup>
-    <Version>1.2.2</Version>
+    <Version>1.2.3</Version>
     <Product>Zenit</Product>
     <AssemblyTitle>Zenit</AssemblyTitle>
     <Description>Zenit: la isla dinámica para Windows. Desarrollado por Danidev.cl.</Description>
