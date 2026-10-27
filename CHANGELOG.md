@@ -2,7 +2,7 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project uses [semantic versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.1.8] - 2026-10-27
 
 ### Added
 - Indicators list in Settings → Currencies: turn on the major currencies (dollar, euro, pound, yen, yuan, Swiss franc, Latin American pesos…), crypto and Chile's UF and UTM with a switch each. Other currencies can still be added by code.
@@ -99,6 +99,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Verifiable releases: build provenance attestation, SHA-256 sums, CodeQL, OpenSSF Scorecard and optional code signing.
 - Distribution through winget, a website at [danidev.cl/zenit](https://danidev.cl/zenit) and a translation catalog for Crowdin.
 
+[1.1.8]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.8
 [1.1.7]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.7
 [1.1.6]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.6
 [1.1.5]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.5
