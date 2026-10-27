@@ -236,8 +236,9 @@ public partial class IslandWindow
         {
             GoToPage(_page + direction, 0);
         }
-        else if (_snapshot is not null)
+        else if (MusicLive)
         {
+            // Con la música en pausa hace rato la isla está en reposo: la rueda no cambia de canción.
             _shift.Velocity = -direction * 700.0;
             _ = direction > 0 ? _media.NextAsync() : _media.PreviousAsync();
         }
