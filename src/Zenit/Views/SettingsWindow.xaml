@@ -546,7 +546,7 @@
             </Grid>
           </Border>
           <TextBlock FontSize="12" Foreground="{StaticResource Subtle}" Margin="2,10,0,0" TextWrapping="Wrap"
-                     Text="{s:Tr Es='Más de 300 monedas y criptomonedas. Tipos de cambio diarios con la variación frente al día anterior. La UF y la UTM vienen de mindicador.cl, con la variación frente al valor anterior.', En='Over 300 currencies and cryptocurrencies. Daily rates with the change versus the previous day. UF and UTM come from mindicador.cl, with the change versus the previous value.'}" />
+                     Text="{s:Tr Es='Más de 300 monedas y criptomonedas. Tipos de cambio diarios con la variación frente al día anterior. La UF y la UTM vienen de findic.cl o mindicador.cl, con la variación frente al valor anterior.', En='Over 300 currencies and cryptocurrencies. Daily rates with the change versus the previous day. UF and UTM come from findic.cl or mindicador.cl, with the change versus the previous value.'}" />
         </StackPanel>
 
         <!-- ═════════════ Sistema ═════════════ -->
@@ -666,7 +666,7 @@
               <TextBlock Foreground="White" FontSize="13" TextWrapping="Wrap" Margin="0,0,0,6"
                          Text="{s:Tr Es='• La música se lee localmente desde Windows. Solo con la página Letras activa se envían título y artista a LRCLIB.', En='• Music info is read locally from Windows. Only with the Lyrics page on, title and artist are sent to LRCLIB.'}" />
               <TextBlock Foreground="White" FontSize="13" TextWrapping="Wrap" Margin="0,0,0,6"
-                         Text="{s:Tr Es='• Clima: Open-Meteo · Ubicación: Windows, BigDataCloud o ipapi.co · Monedas: currency-api · UF y UTM: mindicador.cl · Letras: LRCLIB · Actualizaciones: GitHub.', En='• Weather: Open-Meteo · Location: Windows, BigDataCloud or ipapi.co · Currencies: currency-api · UF and UTM: mindicador.cl · Lyrics: LRCLIB · Updates: GitHub.'}" />
+                         Text="{s:Tr Es='• Clima: Open-Meteo · Ubicación: Windows, BigDataCloud o ipapi.co · Monedas: currency-api · UF y UTM: findic.cl o mindicador.cl · Letras: LRCLIB · Actualizaciones: GitHub.', En='• Weather: Open-Meteo · Location: Windows, BigDataCloud or ipapi.co · Currencies: currency-api · UF and UTM: findic.cl or mindicador.cl · Lyrics: LRCLIB · Updates: GitHub.'}" />
               <TextBlock Foreground="White" FontSize="13" TextWrapping="Wrap" Margin="0,0,0,6"
                          Text="{s:Tr Es='• Todas las conexiones son HTTPS. Solo se envían coordenadas aproximadas o el nombre de una ciudad.', En='• All connections use HTTPS. Only approximate coordinates or a city name are sent.'}" />
             </StackPanel>

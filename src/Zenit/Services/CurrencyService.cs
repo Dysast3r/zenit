@@ -14,11 +14,11 @@ public sealed record Indicator(string Code, string Name);
 /// <summary>
 /// Tipos de cambio de más de 300 monedas y criptomonedas (proyecto abierto fawazahmed0/exchange-api,
 /// servido por jsDelivr y Cloudflare). Sin clave ni límite de uso; se actualiza a diario.
-/// La UF y la UTM vienen de mindicador.cl (valores del Banco Central de Chile y el SII, en pesos chilenos).
+/// La UF y la UTM vienen de findic.cl o mindicador.cl (valores del Banco Central de Chile y el SII, en pesos chilenos).
 /// </summary>
 public sealed class CurrencyService
 {
-    /// <summary>Indicadores chilenos: no son monedas de currency-api y se piden a mindicador.cl.</summary>
+    /// <summary>Indicadores chilenos: no son monedas de currency-api y se piden a findic.cl o mindicador.cl.</summary>
     private static readonly string[] ChileanCodes = ["uf", "utm"];
 
     private readonly AppSettings _settings;
@@ -146,9 +146,12 @@ public sealed class CurrencyService
     /// <summary>Valor en pesos chilenos de la UF o la UTM y su variación frente al valor anterior (día o mes).</summary>
     private static async Task<(double Value, double? Change)?> GetChileanAsync(string code)
     {
-        using var series = await Net.GetJsonAsync($"https://mindicador.cl/api/{code}");
-        if (series is not null && series.RootElement.TryGetProperty("serie", out var serie) && serie.ValueKind == JsonValueKind.Array)
+        // findic.cl y mindicador.cl publican la misma serie; mindicador.cl a veces rechaza las conexiones.
+        foreach (var host in new[] { "findic.cl", "mindicador.cl" })
         {
+            using var series = await Net.GetJsonAsync($"https://{host}/api/{code}");
+            if (series is null || !series.RootElement.TryGetProperty("serie", out var serie) || serie.ValueKind != JsonValueKind.Array) continue;
+
             // Más reciente primero; se descartan fechas futuras por si la serie trae valores ya publicados.
             var values = serie.EnumerateArray()
                 .Select(p => (Date: DateTimeOffset.TryParse(p.Text("fecha"), CultureInfo.InvariantCulture, out var d) ? d : default, Value: p.Number("valor")))
@@ -161,7 +164,7 @@ public sealed class CurrencyService
                 return (values[0], values.Count > 1 ? (values[0] / values[1] - 1) * 100 : null);
         }
 
-        // Respaldo: el resumen diario trae solo el valor actual.
+        // Respaldo: el resumen diario de mindicador.cl trae solo el valor actual.
         using var summary = await Net.GetJsonAsync("https://mindicador.cl/api");
         if (summary is not null && summary.RootElement.TryGetProperty(code, out var indicator) && indicator.Number("valor") is > 0 and var value)
             return (value, null);

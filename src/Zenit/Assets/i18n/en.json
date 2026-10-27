@@ -156,7 +156,7 @@
   "Open": "Open",
   "Open Spotify to start": "Open Spotify to start",
   "Open folder": "Open folder",
-  "Over 300 currencies and cryptocurrencies. Daily rates with the change versus the previous day. UF and UTM come from mindicador.cl, with the change versus the previous value.": "Over 300 currencies and cryptocurrencies. Daily rates with the change versus the previous day. UF and UTM come from mindicador.cl, with the change versus the previous value.",
+  "Over 300 currencies and cryptocurrencies. Daily rates with the change versus the previous day. UF and UTM come from findic.cl or mindicador.cl, with the change versus the previous value.": "Over 300 currencies and cryptocurrencies. Daily rates with the change versus the previous day. UF and UTM come from findic.cl or mindicador.cl, with the change versus the previous value.",
   "Overcast": "Overcast",
   "Pages": "Pages",
   "Partly cloudy": "Partly cloudy",
@@ -280,5 +280,5 @@
   "• No accounts, no keys, no telemetry.": "• No accounts, no keys, no telemetry.",
   "• Right-click the island: quick menu": "• Right-click the island: quick menu",
   "• Swipe the compact island left / right: next / previous track": "• Swipe the compact island left / right: next / previous track",
-  "• Weather: Open-Meteo · Location: Windows, BigDataCloud or ipapi.co · Currencies: currency-api · UF and UTM: mindicador.cl · Lyrics: LRCLIB · Updates: GitHub.": "• Weather: Open-Meteo · Location: Windows, BigDataCloud or ipapi.co · Currencies: currency-api · UF and UTM: mindicador.cl · Lyrics: LRCLIB · Updates: GitHub."
+  "• Weather: Open-Meteo · Location: Windows, BigDataCloud or ipapi.co · Currencies: currency-api · UF and UTM: findic.cl or mindicador.cl · Lyrics: LRCLIB · Updates: GitHub.": "• Weather: Open-Meteo · Location: Windows, BigDataCloud or ipapi.co · Currencies: currency-api · UF and UTM: findic.cl or mindicador.cl · Lyrics: LRCLIB · Updates: GitHub."
 }
