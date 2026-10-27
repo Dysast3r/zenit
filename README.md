@@ -43,7 +43,7 @@ It's native (C# / .NET 10), lightweight, open source, and **needs no accounts, A
 | 🎚️ **Volume and audio output** | A page with the system volume and every app playing audio (Spotify, Chrome, Discord…), each with its own slider and mute. Switch the output between speakers, headphones, Bluetooth or your monitor without leaving the island. |
 | 🔔 **System alerts** | Volume (scroll over the island to change it), battery charging, green and orange camera and microphone dots, and Windows notifications in the Microsoft Store version. |
 | 🧩 **Community widgets** | Data from any public API with a plain JSON file, no code. [Make your own](widgets/README.md). |
-| 🏝️ **Two shapes** | A classic notch attached to the top edge with concave curves, or a floating island. |
+| 🏝️ **Three styles** | A classic notch attached to the top edge with concave curves, a floating island, or built into the taskbar, where it rises above the bar when it expands. |
 | 🎨 **Your style** | Dark or light theme (or follow Windows). A neon edge in the album art color, a color of your choice or a two-color gradient, with pulse, spin or rainbow animations, or turn it off. |
 | 👆 **Gestures** | Hover or click to expand · swipe to change songs · swipe the expanded island to switch pages · horizontal touchpad scrolling · hold the right mouse button and drag to move the island along the top edge (it snaps to the center). |
 | 🌦️ **Weather** | Your current location or any city in the world, an hourly forecast and animated vector icons. |

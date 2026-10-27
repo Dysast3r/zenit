@@ -43,7 +43,7 @@ Es nativa (C# / .NET 10), liviana, de código abierto y **no pide cuentas, clave
 | 🎚️ **Volumen y salida de audio** | Una página con el volumen del sistema y de cada app que suena (Spotify, Chrome, Discord…), con su propio deslizador y silencio. Cambia la salida entre parlantes, audífonos, Bluetooth o el monitor sin salir de la isla. |
 | 🔔 **Avisos del sistema** | Volumen (y la rueda del mouse sobre la isla para cambiarlo), carga de batería, puntos verde y naranja de cámara y micrófono, y notificaciones de Windows en la versión de la Microsoft Store. |
 | 🧩 **Widgets de la comunidad** | Datos de cualquier API pública con un simple archivo JSON, sin código. [Crea el tuyo](widgets/README.es.md). |
-| 🏝️ **Dos formas** | Notch clásico pegado al borde con curvas cóncavas, o isla flotante separada del borde. |
+| 🏝️ **Tres estilos** | Notch clásico pegado al borde con curvas cóncavas, isla flotante separada del borde, o integrada en la barra de tareas, desde donde se eleva al expandirse. |
 | 🎨 **Tu estilo** | Tema oscuro o claro (o según Windows). Borde neón del color de la carátula, de un color a tu gusto o en degradado de dos colores, con animación de pulso, giro o arcoíris, o apagado. |
 | 👆 **Gestos** | Cursor o clic para expandir · deslizar para cambiar de canción · deslizar la isla expandida para cambiar de página · touchpad horizontal · mantener el clic derecho y arrastrar para mover la isla por el borde superior (se imanta al centro). |
 | 🌦️ **Clima** | Ubicación actual o cualquier ciudad del mundo, pronóstico por horas e íconos vectoriales animados. |

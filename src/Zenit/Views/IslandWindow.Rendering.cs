@@ -91,6 +91,7 @@ public partial class IslandWindow
 
         HostScale.ScaleX = HostScale.ScaleY = _scale.Value;
         HostShift.X = _shift.Value;
+        HostShift.Y = -_lift.Value;
         PagerShift.X = _pager.Value;
 
         var position = -_pager.Value / PageWidth;

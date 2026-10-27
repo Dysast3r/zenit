@@ -5,7 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace Zenit.Services;
 
-public enum IslandStyle { Notch, Floating }
+/// <summary>Notch pegado arriba, isla flotante, o integrada en la barra de tareas (crece hacia arriba).</summary>
+public enum IslandStyle { Notch, Floating, Taskbar }
+
 /// <summary>Tema de la isla: oscuro (negra), claro, o el modo de las aplicaciones de Windows.</summary>
 public enum IslandColorScheme { Dark, Light, System }
 

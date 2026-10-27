@@ -55,6 +55,10 @@ public partial class IslandWindow : Window
 
     private readonly Spring _width = new(170), _height = new(32), _radius = new(16);
     private readonly Spring _scale = new(1), _shift = new(0), _pager = new(0);
+
+    /// <summary>En la barra de tareas, cuánto sube la isla expandida para quedar sobre la barra (en DIP de la ventana).</summary>
+    private readonly Spring _lift = new(0);
+    private double _barLift;
     private readonly Spring[] _springs;
 
     private readonly FrameworkElement[] _panels;
@@ -108,6 +112,8 @@ public partial class IslandWindow : Window
     private DateTime _lastWheelAction;
 
     private readonly DispatcherTimer _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _musicPauseTimer, _expandedVolumeTimer, _weatherTimer, _currencyTimer, _calendarTimer;
+    /// <summary>En la barra de tareas: al hacer clic en la barra, Windows la sube sobre la isla; esto la devuelve encima.</summary>
+    private readonly DispatcherTimer _taskbarTimer;
     private bool _loopAttached;
     private TimeSpan _lastFrame;
     private double _time;
@@ -131,7 +137,8 @@ public partial class IslandWindow : Window
         _settings = services.Settings;
         InitializeComponent();
 
-        _springs = [_width, _height, _radius, _scale, _shift, _pager];
+        _springs = [_width, _height, _radius, _scale, _shift, _pager, _lift];
+        _lift.Configure(260, 24);
         _scale.Configure(420, 24);
         _shift.Configure(380, 24);
         _pager.Configure(300, 30);
@@ -196,6 +203,12 @@ public partial class IslandWindow : Window
         _currencyTimer.Tick += (_, _) => _ = _currency.RefreshAsync();
         _calendarTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher) { Interval = TimeSpan.FromMinutes(10) };
         _calendarTimer.Tick += (_, _) => _ = services.Calendar.RefreshAsync();
+        _taskbarTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(300), DispatcherPriority.Background, (_, _) =>
+        {
+            if (_hwnd != 0) NativeMethods.KeepTopmost(_hwnd);
+        }, Dispatcher);
+        // Este constructor arranca el timer: solo debe correr con la isla en la barra de tareas (ApplySettings).
+        _taskbarTimer.Stop();
 
         _media.Changed += OnMediaChangedFromService;
         _weather.Updated += UpdateIdleContent;
@@ -235,7 +248,7 @@ public partial class IslandWindow : Window
             services.Indicators.ChargingStarted -= OnChargingStarted;
             services.Indicators.BatteryLow -= OnBatteryLow;
             services.Notifications.Received -= OnNotification;
-            foreach (var timer in new[] { _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _musicPauseTimer, _weatherTimer, _currencyTimer, _calendarTimer })
+            foreach (var timer in new[] { _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _musicPauseTimer, _weatherTimer, _currencyTimer, _calendarTimer, _taskbarTimer })
                 timer.Stop();
             if (_loopAttached) CompositionTarget.Rendering -= OnRendering;
             _meter.Dispose();
@@ -285,7 +298,26 @@ public partial class IslandWindow : Window
         var center = work.Left + position * work.Width;
         center = Math.Max(work.Left + half, Math.Min(work.Right - half, center));
         if (work.Width < 2 * half) center = work.Left + work.Width / 2.0;
-        NativeMethods.MoveWindow(_hwnd, (int)Math.Round(center - width / 2.0), work.Top);
+        var x = (int)Math.Round(center - width / 2.0);
+
+        if (_settings.Style != IslandStyle.Taskbar)
+        {
+            NativeMethods.MoveWindow(_hwnd, x, work.Top);
+            return;
+        }
+
+        // Barra de tareas: la ventana se apoya en el borde inferior y la píldora en reposo queda centrada
+        // en la barra. Su alto es lo que el área de trabajo deja libre abajo; si la barra se oculta sola o
+        // está en otro borde, se usa el alto estándar de Windows 11 (48 px).
+        var bounds = screen.Bounds;
+        var bar = bounds.Bottom - work.Bottom;
+        if (bar <= 0) bar = (int)Math.Round(48 * scale);
+        var inset = (bar / scale / _settings.Scale - GeometryOf(IslandMode.Idle).h) / 2;
+        Island.Margin = GlowShape.Margin = new Thickness(0, 0, 0, Math.Max(2, inset));
+        // Expandida o con un aviso, la isla se despega y flota 10 px sobre la barra, como los paneles de Windows 11.
+        _barLift = bar / scale - Math.Max(2, inset) * _settings.Scale + 10;
+        var height = (int)Math.Round(Height * scale);
+        NativeMethods.MoveWindow(_hwnd, x, bounds.Bottom - height);
     }
 
     /// <summary>Aplica todos los ajustes en vivo; se llama al cargar y cada vez que cambian.</summary>
@@ -293,10 +325,21 @@ public partial class IslandWindow : Window
     {
         var s = _settings;
 
-        // Forma: notch pegado arriba (iPhone 13) o isla flotante (iPhone 14 Pro).
+        // Forma: notch pegado arriba (iPhone 13), isla flotante (iPhone 14 Pro) o píldora en la barra de tareas,
+        // que crece hacia arriba. El margen inferior de esta última lo calcula PositionWindow según la barra.
+        var taskbar = s.Style == IslandStyle.Taskbar;
         _ear = s.Style == IslandStyle.Notch ? IslandShape.NotchEar : 0;
-        var top = (s.Style == IslandStyle.Notch ? 0 : 8) + s.TopOffset;
-        Island.Margin = GlowShape.Margin = new Thickness(0, top, 0, 0);
+        Island.VerticalAlignment = GlowShape.VerticalAlignment = taskbar ? VerticalAlignment.Bottom : VerticalAlignment.Top;
+        Host.RenderTransformOrigin = new Point(0.5, taskbar ? 1 : 0);
+        if (!taskbar)
+        {
+            var top = (s.Style == IslandStyle.Notch ? 0 : 8) + s.TopOffset;
+            Island.Margin = GlowShape.Margin = new Thickness(0, top, 0, 0);
+        }
+        // Sobre la barra, un filo de luz finísimo la integra con el cristal de Windows 11 (la mitad queda recortada).
+        IslandFill.Stroke = taskbar ? IslandTheme.InkAlpha(0x2A) : null;
+        IslandFill.StrokeThickness = taskbar ? 2 : 0;
+        _taskbarTimer.IsEnabled = taskbar;
         GlowShape.Visibility = s.ShowGlow ? Visibility.Visible : Visibility.Collapsed;
         // Sin borde no hay nada que animar: así no queda un reloj corriendo de fondo.
         GlowShape.Animation = s.ShowGlow ? s.GlowAnimation : GlowAnimation.None;
@@ -305,7 +348,8 @@ public partial class IslandWindow : Window
 
         UserScale.ScaleX = UserScale.ScaleY = s.Scale;
         Width = BaseWindowWidth * s.Scale;
-        Height = (BaseWindowHeight + s.TopOffset) * s.Scale;
+        // En la barra hace falta espacio extra arriba: la isla expandida sube por encima de la barra.
+        Height = (BaseWindowHeight + (taskbar ? 64 : s.TopOffset)) * s.Scale;
         PositionWindow();
 
         if (_hwnd != 0) NativeMethods.ExcludeFromCapture(_hwnd, s.HideFromCapture && !_demo);

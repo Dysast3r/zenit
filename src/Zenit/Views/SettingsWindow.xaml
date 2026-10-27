@@ -260,7 +260,7 @@
           </c:SettingCard>
 
           <TextBlock Style="{StaticResource SectionTitle}" Text="{s:Tr Es='Apariencia', En='Appearance'}" />
-          <UniformGrid Columns="2" Margin="0,0,0,4">
+          <UniformGrid Columns="3" Margin="0,0,0,4">
             <RadioButton x:Name="StyleNotch" GroupName="IslandStyle" Style="{StaticResource StyleTile}" Margin="0,0,4,0" Checked="Style_Checked">
               <StackPanel>
                 <Border Height="92" CornerRadius="6" Background="#FF12203A" ClipToBounds="True">
@@ -279,6 +279,26 @@
                 </Border>
                 <TextBlock Text="{s:Tr Es='Isla flotante', En='Floating island'}" FontSize="13.5" FontWeight="SemiBold" Foreground="White" Margin="6,10,0,0" />
                 <TextBlock Text="{s:Tr Es='Una píldora separada del borde superior', En='A pill floating below the top edge'}"
+                           FontSize="12" Foreground="{StaticResource Muted}" Margin="6,2,0,6" TextWrapping="Wrap" />
+              </StackPanel>
+            </RadioButton>
+            <RadioButton x:Name="StyleTaskbar" GroupName="IslandStyle" Style="{StaticResource StyleTile}" Margin="4,0,0,0" Checked="Style_Checked">
+              <StackPanel>
+                <!-- Escritorio con la barra de tareas abajo: la píldora vive dentro de la barra, junto a los íconos -->
+                <Border Height="92" CornerRadius="6" Background="#FF12203A" ClipToBounds="True">
+                  <Grid VerticalAlignment="Bottom" Height="22" Background="#E61C1C22">
+                    <Border Width="58" Height="16" CornerRadius="8" Background="Black" BorderBrush="#33FFFFFF" BorderThickness="1"
+                            HorizontalAlignment="Left" Margin="12,0,0,0" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="34,0,0,0">
+                      <Border Width="10" Height="10" CornerRadius="2.5" Background="#FF0A84FF" Margin="2,0" />
+                      <Border Width="10" Height="10" CornerRadius="2.5" Background="#99FFFFFF" Margin="2,0" />
+                      <Border Width="10" Height="10" CornerRadius="2.5" Background="#99FFFFFF" Margin="2,0" />
+                      <Border Width="10" Height="10" CornerRadius="2.5" Background="#99FFFFFF" Margin="2,0" />
+                    </StackPanel>
+                  </Grid>
+                </Border>
+                <TextBlock Text="{s:Tr Es='Barra de tareas', En='Taskbar'}" FontSize="13.5" FontWeight="SemiBold" Foreground="White" Margin="6,10,0,0" />
+                <TextBlock Text="{s:Tr Es='Integrada en la barra, junto a tus apps; crece hacia arriba', En='Built into the taskbar, next to your apps; grows upward'}"
                            FontSize="12" Foreground="{StaticResource Muted}" Margin="6,2,0,6" TextWrapping="Wrap" />
               </StackPanel>
             </RadioButton>
@@ -326,7 +346,7 @@
               </Grid>
             </StackPanel>
           </Border>
-          <c:SettingCard Glyph="&#xE76F;" Header="{s:Tr Es='Distancia desde arriba', En='Distance from top'}">
+          <c:SettingCard x:Name="OffsetCard" Glyph="&#xE76F;" Header="{s:Tr Es='Distancia desde arriba', En='Distance from top'}">
             <StackPanel Orientation="Horizontal">
               <Slider x:Name="OffsetSlider" Width="200" Minimum="0" Maximum="80" TickFrequency="2" IsSnapToTickEnabled="True" ValueChanged="Slider_Changed" VerticalAlignment="Center" />
               <TextBlock x:Name="OffsetLabel" Width="48" TextAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource Muted}" />

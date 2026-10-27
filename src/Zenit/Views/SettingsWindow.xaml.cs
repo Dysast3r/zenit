@@ -254,6 +254,7 @@ public partial class SettingsWindow : Window
         Select(ThemeCombo, s.ColorScheme);
         StyleNotch.IsChecked = s.Style == IslandStyle.Notch;
         StyleFloating.IsChecked = s.Style == IslandStyle.Floating;
+        StyleTaskbar.IsChecked = s.Style == IslandStyle.Taskbar;
         Select(IdleCombo, s.Idle);
         SelectMonitor(s.Monitor);
         ScaleSlider.Value = s.Scale;
@@ -373,7 +374,13 @@ public partial class SettingsWindow : Window
     private void Collect()
     {
         var s = _settings;
-        s.Style = StyleFloating.IsChecked == true ? IslandStyle.Floating : IslandStyle.Notch;
+        var style = StyleTaskbar.IsChecked == true ? IslandStyle.Taskbar
+            : StyleFloating.IsChecked == true ? IslandStyle.Floating
+            : IslandStyle.Notch;
+        // Centrada sobre la barra taparía los íconos: al pasar a la barra de tareas parte en un espacio libre.
+        if (style == IslandStyle.Taskbar && s.Style != IslandStyle.Taskbar && Math.Abs(s.HorizontalPosition - 0.5) < 0.001)
+            s.HorizontalPosition = TaskbarStartPosition();
+        s.Style = style;
         s.Idle = Selected(IdleCombo, s.Idle);
         s.Monitor = Selected(MonitorCombo, s.Monitor);
         s.Scale = Math.Round(ScaleSlider.Value, 2);
@@ -447,6 +454,25 @@ public partial class SettingsWindow : Window
         _settings.Save();
     }
 
+    /// <summary>
+    /// Dónde parte la isla en la barra de tareas: a la izquierda si los íconos están centrados (Windows 11),
+    /// o a la derecha del centro si están a la izquierda (Windows 10, o Windows 11 alineado a la izquierda).
+    /// </summary>
+    private static double TaskbarStartPosition()
+    {
+        var centered = Environment.OSVersion.Version.Build >= 22000;
+        try
+        {
+            using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced");
+            if (centered && key?.GetValue("TaskbarAl") is int alignment) centered = alignment != 0;
+        }
+        catch
+        {
+            // Sin acceso al registro se asume la alineación por defecto de la versión de Windows.
+        }
+        return centered ? 0.2 : 0.62;
+    }
+
     private void CenterIsland_Click(object sender, RoutedEventArgs e)
     {
         _settings.HorizontalPosition = 0.5;
@@ -469,6 +495,8 @@ public partial class SettingsWindow : Window
         foreach (Button swatch in Swatches.Children)
             swatch.BorderThickness = new Thickness(string.Equals((string)swatch.Tag, _settings.CustomAccent, StringComparison.OrdinalIgnoreCase) && _settings.AccentMode == AccentMode.Custom ? 2 : 0);
 
+        // En la barra de tareas la isla va abajo: la distancia desde arriba no aplica.
+        OffsetCard.Visibility = _settings.Style == IslandStyle.Taskbar ? Visibility.Collapsed : Visibility.Visible;
         GlowOptions.IsEnabled = _settings.ShowGlow;
         GlowOptions.Opacity = _settings.ShowGlow ? 1 : 0.45;
         GlowColorsCard.Visibility = _settings.GlowTone == GlowTone.Accent ? Visibility.Collapsed : Visibility.Visible;

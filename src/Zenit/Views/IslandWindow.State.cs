@@ -143,6 +143,7 @@ public partial class IslandWindow
         _height.Target = h;
         _radius.Target = r;
         _scale.Target = RestingScale();
+        _lift.Target = _settings.Style == IslandStyle.Taskbar && mode is IslandMode.Expanded or IslandMode.Peek ? _barLift : 0;
 
         IdlePanel.Width = IdleWidth();
         ShowPanel(IdlePanel, mode == IslandMode.Idle);
