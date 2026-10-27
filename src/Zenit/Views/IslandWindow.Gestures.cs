@@ -27,7 +27,7 @@ public partial class IslandWindow
     {
         _hovering = true;
         _collapseTimer.Stop();
-        if (_settings.ExpandOnHover && (_snapshot is not null || HasLiveActivity) && _mode != IslandMode.Expanded) _hoverTimer.Start();
+        if (_settings.ExpandOnHover && (MusicLive || HasLiveActivity) && _mode != IslandMode.Expanded) _hoverTimer.Start();
         _scale.Target = RestingScale();
         EnsureLoop();
     }

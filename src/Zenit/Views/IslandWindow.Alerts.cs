@@ -44,7 +44,7 @@ public partial class IslandWindow
         var timer = TimerLive;
         var meeting = timer ? null : MeetingLive;
         var activity = timer || meeting is not null;
-        var music = _snapshot is not null;
+        var music = MusicLive;
         CompactArt.Visibility = music ? Visibility.Visible : Visibility.Hidden;
         CompactTimerIcon.Visibility = !music && activity ? Visibility.Visible : Visibility.Hidden;
         CompactBars.Visibility = music && !activity ? Visibility.Visible : Visibility.Hidden;

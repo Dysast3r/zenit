@@ -29,12 +29,37 @@ public partial class IslandWindow
     private void OnMediaChangedFromService(MediaSnapshot? snapshot)
         => Dispatcher.BeginInvoke(() => OnMediaChanged(snapshot));
 
+    /// <summary>Segundos que la isla sigue en modo música después de pausar, antes de volver al reposo.</summary>
+    private const int MusicPauseGraceSeconds = 5;
+
+    /// <summary>
+    /// Hay música que mostrar: está sonando o se pausó hace poco. Una app abierta con una canción cargada
+    /// pero sin reproducir (Spotify al iniciarse) no cuenta.
+    /// </summary>
+    private bool MusicLive => _snapshot is not null && _musicActive;
+
     private void OnMediaChanged(MediaSnapshot? snapshot)
     {
         var previousKey = _trackKey;
         _snapshot = snapshot;
         _trackKey = snapshot?.TrackKey;
         var trackChanged = _trackKey != previousKey;
+
+        var wasActive = _musicActive;
+        if (snapshot?.IsPlaying == true)
+        {
+            _musicActive = true;
+            _musicPauseTimer.Stop();
+        }
+        else if (snapshot is null)
+        {
+            _musicActive = false;
+            _musicPauseTimer.Stop();
+        }
+        else if (_musicActive && !_musicPauseTimer.IsEnabled)
+        {
+            _musicPauseTimer.Start();
+        }
 
         if (trackChanged || !ReferenceEquals(snapshot?.Art, _appliedArt)) ApplyArt(snapshot);
         if (trackChanged) ApplyTexts(snapshot);
@@ -50,9 +75,12 @@ public partial class IslandWindow
         {
             LoadLyricsIfNeeded();
             if (_mode == IslandMode.Expanded) PopArt();
-            else if (_settings.ShowTrackPeek)
-                ShowAlert(new IslandAlert("music", snapshot.Title, snapshot.Artist, _settings.PeekSeconds, Image: _artBrush, ShowBars: true));
         }
+
+        // El aviso de canción sale cuando empieza a sonar algo (o cambia de tema mientras suena),
+        // no cuando una app abre con una canción cargada en pausa.
+        if (snapshot is { IsPlaying: true } && (trackChanged || !wasActive) && _mode != IslandMode.Expanded && _settings.ShowTrackPeek)
+            ShowAlert(new IslandAlert("music", snapshot.Title, snapshot.Artist, _settings.PeekSeconds, Image: _artBrush, ShowBars: true));
 
         Evaluate();
         UpdateProgress();
@@ -79,7 +107,7 @@ public partial class IslandWindow
         if (_fullscreen && _settings.HideInFullscreen) next = IslandMode.Hidden;
         else if (_expandRequested) next = IslandMode.Expanded;
         else if (_alert is not null && DateTime.UtcNow < _peekUntil) next = IslandMode.Peek;
-        else if (_snapshot is not null || HasLiveActivity) next = IslandMode.Compact;
+        else if (MusicLive || HasLiveActivity) next = IslandMode.Compact;
         else next = _settings.HideWhenIdle ? IslandMode.Hidden : IslandMode.Idle;
         SetMode(next);
     }

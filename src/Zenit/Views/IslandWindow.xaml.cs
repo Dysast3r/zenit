@@ -73,7 +73,7 @@ public partial class IslandWindow : Window
     private string? _trackKey;
     private ImageSource? _appliedArt;
     private IslandAlert? _alert;
-    private bool _expandRequested, _hovering, _fullscreen;
+    private bool _expandRequested, _hovering, _fullscreen, _musicActive;
 #if DEBUG
     private bool _demo;
 #else
@@ -107,7 +107,7 @@ public partial class IslandWindow : Window
     private double _wheelAccumulator;
     private DateTime _lastWheelAction;
 
-    private readonly DispatcherTimer _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _expandedVolumeTimer, _weatherTimer, _currencyTimer, _calendarTimer;
+    private readonly DispatcherTimer _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _musicPauseTimer, _expandedVolumeTimer, _weatherTimer, _currencyTimer, _calendarTimer;
     private bool _loopAttached;
     private TimeSpan _lastFrame;
     private double _time;
@@ -182,6 +182,13 @@ public partial class IslandWindow : Window
             _alert = null;
             Evaluate();
         });
+        _musicPauseTimer = OneShot(MusicPauseGraceSeconds * 1000, () =>
+        {
+            if (_snapshot?.IsPlaying == true) return;
+            _musicActive = false;
+            UpdateCompact();
+            Evaluate();
+        });
         _expandedVolumeTimer = OneShot(1600, HideExpandedVolume);
         _weatherTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher);
         _weatherTimer.Tick += (_, _) => _ = _weather.RefreshAsync();
@@ -228,7 +235,7 @@ public partial class IslandWindow : Window
             services.Indicators.ChargingStarted -= OnChargingStarted;
             services.Indicators.BatteryLow -= OnBatteryLow;
             services.Notifications.Received -= OnNotification;
-            foreach (var timer in new[] { _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _weatherTimer, _currencyTimer, _calendarTimer })
+            foreach (var timer in new[] { _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _musicPauseTimer, _weatherTimer, _currencyTimer, _calendarTimer })
                 timer.Stop();
             if (_loopAttached) CompositionTarget.Rendering -= OnRendering;
             _meter.Dispose();
