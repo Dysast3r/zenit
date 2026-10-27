@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
+using Zenit.Controls;
 using Zenit.Services;
 using Microsoft.Win32;
 using Zenit.Views;
@@ -55,6 +56,8 @@ public partial class App : Application
                     "The update could not be installed: the previous version is still in use."),
                     Strings.AppName, MessageBoxButton.OK, MessageBoxImage.Warning);
 
+            // Antes de crear las ventanas: la isla y sus páginas toman los colores del tema al construirse.
+            IslandTheme.Apply(_settings.ColorScheme, Resources);
             _services = new ZenitServices(_settings, Dispatcher);
             var window = new IslandWindow(_services);
             _tray = new TrayIcon(window, OpenSettings, Shutdown);

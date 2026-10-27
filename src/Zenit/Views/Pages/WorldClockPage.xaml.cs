@@ -69,17 +69,17 @@ public partial class WorldClockPage : UserControl, IIslandPage
             var label = new TextBlock
             {
                 Text = string.IsNullOrWhiteSpace(entry.Label) ? zone.StandardName : entry.Label,
-                FontSize = 13, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White,
+                FontSize = 13, FontWeight = FontWeights.SemiBold, Foreground = IslandTheme.Ink,
                 HorizontalAlignment = HorizontalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis, Margin = new Thickness(4, 10, 4, 0),
             };
             var time = new TextBlock
             {
-                FontSize = 12.5, Foreground = new SolidColorBrush(Color.FromArgb(0xE6, 255, 255, 255)),
+                FontSize = 12.5, Foreground = IslandTheme.InkAlpha(0xE6),
                 HorizontalAlignment = HorizontalAlignment.Center,
             };
             var relative = new TextBlock
             {
-                FontSize = 11, Foreground = new SolidColorBrush(Color.FromArgb(0x80, 255, 255, 255)),
+                FontSize = 11, Foreground = IslandTheme.InkAlpha(0x80),
                 HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 1, 0, 0),
             };
 

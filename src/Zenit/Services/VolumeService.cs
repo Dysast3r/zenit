@@ -4,6 +4,11 @@ using Zenit.Interop;
 
 namespace Zenit.Services;
 
+public enum AudioOutputKind { Speakers, Headphones, Bluetooth, Display, Other }
+
+/// <summary>Una salida de audio (parlantes, audífonos, Bluetooth, monitor…).</summary>
+public sealed record AudioOutput(string Id, string Name, AudioOutputKind Kind, bool IsDefault);
+
 /// <summary>Volumen del sistema: avisa cuando cambia (para el indicador en pantalla) y permite ajustarlo.</summary>
 public sealed class VolumeService : IAudioEndpointVolumeCallback, IDisposable
 {
@@ -79,6 +84,19 @@ public sealed class VolumeService : IAudioEndpointVolumeCallback, IDisposable
         {
             Detach();
         }
+    }
+
+    /// <summary>Salidas de audio activas (parlantes, audífonos, Bluetooth…), con la predeterminada marcada.</summary>
+    public IReadOnlyList<AudioOutput> Outputs() => CoreAudio.ListOutputs();
+
+    /// <summary>Cambia la salida predeterminada de Windows y engancha el volumen a la nueva de inmediato.</summary>
+    public bool SelectOutput(string id)
+    {
+        if (!CoreAudio.SetDefaultOutput(id)) return false;
+        Attach();
+        var (level, muted) = Current;
+        Changed?.Invoke(level, muted);
+        return true;
     }
 
     int IAudioEndpointVolumeCallback.OnNotify(IntPtr notifyData)

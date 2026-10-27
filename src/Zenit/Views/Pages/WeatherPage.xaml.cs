@@ -25,9 +25,9 @@ public partial class WeatherPage : UserControl, IIslandPage
 
         for (var i = 0; i < HourColumns; i++)
         {
-            var hour = new TextBlock { FontSize = 11, FontWeight = FontWeights.SemiBold, Foreground = new SolidColorBrush(Color.FromArgb(0x99, 255, 255, 255)), HorizontalAlignment = HorizontalAlignment.Center };
+            var hour = new TextBlock { FontSize = 11, FontWeight = FontWeights.SemiBold, Foreground = IslandTheme.InkAlpha(0x99), HorizontalAlignment = HorizontalAlignment.Center };
             var glyph = new WeatherGlyph { Width = 26, Height = 26, Margin = new Thickness(0, 5, 0, 4) };
-            var temp = new TextBlock { FontSize = 13, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White, HorizontalAlignment = HorizontalAlignment.Center };
+            var temp = new TextBlock { FontSize = 13, FontWeight = FontWeights.SemiBold, Foreground = IslandTheme.Ink, HorizontalAlignment = HorizontalAlignment.Center };
             var column = new StackPanel { HorizontalAlignment = HorizontalAlignment.Center };
             column.Children.Add(hour);
             column.Children.Add(glyph);

@@ -10,7 +10,6 @@
         TextOptions.TextFormattingMode="Ideal">
 
   <Window.Resources>
-    <SolidColorBrush x:Key="Secondary" Color="#A3FFFFFF" />
 
     <Style x:Key="IslandButton" TargetType="Button">
       <Setter Property="Focusable" Value="False" />
@@ -25,7 +24,7 @@
                 <ScaleTransform x:Name="Scale" />
               </Grid.RenderTransform>
               <Ellipse x:Name="Halo" Width="{TemplateBinding Height}" Height="{TemplateBinding Height}"
-                       Fill="White" Opacity="0" />
+                       Fill="{DynamicResource Ink}" Opacity="0" />
               <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Grid>
             <ControlTemplate.Triggers>
@@ -80,7 +79,7 @@
     <Style x:Key="TimeText" TargetType="TextBlock">
       <Setter Property="FontSize" Value="11" />
       <Setter Property="FontWeight" Value="SemiBold" />
-      <Setter Property="Foreground" Value="{StaticResource Secondary}" />
+      <Setter Property="Foreground" Value="{DynamicResource InkA3}" />
       <Setter Property="VerticalAlignment" Value="Center" />
       <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
     </Style>
@@ -103,19 +102,19 @@
           MouseEnter="Island_MouseEnter" MouseLeave="Island_MouseLeave"
           MouseLeftButtonDown="Island_MouseLeftButtonDown" MouseMove="Island_MouseMove"
           MouseLeftButtonUp="Island_MouseLeftButtonUp" LostMouseCapture="Island_LostMouseCapture"
-          MouseRightButtonUp="Island_MouseRightButtonUp">
-      <Path x:Name="IslandFill" Fill="Black" />
+          MouseRightButtonDown="Island_MouseRightButtonDown" MouseRightButtonUp="Island_MouseRightButtonUp">
+      <Path x:Name="IslandFill" Fill="{DynamicResource IslandBackground}" />
 
       <Canvas x:Name="Stage">
 
         <!-- Reposo: hora, fecha, clima o moneda (configurable) -->
         <Grid x:Name="IdlePanel" Width="170" Height="32">
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock x:Name="IdleText" FontSize="13" FontWeight="SemiBold" Foreground="White"
+            <TextBlock x:Name="IdleText" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource Ink}"
                        VerticalAlignment="Center" Typography.NumeralAlignment="Tabular" />
-            <Ellipse x:Name="IdleDot" Width="3" Height="3" Fill="#66FFFFFF" Margin="8,0" VerticalAlignment="Center" />
+            <Ellipse x:Name="IdleDot" Width="3" Height="3" Fill="{DynamicResource Ink66}" Margin="8,0" VerticalAlignment="Center" />
             <c:WeatherGlyph x:Name="IdleGlyph" Width="17" Height="17" VerticalAlignment="Center" Margin="0,0,4,0" />
-            <TextBlock x:Name="IdleExtra" FontSize="13" FontWeight="SemiBold" Foreground="White"
+            <TextBlock x:Name="IdleExtra" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource Ink}"
                        VerticalAlignment="Center" Typography.NumeralAlignment="Tabular" />
           </StackPanel>
         </Grid>
@@ -123,21 +122,29 @@
         <!-- Compacta: carátula a la izquierda, contenido al centro (configurable), ecualizador a la derecha -->
         <Grid x:Name="CompactPanel" Width="284" Height="36">
           <Border x:Name="CompactArt" Width="24" Height="24" CornerRadius="7"
-                  HorizontalAlignment="Left" Margin="9,0,0,0" />
+                  HorizontalAlignment="Left" Margin="9,0,0,0" RenderTransformOrigin="0.5,0.5">
+            <Border.RenderTransform><ScaleTransform x:Name="CompactArtScale" /></Border.RenderTransform>
+          </Border>
+          <!-- Carátula anterior: se desvanece encima de la nueva al cambiar de canción -->
+          <Border x:Name="CompactArtPrevious" Width="24" Height="24" CornerRadius="7" Opacity="0" IsHitTestVisible="False"
+                  HorizontalAlignment="Left" Margin="9,0,0,0" RenderTransformOrigin="0.5,0.5"
+                  Visibility="{Binding Visibility, ElementName=CompactArt}">
+            <Border.RenderTransform><ScaleTransform /></Border.RenderTransform>
+          </Border>
           <!-- Centro: hora, fecha, temperatura o canción (en marquesina si no cabe) -->
           <!-- Un Canvas no recorta a sus hijos a su ancho: así el texto largo y su copia se dibujan completos -->
           <Canvas x:Name="CompactCenterHost" Width="176" Height="36" HorizontalAlignment="Center" ClipToBounds="True" Visibility="Collapsed">
             <StackPanel x:Name="CompactCenterContent" Orientation="Horizontal">
               <StackPanel.RenderTransform><TranslateTransform x:Name="CompactCenterShift" /></StackPanel.RenderTransform>
               <c:WeatherGlyph x:Name="CompactCenterGlyph" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,5,0" Visibility="Collapsed" />
-              <TextBlock x:Name="CompactCenterText" FontSize="13" FontWeight="SemiBold" Foreground="White"
+              <TextBlock x:Name="CompactCenterText" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource Ink}"
                          VerticalAlignment="Center" Typography.NumeralAlignment="Tabular" />
-              <TextBlock x:Name="CompactCenterEcho" FontSize="13" FontWeight="SemiBold" Foreground="White"
+              <TextBlock x:Name="CompactCenterEcho" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource Ink}"
                          VerticalAlignment="Center" Margin="36,0,0,0" Visibility="Collapsed" />
             </StackPanel>
           </Canvas>
           <!-- Letra en curso, si la última página abierta fue Letras -->
-          <TextBlock x:Name="CompactLyric" MaxWidth="290" FontSize="12.5" FontWeight="SemiBold" Foreground="White"
+          <TextBlock x:Name="CompactLyric" MaxWidth="290" FontSize="12.5" FontWeight="SemiBold" Foreground="{DynamicResource Ink}"
                      HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
                      TextTrimming="CharacterEllipsis" Visibility="Collapsed">
             <TextBlock.RenderTransform><TranslateTransform x:Name="CompactLyricShift" /></TextBlock.RenderTransform>
@@ -163,19 +170,19 @@
         <Grid x:Name="PeekPanel" Width="372" Height="72">
           <Border x:Name="PeekArt" Width="48" Height="48" CornerRadius="12"
                   HorizontalAlignment="Left" Margin="12,0,0,0">
-            <TextBlock x:Name="PeekGlyph" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="20" Foreground="White"
+            <TextBlock x:Name="PeekGlyph" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="20" Foreground="{DynamicResource Ink}"
                        HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" />
           </Border>
           <StackPanel Margin="72,0,116,0" VerticalAlignment="Center">
-            <TextBlock x:Name="PeekTitle" FontSize="14.5" FontWeight="SemiBold" Foreground="White" TextTrimming="CharacterEllipsis" />
-            <TextBlock x:Name="PeekArtist" FontSize="12.5" Foreground="{StaticResource Secondary}" TextTrimming="CharacterEllipsis" Margin="0,1,0,0" />
+            <TextBlock x:Name="PeekTitle" FontSize="14.5" FontWeight="SemiBold" Foreground="{DynamicResource Ink}" TextTrimming="CharacterEllipsis" />
+            <TextBlock x:Name="PeekArtist" FontSize="12.5" Foreground="{DynamicResource InkA3}" TextTrimming="CharacterEllipsis" Margin="0,1,0,0" />
           </StackPanel>
           <c:EqualizerBars x:Name="PeekBars" Width="22" Height="16"
                            HorizontalAlignment="Right" Margin="0,0,20,0" />
           <!-- Barra para avisos con nivel (volumen, batería) -->
           <Grid x:Name="PeekProgress" Width="84" Height="6" HorizontalAlignment="Right" Margin="0,0,22,0" Visibility="Collapsed">
-            <Border CornerRadius="3" Background="#33FFFFFF" />
-            <Border x:Name="PeekProgressFill" CornerRadius="3" Background="White" HorizontalAlignment="Left" Width="0" />
+            <Border CornerRadius="3" Background="{DynamicResource Ink33}" />
+            <Border x:Name="PeekProgressFill" CornerRadius="3" Background="{DynamicResource Ink}" HorizontalAlignment="Left" Width="0" />
           </Grid>
         </Grid>
 
@@ -199,8 +206,8 @@
                 <Rectangle IsHitTestVisible="False" Margin="0,-24">
                   <Rectangle.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                      <GradientStop Color="#33000000" Offset="0" />
-                      <GradientStop Color="#B3000000" Offset="1" />
+                      <GradientStop Color="{DynamicResource Shade33}" Offset="0" />
+                      <GradientStop Color="{DynamicResource ShadeB3}" Offset="1" />
                     </LinearGradientBrush>
                   </Rectangle.Fill>
                 </Rectangle>
@@ -211,12 +218,16 @@
                     <Border.RenderTransform>
                       <ScaleTransform x:Name="ArtScale" />
                     </Border.RenderTransform>
-                    <TextBlock x:Name="ArtPlaceholder" Text="♪" FontSize="28" Foreground="#CCFFFFFF"
+                    <TextBlock x:Name="ArtPlaceholder" Text="♪" FontSize="28" Foreground="{DynamicResource InkCC}"
                                HorizontalAlignment="Center" VerticalAlignment="Center" />
                   </Border>
+                  <Border x:Name="ExpandedArtPrevious" Width="62" Height="62" CornerRadius="15" Opacity="0" IsHitTestVisible="False"
+                          HorizontalAlignment="Left" RenderTransformOrigin="0.5,0.5">
+                    <Border.RenderTransform><ScaleTransform /></Border.RenderTransform>
+                  </Border>
                   <StackPanel Margin="78,0,44,0" VerticalAlignment="Center">
-                    <TextBlock x:Name="TitleText" FontSize="15.5" FontWeight="SemiBold" Foreground="White" TextTrimming="CharacterEllipsis" />
-                    <TextBlock x:Name="ArtistText" FontSize="13" Foreground="{StaticResource Secondary}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                    <TextBlock x:Name="TitleText" FontSize="15.5" FontWeight="SemiBold" Foreground="{DynamicResource Ink}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="ArtistText" FontSize="13" Foreground="{DynamicResource InkA3}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
                   </StackPanel>
                   <c:EqualizerBars x:Name="ExpandedBars" Width="24" Height="20"
                                    HorizontalAlignment="Right" VerticalAlignment="Center" />
@@ -228,8 +239,8 @@
                         MouseEnter="SeekTrack_MouseEnter" MouseLeave="SeekTrack_MouseLeave"
                         MouseLeftButtonDown="SeekTrack_MouseLeftButtonDown" MouseMove="SeekTrack_MouseMove"
                         MouseLeftButtonUp="SeekTrack_MouseLeftButtonUp">
-                    <Border x:Name="TrackBackground" Height="5" CornerRadius="2.5" Background="#33FFFFFF" VerticalAlignment="Center" />
-                    <Border x:Name="TrackFill" Height="5" CornerRadius="2.5" Background="White"
+                    <Border x:Name="TrackBackground" Height="5" CornerRadius="2.5" Background="{DynamicResource Ink33}" VerticalAlignment="Center" />
+                    <Border x:Name="TrackFill" Height="5" CornerRadius="2.5" Background="{DynamicResource Ink}"
                             HorizontalAlignment="Left" VerticalAlignment="Center" Width="0" />
                   </Grid>
                   <TextBlock x:Name="RemainingText" Style="{StaticResource TimeText}" HorizontalAlignment="Right" Text="-0:00" />
@@ -237,24 +248,24 @@
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,134,0,0">
                   <Button x:Name="PreviousButton" Style="{StaticResource IslandButton}" Click="PreviousButton_Click" VerticalAlignment="Center">
-                    <Path Data="M 23,3 L 23,17 L 12,10 Z M 12,3 L 12,17 L 1,10 Z" Fill="White" Stroke="White"
+                    <Path Data="M 23,3 L 23,17 L 12,10 Z M 12,3 L 12,17 L 1,10 Z" Fill="{DynamicResource Ink}" Stroke="{DynamicResource Ink}"
                           StrokeThickness="1.6" StrokeLineJoin="Round" Width="24" Height="20" />
                   </Button>
                   <Button x:Name="PlayButton" Style="{StaticResource IslandButton}" Click="PlayButton_Click"
                           Width="68" Height="52" Margin="14,0">
                     <Grid Width="22" Height="24">
-                      <Path x:Name="PlayGlyph" Data="M 3,1.5 L 3,22.5 L 21,12 Z" Fill="White" Stroke="White"
+                      <Path x:Name="PlayGlyph" Data="M 3,1.5 L 3,22.5 L 21,12 Z" Fill="{DynamicResource Ink}" Stroke="{DynamicResource Ink}"
                             StrokeThickness="2" StrokeLineJoin="Round" RenderTransformOrigin="0.5,0.5">
                         <Path.RenderTransform><ScaleTransform /></Path.RenderTransform>
                       </Path>
-                      <Path x:Name="PauseGlyph" Data="M 3,2 L 8,2 L 8,22 L 3,22 Z M 14,2 L 19,2 L 19,22 L 14,22 Z" Fill="White" Stroke="White"
+                      <Path x:Name="PauseGlyph" Data="M 3,2 L 8,2 L 8,22 L 3,22 Z M 14,2 L 19,2 L 19,22 L 14,22 Z" Fill="{DynamicResource Ink}" Stroke="{DynamicResource Ink}"
                             StrokeThickness="1.6" StrokeLineJoin="Round" RenderTransformOrigin="0.5,0.5" Opacity="0">
                         <Path.RenderTransform><ScaleTransform /></Path.RenderTransform>
                       </Path>
                     </Grid>
                   </Button>
                   <Button x:Name="NextButton" Style="{StaticResource IslandButton}" Click="NextButton_Click" VerticalAlignment="Center">
-                    <Path Data="M 1,3 L 1,17 L 12,10 Z M 12,3 L 12,17 L 23,10 Z" Fill="White" Stroke="White"
+                    <Path Data="M 1,3 L 1,17 L 12,10 Z M 12,3 L 12,17 L 23,10 Z" Fill="{DynamicResource Ink}" Stroke="{DynamicResource Ink}"
                           StrokeThickness="1.6" StrokeLineJoin="Round" Width="24" Height="20" />
                   </Button>
                 </StackPanel>
@@ -269,13 +280,13 @@
           <!-- Volumen con la isla expandida: reemplaza un momento a los puntos de página -->
           <StackPanel x:Name="ExpandedVolume" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom"
                       Margin="0,0,0,5" IsHitTestVisible="False" Opacity="0">
-            <TextBlock x:Name="ExpandedVolumeGlyph" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="11" Foreground="White"
+            <TextBlock x:Name="ExpandedVolumeGlyph" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="11" Foreground="{DynamicResource Ink}"
                        VerticalAlignment="Center" Margin="0,0,8,0" />
             <Grid x:Name="ExpandedVolumeTrack" Width="120" Height="4" VerticalAlignment="Center">
-              <Border CornerRadius="2" Background="#33FFFFFF" />
-              <Border x:Name="ExpandedVolumeFill" CornerRadius="2" Background="White" HorizontalAlignment="Left" Width="0" />
+              <Border CornerRadius="2" Background="{DynamicResource Ink33}" />
+              <Border x:Name="ExpandedVolumeFill" CornerRadius="2" Background="{DynamicResource Ink}" HorizontalAlignment="Left" Width="0" />
             </Grid>
-            <TextBlock x:Name="ExpandedVolumeText" FontSize="11" FontWeight="SemiBold" Foreground="White" Width="32"
+            <TextBlock x:Name="ExpandedVolumeText" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Ink}" Width="32"
                        Typography.NumeralAlignment="Tabular" VerticalAlignment="Center" Margin="8,0,0,0" />
           </StackPanel>
         </Grid>

@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Zenit.Controls;
 using Zenit.Services;
 
 namespace Zenit.Views.Pages;
@@ -10,8 +11,10 @@ public partial class VolumePage : UserControl, IIslandPage
 {
     private const int MaxApps = 3;
 
-    private static readonly Brush Muted = Frozen(Color.FromArgb(0x8C, 255, 255, 255));
-    private static readonly Brush IconBackground = Frozen(Color.FromArgb(0x26, 255, 255, 255));
+    private static readonly Brush Muted = IslandTheme.InkAlpha(0x8C);
+    private static readonly Brush IconBackground = IslandTheme.InkAlpha(0x26);
+    private static readonly Brush OutputSelected = IslandTheme.InkAlpha(0x33);
+    private static readonly Brush OutputIdle = IslandTheme.InkAlpha(0x14);
     private static readonly FontFamily GlyphFont = new("Segoe Fluent Icons, Segoe MDL2 Assets");
 
     /// <summary>Una fila: sus controles son fijos; lo que cambia es a qué salida (el sistema o una app) apuntan.</summary>
@@ -48,7 +51,91 @@ public partial class VolumePage : UserControl, IIslandPage
         InitializeComponent();
         // Solo mientras está en una isla abierta: así una isla cerrada no queda enganchada al servicio.
         Loaded += (_, _) => _volume.Changed += OnVolumeChanged;
-        Unloaded += (_, _) => _volume.Changed -= OnVolumeChanged;
+        Unloaded += (_, _) =>
+        {
+            _volume.Changed -= OnVolumeChanged;
+            ShowOutputs(false);
+        };
+    }
+
+    private bool _choosingOutput;
+
+    private static string GlyphOf(AudioOutputKind kind) => kind switch
+    {
+        AudioOutputKind.Speakers => "",
+        AudioOutputKind.Headphones => "",
+        AudioOutputKind.Bluetooth => "",
+        AudioOutputKind.Display => "",
+        _ => "",
+    };
+
+    /// <summary>"Altavoces (Realtek(R) Audio)" → "Altavoces": el adaptador entre paréntesis sobra en el chip.</summary>
+    private static string ShortName(string name)
+    {
+        var cut = name.IndexOf(" (", StringComparison.Ordinal);
+        return cut > 0 ? name[..cut] : name;
+    }
+
+    /// <summary>Chip de la salida actual; solo se puede tocar si hay más de una.</summary>
+    private void RefreshOutput(IReadOnlyList<AudioOutput> outputs)
+    {
+        var current = outputs.FirstOrDefault(o => o.IsDefault);
+        OutputButton.Visibility = current is null ? Visibility.Collapsed : Visibility.Visible;
+        if (current is null) return;
+        OutputGlyph.Text = GlyphOf(current.Kind);
+        OutputName.Text = ShortName(current.Name);
+        OutputButton.ToolTip = current.Name;
+        var choice = outputs.Count > 1;
+        OutputChevron.Visibility = choice ? Visibility.Visible : Visibility.Collapsed;
+        OutputButton.IsHitTestVisible = choice;
+    }
+
+    private void OutputButton_Click(object sender, RoutedEventArgs e) => ShowOutputs(!_choosingOutput);
+
+    private void ShowOutputs(bool show)
+    {
+        _choosingOutput = show;
+        Rows.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
+        OutputsHost.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+        OutputChevron.Text = show ? "" : "";
+        if (show) BuildOutputs(_volume.Outputs());
+    }
+
+    private void BuildOutputs(IReadOnlyList<AudioOutput> outputs)
+    {
+        OutputsList.Children.Clear();
+        foreach (var output in outputs)
+        {
+            var row = new Grid { Width = 366 };
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(28) });
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            row.Children.Add(new TextBlock { Text = GlyphOf(output.Kind), FontFamily = GlyphFont, FontSize = 14, VerticalAlignment = VerticalAlignment.Center });
+            var name = new TextBlock { Text = output.Name, FontSize = 12.5, TextTrimming = TextTrimming.CharacterEllipsis, VerticalAlignment = VerticalAlignment.Center };
+            Grid.SetColumn(name, 1);
+            row.Children.Add(name);
+            if (output.IsDefault)
+            {
+                var check = new TextBlock { Text = "", FontFamily = GlyphFont, FontSize = 12, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0) };
+                Grid.SetColumn(check, 2);
+                row.Children.Add(check);
+            }
+
+            var button = new Button
+            {
+                Style = (Style)FindResource("ChipButton"), Content = row, ToolTip = output.Name,
+                Padding = new Thickness(12, 7, 12, 7), Margin = new Thickness(0, 0, 0, 4),
+                Background = output.IsDefault ? OutputSelected : OutputIdle,
+            };
+            button.Click += (_, _) =>
+            {
+                if (!output.IsDefault) _volume.SelectOutput(output.Id);
+                ShowOutputs(false);
+                RefreshOutput(_volume.Outputs());
+                Sync();
+            };
+            OutputsList.Children.Add(button);
+        }
     }
 
     private void OnVolumeChanged(float level, bool muted) => Sync();
@@ -61,6 +148,7 @@ public partial class VolumePage : UserControl, IIslandPage
         if (DateTime.UtcNow - _lastScan > TimeSpan.FromSeconds(3) && !_rows.Any(r => r.Slider.IsMouseCaptureWithin))
         {
             _lastScan = DateTime.UtcNow;
+            RefreshOutput(_volume.Outputs());
             var apps = _sessions.Refresh().Take(MaxApps).ToList();
             var layout = string.Join('|', apps.Select(a => $"{a.ProcessId}:{a.Name}"));
             if (layout != _layout || _rows.Count == 0)
@@ -106,13 +194,13 @@ public partial class VolumePage : UserControl, IIslandPage
             Width = 26, Height = 26, CornerRadius = new CornerRadius(7),
             Background = icon is null ? IconBackground : Brushes.Transparent,
             Child = icon is null
-                ? new TextBlock { Text = fallbackGlyph, FontFamily = GlyphFont, FontSize = 13, Foreground = Brushes.White, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }
+                ? new TextBlock { Text = fallbackGlyph, FontFamily = GlyphFont, FontSize = 13, Foreground = IslandTheme.Ink, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }
                 : new Image { Source = icon, Width = 22, Height = 22 },
         };
 
         var label = new TextBlock
         {
-            Text = name, Width = 104, FontSize = 12.5, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White,
+            Text = name, Width = 104, FontSize = 12.5, FontWeight = FontWeights.SemiBold, Foreground = IslandTheme.Ink,
             TextTrimming = TextTrimming.CharacterEllipsis, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(10, 0, 10, 0),
         };
 
@@ -160,7 +248,7 @@ public partial class VolumePage : UserControl, IIslandPage
                 if (!row.Slider.IsMouseCaptureWithin) row.Slider.Value = row.Read();
                 var muted = row.ReadMuted();
                 row.Mute.Content = muted ? "" : "";
-                row.Mute.Foreground = muted ? Muted : Brushes.White;
+                row.Mute.Foreground = muted ? Muted : IslandTheme.Ink;
                 row.Slider.Opacity = muted ? 0.4 : 1;
             }
         }

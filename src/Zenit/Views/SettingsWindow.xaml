@@ -284,6 +284,11 @@
             </RadioButton>
           </UniformGrid>
 
+          <c:SettingCard Glyph="&#xE793;" Header="{s:Tr Es='Tema de la isla', En='Island theme'}"
+                         Description="{s:Tr Es='Oscuro, claro o el modo de las aplicaciones de Windows. Al cambiarlo, la app se reinicia en un segundo.', En='Dark, light or the Windows app mode. Changing it restarts the app in a second.'}">
+            <ComboBox x:Name="ThemeCombo" Width="230" SelectionChanged="Theme_Changed" />
+          </c:SettingCard>
+
           <c:SettingCard Glyph="&#xE7F4;" Header="{s:Tr Es='Contenido en reposo', En='Idle content'}"
                          Description="{s:Tr Es='Qué muestra la isla cuando no suena música', En='What the island shows when no music is playing'}">
             <ComboBox x:Name="IdleCombo" Width="230" SelectionChanged="Any_Changed" />
@@ -327,6 +332,10 @@
               <TextBlock x:Name="OffsetLabel" Width="48" TextAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource Muted}" />
             </StackPanel>
           </c:SettingCard>
+          <c:SettingCard Glyph="&#xE7C2;" Header="{s:Tr Es='Posición en el borde', En='Position along the edge'}"
+                         Description="{s:Tr Es='Mantén el clic derecho sobre la isla y arrástrala para moverla', En='Hold the right mouse button on the island and drag it to move it'}">
+            <Button x:Name="CenterIslandButton" Content="{s:Tr Es='Centrar', En='Center'}" Padding="18,6" Click="CenterIsland_Click" />
+          </c:SettingCard>
           <c:SettingCard Glyph="&#xE790;" Header="{s:Tr Es='Color de acento', En='Accent color'}"
                          Description="{s:Tr Es='Ecualizador y resplandor. Automático toma el color de la carátula', En='Equalizer and glow. Automatic uses the album art color'}">
             <StackPanel Orientation="Horizontal">
@@ -334,6 +343,27 @@
               <StackPanel x:Name="Swatches" Orientation="Horizontal" Margin="10,0,0,0" />
             </StackPanel>
           </c:SettingCard>
+          <c:SettingCard Glyph="&#xE706;" Header="{s:Tr Es='Borde neón', En='Neon edge'}"
+                         Description="{s:Tr Es='Resplandor del color de acento alrededor de la isla', En='Accent-colored glow around the island'}">
+            <CheckBox x:Name="GlowSwitch" Style="{StaticResource Switch}" Click="Any_Changed" />
+          </c:SettingCard>
+          <StackPanel x:Name="GlowOptions">
+            <c:SettingCard Glyph="&#xE790;" Header="{s:Tr Es='Tono del neón', En='Neon tone'}"
+                           Description="{s:Tr Es='El color de acento, uno a tu gusto o un degradado de dos', En='The accent color, one of your choice or a two-color gradient'}">
+              <ComboBox x:Name="GlowToneCombo" Width="230" SelectionChanged="Any_Changed" />
+            </c:SettingCard>
+            <c:SettingCard x:Name="GlowColorsCard" Glyph="&#xE771;" Header="{s:Tr Es='Colores del neón', En='Neon colors'}"
+                           Description="{s:Tr Es='La segunda fila es el otro extremo del degradado', En='The second row is the other end of the gradient'}">
+              <StackPanel>
+                <StackPanel x:Name="GlowSwatches" Orientation="Horizontal" />
+                <StackPanel x:Name="GlowSwatches2" Orientation="Horizontal" Margin="0,8,0,0" />
+              </StackPanel>
+            </c:SettingCard>
+            <c:SettingCard Glyph="&#xE768;" Header="{s:Tr Es='Animación del neón', En='Neon animation'}"
+                           Description="{s:Tr Es='Pulso, giro alrededor del borde o arcoíris', En='Pulse, spin around the edge or rainbow'}">
+              <ComboBox x:Name="GlowAnimationCombo" Width="230" SelectionChanged="Any_Changed" />
+            </c:SettingCard>
+          </StackPanel>
 
           <c:SettingCard Glyph="&#xE7F4;" Header="{s:Tr Es='Pantalla', En='Display'}"
                          Description="{s:Tr Es='En qué monitor aparece la isla, o en todos a la vez', En='Which monitor shows the island, or all of them at once'}">

@@ -4,10 +4,10 @@
              Width="430" Height="204">
   <Grid>
     <Grid Margin="24,18,24,0" VerticalAlignment="Top">
-      <TextBlock x:Name="HeaderText" FontSize="13.5" FontWeight="SemiBold" Foreground="White" />
-      <TextBlock x:Name="DateText" FontSize="11" Foreground="#73FFFFFF" HorizontalAlignment="Right" VerticalAlignment="Center" />
+      <TextBlock x:Name="HeaderText" FontSize="13.5" FontWeight="SemiBold" Foreground="{DynamicResource Ink}" />
+      <TextBlock x:Name="DateText" FontSize="11" Foreground="{DynamicResource Ink73}" HorizontalAlignment="Right" VerticalAlignment="Center" />
     </Grid>
     <UniformGrid x:Name="Tiles" Rows="1" Margin="18,46,18,28" />
-    <TextBlock x:Name="StatusText" FontSize="13" Foreground="#A3FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" />
+    <TextBlock x:Name="StatusText" FontSize="13" Foreground="{DynamicResource InkA3}" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" />
   </Grid>
 </UserControl>

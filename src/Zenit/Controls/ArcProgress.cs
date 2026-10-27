@@ -18,7 +18,7 @@ public sealed class ArcProgress : FrameworkElement
         nameof(Thickness), typeof(double), typeof(ArcProgress),
         new FrameworkPropertyMetadata(6.0, FrameworkPropertyMetadataOptions.AffectsRender));
 
-    private static readonly Brush Track = Freeze(new SolidColorBrush(Color.FromArgb(0x2A, 255, 255, 255)));
+    private static readonly Brush Track = Freeze(IslandTheme.InkAlpha(0x2A));
 
     public double Progress
     {

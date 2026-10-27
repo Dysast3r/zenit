@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Zenit.Controls;
 using Zenit.Services;
 
 namespace Zenit.Views.Pages;
@@ -8,8 +9,8 @@ namespace Zenit.Views.Pages;
 /// <summary>Hasta cuatro widgets de la comunidad como tarjetas.</summary>
 public partial class WidgetsPage : UserControl, IIslandPage
 {
-    private static readonly Brush TileBackground = Frozen(Color.FromArgb(0x14, 255, 255, 255));
-    private static readonly Brush Muted = Frozen(Color.FromArgb(0x8C, 255, 255, 255));
+    private static readonly Brush TileBackground = IslandTheme.InkAlpha(0x14);
+    private static readonly Brush Muted = IslandTheme.InkAlpha(0x8C);
 
     private readonly WidgetService _widgets;
     private bool _dirty = true;
@@ -54,7 +55,7 @@ public partial class WidgetsPage : UserControl, IIslandPage
         header.Children.Add(badge);
         header.Children.Add(new TextBlock
         {
-            Text = widget.Definition.Name, FontSize = 12.5, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White,
+            Text = widget.Definition.Name, FontSize = 12.5, FontWeight = FontWeights.SemiBold, Foreground = IslandTheme.Ink,
             VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0), TextTrimming = TextTrimming.CharacterEllipsis, MaxWidth = 64,
         });
 
@@ -79,7 +80,7 @@ public partial class WidgetsPage : UserControl, IIslandPage
                 Child = new TextBlock
                 {
                     Text = main.Text, FontFamily = new FontFamily("Segoe UI Variable Display, Segoe UI"),
-                    FontSize = 22, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White,
+                    FontSize = 22, FontWeight = FontWeights.SemiBold, Foreground = IslandTheme.Ink,
                 },
             });
             stack.Children.Add(new TextBlock { Text = main.Label, FontSize = 10.5, Foreground = Muted });
@@ -88,7 +89,7 @@ public partial class WidgetsPage : UserControl, IIslandPage
                 stack.Children.Add(new TextBlock
                 {
                     // Sin etiqueta, el valor usa todo el ancho de la tarjeta (útil para nombres largos).
-                    Text = extra.Label.Length > 0 ? $"{extra.Label}  {extra.Text}" : extra.Text, FontSize = 11, Foreground = Brushes.White,
+                    Text = extra.Label.Length > 0 ? $"{extra.Label}  {extra.Text}" : extra.Text, FontSize = 11, Foreground = IslandTheme.Ink,
                     Margin = new Thickness(0, 3, 0, 0), TextTrimming = TextTrimming.CharacterEllipsis,
                 });
             }

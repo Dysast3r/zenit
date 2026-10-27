@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Zenit.Controls;
 using Zenit.Services;
 
 namespace Zenit.Views.Pages;
@@ -10,8 +11,8 @@ public partial class CurrencyPage : UserControl, IIslandPage
 {
     private static readonly Brush Up = Frozen(Color.FromRgb(0x34, 0xD3, 0x99));
     private static readonly Brush Down = Frozen(Color.FromRgb(0xF8, 0x71, 0x71));
-    private static readonly Brush Muted = Frozen(Color.FromArgb(0x8C, 255, 255, 255));
-    private static readonly Brush TileBackground = Frozen(Color.FromArgb(0x14, 255, 255, 255));
+    private static readonly Brush Muted = IslandTheme.InkAlpha(0x8C);
+    private static readonly Brush TileBackground = IslandTheme.InkAlpha(0x14);
 
     private readonly CurrencyService _currency;
     private CurrencyReport? _shown;
@@ -62,7 +63,7 @@ public partial class CurrencyPage : UserControl, IIslandPage
         header.Children.Add(Badge(quote.Code, 18, 9));
         header.Children.Add(new TextBlock
         {
-            Text = quote.Code.ToUpperInvariant(), FontSize = 11.5, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White,
+            Text = quote.Code.ToUpperInvariant(), FontSize = 11.5, FontWeight = FontWeights.SemiBold, Foreground = IslandTheme.Ink,
             VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0, 0, 0),
         });
 
@@ -74,7 +75,7 @@ public partial class CurrencyPage : UserControl, IIslandPage
             {
                 Text = CurrencyService.FormatValue(quote.Value),
                 FontFamily = new FontFamily("Segoe UI Variable Display, Segoe UI"),
-                FontSize = 16, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White,
+                FontSize = 16, FontWeight = FontWeights.SemiBold, Foreground = IslandTheme.Ink,
             },
         };
 
@@ -130,7 +131,7 @@ public partial class CurrencyPage : UserControl, IIslandPage
         header.Children.Add(Badge(quote.Code, 26, 12));
         header.Children.Add(new TextBlock
         {
-            Text = code, FontSize = 13, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White,
+            Text = code, FontSize = 13, FontWeight = FontWeights.SemiBold, Foreground = IslandTheme.Ink,
             VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0),
         });
 
@@ -143,7 +144,7 @@ public partial class CurrencyPage : UserControl, IIslandPage
             {
                 Text = CurrencyService.FormatValue(quote.Value),
                 FontFamily = new FontFamily("Segoe UI Variable Display, Segoe UI"),
-                FontSize = 22, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White,
+                FontSize = 22, FontWeight = FontWeights.SemiBold, Foreground = IslandTheme.Ink,
             },
         };
 

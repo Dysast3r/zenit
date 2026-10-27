@@ -3,19 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Width="430" Height="204">
   <Grid ClipToBounds="True">
-    <TextBlock x:Name="HeaderText" FontSize="11.5" FontWeight="SemiBold" Foreground="#80FFFFFF"
+    <TextBlock x:Name="HeaderText" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource Ink80}"
                Margin="26,16,26,0" VerticalAlignment="Top" TextTrimming="CharacterEllipsis" />
 
     <StackPanel x:Name="LinesPanel" VerticalAlignment="Center" Margin="26,10,26,8">
       <StackPanel.RenderTransform><TranslateTransform x:Name="LinesShift" /></StackPanel.RenderTransform>
-      <TextBlock x:Name="PreviousLine" FontSize="14" Foreground="#4DFFFFFF" TextTrimming="CharacterEllipsis" />
+      <TextBlock x:Name="PreviousLine" FontSize="14" Foreground="{DynamicResource Ink4D}" TextTrimming="CharacterEllipsis" />
       <TextBlock x:Name="CurrentLine" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="21" FontWeight="Bold"
-                 Foreground="White" TextWrapping="Wrap" MaxHeight="58" TextTrimming="CharacterEllipsis" Margin="0,6" />
-      <TextBlock x:Name="NextLine" FontSize="14" Foreground="#73FFFFFF" TextTrimming="CharacterEllipsis" />
+                 Foreground="{DynamicResource Ink}" TextWrapping="Wrap" MaxHeight="58" TextTrimming="CharacterEllipsis" Margin="0,6" />
+      <TextBlock x:Name="NextLine" FontSize="14" Foreground="{DynamicResource Ink73}" TextTrimming="CharacterEllipsis" />
     </StackPanel>
 
-    <TextBlock x:Name="StatusText" FontSize="13" Foreground="#A3FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"
+    <TextBlock x:Name="StatusText" FontSize="13" Foreground="{DynamicResource InkA3}" HorizontalAlignment="Center" VerticalAlignment="Center"
                TextAlignment="Center" Visibility="Collapsed" />
-    <TextBlock Text="LRCLIB" FontSize="9.5" Foreground="#40FFFFFF" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,24,10" />
+    <TextBlock Text="LRCLIB" FontSize="9.5" Foreground="{DynamicResource Ink40}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,24,10" />
   </Grid>
 </UserControl>

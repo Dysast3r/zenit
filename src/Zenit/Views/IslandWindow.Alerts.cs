@@ -66,8 +66,13 @@ public partial class IslandWindow
         var stopwatch = _timer.Mode == ClockTool.Stopwatch;
         CompactTimerText.Text = TimerService.Format(stopwatch ? _timer.Elapsed : _timer.Remaining);
         CompactTimerGlyph.Text = CompactTimerIconGlyph.Text = TimerGlyph;
-        CompactTimerText.Foreground = CompactTimerGlyph.Foreground = stopwatch ? Green : Orange;
-        CompactTimerIconCircle.Fill = stopwatch ? Green : Orange;
+        var color = _timer.Mode switch
+        {
+            ClockTool.Stopwatch => Green,
+            ClockTool.Pomodoro => _timer.Phase == PomodoroPhase.Focus ? Red : Green,
+            _ => Orange,
+        };
+        CompactTimerText.Foreground = CompactTimerGlyph.Foreground = CompactTimerIconCircle.Fill = color;
     }
 
     private const string TimerGlyph = "", CalendarGlyph = "";
@@ -204,9 +209,25 @@ public partial class IslandWindow
     }
 
     private void OnTimerCompleted()
-        => ShowAlert(new IslandAlert("timer", Strings.T("¡Tiempo!", "Time's up!"),
+    {
+        if (_timer.Mode == ClockTool.Pomodoro)
+        {
+            // La fase siguiente ya está lista: el aviso dice qué viene, y un clic abre la página para empezarla.
+            var focusDone = _timer.CompletedPhase == PomodoroPhase.Focus;
+            var next = Strings.F("{0} min", "{0} min", (int)TimerService.DurationOf(_timer.Phase).TotalMinutes);
+            ShowAlert(new IslandAlert("timer",
+                focusDone ? Strings.T("¡Pomodoro completado!", "Pomodoro done!") : Strings.T("Fin del descanso", "Break's over"),
+                focusDone
+                    ? Strings.F("Toma un descanso de {0}", "Take a {0} break", next)
+                    : Strings.F("Siguiente: {0} de enfoque", "Next: {0} of focus", next),
+                6, Glyph: "", GlyphBackground: focusDone ? Red : Green), force: true);
+            return;
+        }
+
+        ShowAlert(new IslandAlert("timer", Strings.T("¡Tiempo!", "Time's up!"),
             Strings.F("Temporizador de {0}", "{0} timer", TimerService.Format(_timer.Duration)), 6,
             Glyph: "", GlyphBackground: Orange), force: true);
+    }
 
     private const string VolumeGlyph = "", MutedGlyph = "";
 

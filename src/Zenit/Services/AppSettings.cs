@@ -6,6 +6,15 @@ using System.Text.Json.Serialization;
 namespace Zenit.Services;
 
 public enum IslandStyle { Notch, Floating }
+/// <summary>Tema de la isla: oscuro (negra), claro, o el modo de las aplicaciones de Windows.</summary>
+public enum IslandColorScheme { Dark, Light, System }
+
+/// <summary>Color del borde neón: el de acento, uno elegido o un degradado de dos.</summary>
+public enum GlowTone { Accent, Custom, Gradient }
+
+/// <summary>Animación del borde neón: quieto, pulso (respira), giro alrededor del borde o arcoíris.</summary>
+public enum GlowAnimation { None, Pulse, Spin, Rainbow }
+
 public enum IdleContent { Nothing, Time, Date, TimeAndWeather, Currency, Battery }
 public enum CompactCenter { Nothing, Time, Date, Temperature, Track }
 public enum PageKind { Music, Clock, Weather, Currency, WorldClock, Lyrics, Timer, Widgets, Volume }
@@ -88,6 +97,20 @@ public sealed class AppSettings
     public bool HideFromCapture { get; set; } = true;
     public double Scale { get; set; } = 1.0;
     public double TopOffset { get; set; }
+
+    public IslandColorScheme ColorScheme { get; set; } = IslandColorScheme.Dark;
+
+    /// <summary>Resplandor de neón del color de acento alrededor de la isla.</summary>
+    public bool ShowGlow { get; set; } = true;
+
+    public GlowTone GlowTone { get; set; } = GlowTone.Accent;
+    public string GlowColor { get; set; } = "#22D3EE";
+    public string GlowColor2 { get; set; } = "#EC4899";
+    public GlowAnimation GlowAnimation { get; set; } = GlowAnimation.None;
+
+    /// <summary>Centro de la isla a lo ancho de la pantalla: 0 = borde izquierdo, 0.5 = centro, 1 = borde derecho.</summary>
+    public double HorizontalPosition { get; set; } = 0.5;
+
     public AccentMode AccentMode { get; set; } = AccentMode.Artwork;
     public string CustomAccent { get; set; } = "#0A84FF";
     public IdleContent Idle { get; set; } = IdleContent.TimeAndWeather;
@@ -238,6 +261,11 @@ public sealed class AppSettings
 
         if (!Enum.IsDefined(Language)) Language = AppLanguage.System;
         if (!Enum.IsDefined(Style)) Style = IslandStyle.Notch;
+        if (!Enum.IsDefined(ColorScheme)) ColorScheme = IslandColorScheme.Dark;
+        if (!Enum.IsDefined(GlowTone)) GlowTone = GlowTone.Accent;
+        if (!Enum.IsDefined(GlowAnimation)) GlowAnimation = GlowAnimation.None;
+        GlowColor ??= "#22D3EE";
+        GlowColor2 ??= "#EC4899";
         if (!Enum.IsDefined(AccentMode)) AccentMode = AccentMode.Artwork;
         if (!Enum.IsDefined(Idle)) Idle = IdleContent.TimeAndWeather;
         if (!Enum.IsDefined(CompactCenter)) CompactCenter = CompactCenter.Time;
@@ -249,6 +277,7 @@ public sealed class AppSettings
 
         Scale = Math.Clamp(Scale, 0.6, 1.6);
         TopOffset = Math.Clamp(TopOffset, 0, 80);
+        HorizontalPosition = double.IsFinite(HorizontalPosition) ? Math.Clamp(HorizontalPosition, 0, 1) : 0.5;
         PeekSeconds = Math.Clamp(PeekSeconds, 1, 10);
         WeatherRefreshMinutes = Math.Clamp(WeatherRefreshMinutes, 5, 180);
         CurrencyRefreshMinutes = Math.Clamp(CurrencyRefreshMinutes, 15, 1440);

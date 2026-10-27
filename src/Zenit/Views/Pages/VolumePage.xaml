@@ -8,8 +8,21 @@
   </UserControl.Resources>
 
   <Grid>
-    <TextBlock Text="{s:Tr Es='Volumen', En='Volume'}" FontSize="13.5" FontWeight="SemiBold" Foreground="White" Margin="24,16,24,0" />
+    <TextBlock Text="{s:Tr Es='Volumen', En='Volume'}" FontSize="13.5" FontWeight="SemiBold" Foreground="{DynamicResource Ink}" Margin="24,16,24,0" />
+    <!-- Salida de audio actual: al tocarla se elige otra -->
+    <Button x:Name="OutputButton" Style="{StaticResource ChipButton}" HorizontalAlignment="Right" VerticalAlignment="Top"
+            Margin="0,12,20,0" Click="OutputButton_Click" Visibility="Collapsed">
+      <StackPanel Orientation="Horizontal">
+        <TextBlock x:Name="OutputGlyph" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center" Margin="0,0,7,0" />
+        <TextBlock x:Name="OutputName" MaxWidth="190" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+        <TextBlock x:Name="OutputChevron" Text="&#xE70D;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="9" VerticalAlignment="Center" Margin="7,1,0,0" />
+      </StackPanel>
+    </Button>
     <!-- Una fila por salida: el sistema primero y luego hasta tres aplicaciones con audio -->
     <StackPanel x:Name="Rows" Margin="20,42,20,26" />
+    <!-- Lista de salidas de audio, en lugar de los deslizadores mientras se elige -->
+    <ScrollViewer x:Name="OutputsHost" Margin="20,42,20,22" VerticalScrollBarVisibility="Hidden" Visibility="Collapsed">
+      <StackPanel x:Name="OutputsList" />
+    </ScrollViewer>
   </Grid>
 </UserControl>

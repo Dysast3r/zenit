@@ -10,12 +10,14 @@
 
   <Grid>
     <!-- Selector Temporizador / Cronómetro -->
-    <Border CornerRadius="13" Background="#1AFFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,14,0,0" Padding="2">
+    <Border CornerRadius="13" Background="{DynamicResource Ink1A}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,14,0,0" Padding="2">
       <StackPanel Orientation="Horizontal">
         <Button x:Name="TimerTab" Style="{StaticResource ChipButton}" Margin="0" Click="TimerTab_Click"
                 Content="{s:Tr Es='Temporizador', En='Timer'}" />
         <Button x:Name="StopwatchTab" Style="{StaticResource ChipButton}" Margin="0" Click="StopwatchTab_Click"
                 Content="{s:Tr Es='Cronómetro', En='Stopwatch'}" />
+        <Button x:Name="PomodoroTab" Style="{StaticResource ChipButton}" Margin="0" Click="PomodoroTab_Click"
+                Content="Pomodoro" />
       </StackPanel>
     </Border>
 
@@ -30,12 +32,29 @@
         <c:ArcProgress x:Name="Ring" Thickness="6" />
         <TextBlock x:Name="RingGlyph" Text="&#xE916;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="26"
                    Foreground="#FF9F0A" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <!-- Pomodoro: número del pomodoro en el ciclo (o una taza en el descanso) -->
+        <TextBlock x:Name="RingText" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource Ink}" Visibility="Collapsed"
+                   FontFamily="Segoe UI Variable Display, Segoe UI, Segoe UI Symbol"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" />
       </Grid>
 
       <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="18,0,8,0">
+        <TextBlock x:Name="PhaseText" FontSize="12" FontWeight="SemiBold" Visibility="Collapsed" />
         <TextBlock x:Name="TimeText" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="44" FontWeight="Light"
-                   Foreground="White" Typography.NumeralAlignment="Tabular" />
+                   Foreground="{DynamicResource Ink}" Typography.NumeralAlignment="Tabular" />
         <StackPanel x:Name="Presets" Orientation="Horizontal" Margin="0,4,0,0" />
+        <!-- Estadísticas: hoy, racha y los últimos 7 días -->
+        <Grid x:Name="PomodoroStats" Visibility="Collapsed" Margin="0,2,0,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock x:Name="TodayText" FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource Ink}" />
+            <TextBlock x:Name="StreakText" FontSize="10.5" Foreground="{DynamicResource Ink8C}" Margin="0,1,0,0" />
+          </StackPanel>
+          <StackPanel x:Name="WeekBars" Grid.Column="1" Orientation="Horizontal" Height="26" VerticalAlignment="Bottom" Margin="8,0,0,0" />
+        </Grid>
       </StackPanel>
 
       <StackPanel Grid.Column="2" VerticalAlignment="Center">

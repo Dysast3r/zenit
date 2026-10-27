@@ -36,7 +36,7 @@ public partial class IslandWindow : Window
     private static readonly Brush Green = Frozen(Color.FromRgb(0x30, 0xD1, 0x58));
     private static readonly Brush Red = Frozen(Color.FromRgb(0xFF, 0x45, 0x3A));
     private static readonly Brush Blue = Frozen(Color.FromRgb(0x0A, 0x84, 0xFF));
-    private static readonly Brush Subtle = Frozen(Color.FromArgb(0x33, 255, 255, 255));
+    private static readonly Brush Subtle = IslandTheme.InkAlpha(0x33);
 
     /// <summary>Aviso breve que la isla muestra creciendo un momento (canción, volumen, batería, temporizador, notificación).</summary>
     private sealed record IslandAlert(
@@ -60,7 +60,7 @@ public partial class IslandWindow : Window
     private readonly FrameworkElement[] _panels;
     private readonly Dictionary<FrameworkElement, bool> _panelShown = [];
     private readonly EqualizerBars[] _bars;
-    private readonly SolidColorBrush _accent = new(Colors.White);
+    private readonly SolidColorBrush _accent = new(IslandTheme.InkColor);
     private readonly Brush _fallbackArt;
     private Brush _artBrush;
 
@@ -99,6 +99,11 @@ public partial class IslandWindow : Window
     private readonly VelocityTracker _velocity = new();
     private bool _scrubbing;
     private double _scrubRatio;
+
+    // Mover la isla manteniendo el clic derecho (en píxeles físicos de pantalla).
+    private bool _rightDown, _moving;
+    private double _moveStartCursor, _moveStartCenter;
+    private double? _movePosition;
     private double _wheelAccumulator;
     private DateTime _lastWheelAction;
 
@@ -244,10 +249,16 @@ public partial class IslandWindow : Window
     /// <summary>Pantalla de esta isla: la fija (islas secundarias) o la elegida en los ajustes; null = la principal.</summary>
     private string? ScreenName => _fixedScreen ?? (_settings.Monitor is "" or "*" ? null : _settings.Monitor);
 
-    /// <summary>Centra la isla arriba del área de trabajo de su pantalla.</summary>
+    private Forms.Screen? CurrentScreen => Forms.Screen.AllScreens.FirstOrDefault(s => s.DeviceName == ScreenName) ?? Forms.Screen.PrimaryScreen;
+
+    /// <summary>
+    /// Pone la isla arriba del área de trabajo de su pantalla, en la posición horizontal elegida (centrada por defecto).
+    /// Mientras se arrastra con el clic derecho se usa la posición del arrastre.
+    /// </summary>
     private void PositionWindow()
     {
-        var screen = Forms.Screen.AllScreens.FirstOrDefault(s => s.DeviceName == ScreenName) ?? Forms.Screen.PrimaryScreen;
+        var position = _movePosition ?? _settings.HorizontalPosition;
+        var screen = CurrentScreen;
         if (_hwnd == 0 || screen is null)
         {
             var area = SystemParameters.WorkArea;
@@ -257,11 +268,17 @@ public partial class IslandWindow : Window
         }
 
         // En píxeles físicos: cada monitor puede tener su propia escala. Si la escala cambia al mover la
-        // ventana, WPF la redimensiona y WM_DPICHANGED vuelve a llamar aquí para recentrarla.
+        // ventana, WPF la redimensiona y WM_DPICHANGED vuelve a llamar aquí para reubicarla.
         var work = screen.WorkingArea;
         var scale = NativeMethods.DpiScaleAt(work.Left + work.Width / 2, work.Top + work.Height / 2);
         var width = (int)Math.Round(Width * scale);
-        NativeMethods.MoveWindow(_hwnd, work.Left + (work.Width - width) / 2, work.Top);
+
+        // La isla expandida siempre cabe entera: cerca de los bordes, el centro se detiene a media isla.
+        var half = (PageWidth / 2 + _ear + 6) * _settings.Scale * scale;
+        var center = work.Left + position * work.Width;
+        center = Math.Max(work.Left + half, Math.Min(work.Right - half, center));
+        if (work.Width < 2 * half) center = work.Left + work.Width / 2.0;
+        NativeMethods.MoveWindow(_hwnd, (int)Math.Round(center - width / 2.0), work.Top);
     }
 
     /// <summary>Aplica todos los ajustes en vivo; se llama al cargar y cada vez que cambian.</summary>
@@ -273,6 +290,11 @@ public partial class IslandWindow : Window
         _ear = s.Style == IslandStyle.Notch ? IslandShape.NotchEar : 0;
         var top = (s.Style == IslandStyle.Notch ? 0 : 8) + s.TopOffset;
         Island.Margin = GlowShape.Margin = new Thickness(0, top, 0, 0);
+        GlowShape.Visibility = s.ShowGlow ? Visibility.Visible : Visibility.Collapsed;
+        // Sin borde no hay nada que animar: así no queda un reloj corriendo de fondo.
+        GlowShape.Animation = s.ShowGlow ? s.GlowAnimation : GlowAnimation.None;
+        GlowShape.Gradient = s.GlowTone == GlowTone.Gradient;
+        if (TryParseColor(s.GlowColor2, out var second)) GlowShape.SecondColor = second;
 
         UserScale.ScaleX = UserScale.ScaleY = s.Scale;
         Width = BaseWindowWidth * s.Scale;
@@ -378,7 +400,7 @@ public partial class IslandWindow : Window
         {
             foreach (var _ in _pages)
             {
-                var dot = new Ellipse { Width = 6, Height = 6, Fill = Brushes.White, Margin = new Thickness(3, 0, 3, 0) };
+                var dot = new Ellipse { Width = 6, Height = 6, Fill = IslandTheme.Ink, Margin = new Thickness(3, 0, 3, 0) };
                 _dots.Add(dot);
                 DotsHost.Children.Add(dot);
             }
@@ -394,10 +416,13 @@ public partial class IslandWindow : Window
     {
         var color = _settings.AccentMode == AccentMode.Custom && TryParseColor(_settings.CustomAccent, out var custom)
             ? custom
-            : _snapshot?.Accent ?? Colors.White;
+            : _snapshot?.Accent ?? IslandTheme.InkColor;
         var animation = new ColorAnimation(color, TimeSpan.FromMilliseconds(700)) { EasingFunction = EaseOut };
         _accent.BeginAnimation(SolidColorBrush.ColorProperty, animation);
-        GlowShape.BeginAnimation(IslandGlow.ColorProperty, animation);
+
+        // El neón sigue al acento, salvo que el usuario le haya dado su propio tono.
+        var glow = _settings.GlowTone != GlowTone.Accent && TryParseColor(_settings.GlowColor, out var own) ? own : color;
+        GlowShape.BeginAnimation(IslandGlow.ColorProperty, new ColorAnimation(glow, TimeSpan.FromMilliseconds(700)) { EasingFunction = EaseOut });
     }
 
     private static bool TryParseColor(string text, out Color color)

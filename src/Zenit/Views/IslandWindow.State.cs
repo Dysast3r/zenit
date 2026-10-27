@@ -199,8 +199,10 @@ public partial class IslandWindow
     private void ApplyArt(MediaSnapshot? snapshot)
     {
         var art = snapshot?.Art;
+        var previous = _artBrush;
         _appliedArt = art;
         _artBrush = art is null ? _fallbackArt : Freeze(new ImageBrush(art) { Stretch = Stretch.UniformToFill });
+        if (IsLoaded && !ReferenceEquals(previous, _artBrush)) CrossfadeArt(previous);
         CompactArt.Background = _artBrush;
         ExpandedArt.Background = _artBrush;
         if (_alert?.Kind == "music") PeekArt.Background = _artBrush;
@@ -245,6 +247,31 @@ public partial class IslandWindow
     {
         TitleText.Text = snapshot?.Title ?? Strings.NothingPlaying;
         ArtistText.Text = snapshot?.Artist ?? Strings.OpenSpotifyHint;
+    }
+
+    /// <summary>Al cambiar de canción, la carátula anterior se desvanece encogiéndose y la nueva crece desde atrás.</summary>
+    private void CrossfadeArt(Brush previous)
+    {
+        var fade = TimeSpan.FromMilliseconds(420);
+        foreach (var overlay in new[] { ExpandedArtPrevious, CompactArtPrevious })
+        {
+            overlay.Background = previous;
+            overlay.BeginAnimation(OpacityProperty, new DoubleAnimation(1, 0, fade) { EasingFunction = EaseOut });
+            var shrink = new DoubleAnimation(1, 0.82, fade) { EasingFunction = EaseOut };
+            var scale = (ScaleTransform)overlay.RenderTransform;
+            scale.BeginAnimation(ScaleTransform.ScaleXProperty, shrink);
+            scale.BeginAnimation(ScaleTransform.ScaleYProperty, shrink);
+        }
+
+        var grow = new DoubleAnimation(0.84, 1, TimeSpan.FromMilliseconds(560))
+        {
+            EasingFunction = new BackEase { Amplitude = 0.45, EasingMode = EasingMode.EaseOut },
+        };
+        foreach (var scale in new[] { ArtScale, CompactArtScale })
+        {
+            scale.BeginAnimation(ScaleTransform.ScaleXProperty, grow);
+            scale.BeginAnimation(ScaleTransform.ScaleYProperty, grow);
+        }
     }
 
     private void PopArt()

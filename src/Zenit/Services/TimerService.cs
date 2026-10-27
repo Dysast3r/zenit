@@ -4,14 +4,25 @@ using System.Windows.Threading;
 
 namespace Zenit.Services;
 
-public enum ClockTool { Timer, Stopwatch }
+public enum ClockTool { Timer, Stopwatch, Pomodoro }
 
-/// <summary>Temporizador y cronómetro que siguen corriendo aunque la isla esté compacta (actividad en vivo).</summary>
+public enum PomodoroPhase { Focus, ShortBreak, LongBreak }
+
+/// <summary>
+/// Temporizador, cronómetro y Pomodoro, que siguen corriendo aunque la isla esté compacta (actividad en vivo).
+/// El Pomodoro alterna 25 min de enfoque con 5 de descanso, y uno largo de 15 cada 4 pomodoros.
+/// </summary>
 public sealed class TimerService
 {
+    public const int PomodorosPerCycle = 4;
+    private static readonly TimeSpan FocusTime = TimeSpan.FromMinutes(25);
+    private static readonly TimeSpan ShortBreakTime = TimeSpan.FromMinutes(5);
+    private static readonly TimeSpan LongBreakTime = TimeSpan.FromMinutes(15);
+
     private readonly DispatcherTimer _tick;
     private readonly Stopwatch _watch = new();
     private TimeSpan _accumulated;
+    private TimeSpan _timerDuration = TimeSpan.FromMinutes(5);
 
     public TimerService(Dispatcher dispatcher)
     {
@@ -42,14 +53,34 @@ public sealed class TimerService
     /// <summary>Cambió cualquier estado (inicio, pausa, modo, duración).</summary>
     public event Action? Changed;
 
-    /// <summary>El temporizador llegó a cero.</summary>
+    /// <summary>El temporizador o una fase del Pomodoro llegó a cero.</summary>
     public event Action? Completed;
+
+    public PomodoroPhase Phase { get; private set; } = PomodoroPhase.Focus;
+
+    /// <summary>Fase del Pomodoro que acaba de terminar (para el aviso de <see cref="Completed"/>).</summary>
+    public PomodoroPhase CompletedPhase { get; private set; }
+
+    /// <summary>Pomodoros de enfoque terminados en el ciclo actual (0..3); al cuarto viene el descanso largo.</summary>
+    public int CycleCount { get; private set; }
+
+    public PomodoroStats Stats { get; } = PomodoroStats.Load();
+
+    public static TimeSpan DurationOf(PomodoroPhase phase) => phase switch
+    {
+        PomodoroPhase.ShortBreak => ShortBreakTime,
+        PomodoroPhase.LongBreak => LongBreakTime,
+        _ => FocusTime,
+    };
 
     public void SetMode(ClockTool mode)
     {
         if (mode == Mode) return;
         Reset();
+        // El Pomodoro usa sus propias duraciones; el temporizador recupera la que tenía.
+        if (Mode == ClockTool.Timer) _timerDuration = Duration;
         Mode = mode;
+        Duration = mode == ClockTool.Pomodoro ? DurationOf(Phase) : _timerDuration;
         Changed?.Invoke();
     }
 
@@ -57,8 +88,33 @@ public sealed class TimerService
     {
         Reset();
         Mode = ClockTool.Timer;
-        Duration = duration;
+        Duration = _timerDuration = duration;
         Changed?.Invoke();
+    }
+
+    /// <summary>Pasa a la fase siguiente del Pomodoro sin contar la actual.</summary>
+    public void SkipPhase()
+    {
+        if (Mode != ClockTool.Pomodoro) return;
+        Reset();
+        AdvancePhase(completed: false);
+        Changed?.Invoke();
+    }
+
+    private void AdvancePhase(bool completed)
+    {
+        if (Phase == PomodoroPhase.Focus)
+        {
+            if (completed) Stats.Record(Duration);
+            CycleCount++;
+            Phase = CycleCount >= PomodorosPerCycle ? PomodoroPhase.LongBreak : PomodoroPhase.ShortBreak;
+        }
+        else
+        {
+            if (Phase == PomodoroPhase.LongBreak) CycleCount = 0;
+            Phase = PomodoroPhase.Focus;
+        }
+        Duration = DurationOf(Phase);
     }
 
     public void AddMinute()
@@ -77,7 +133,7 @@ public sealed class TimerService
         }
         else
         {
-            if (Mode == ClockTool.Timer && Remaining == TimeSpan.Zero) _accumulated = TimeSpan.Zero;
+            if (Mode != ClockTool.Stopwatch && Remaining == TimeSpan.Zero) _accumulated = TimeSpan.Zero;
             _watch.Start();
             _tick.Start();
         }
@@ -94,11 +150,18 @@ public sealed class TimerService
 
     private void OnTick()
     {
-        if (Mode != ClockTool.Timer || Remaining > TimeSpan.Zero) return;
+        if (Mode == ClockTool.Stopwatch || Remaining > TimeSpan.Zero) return;
         _accumulated = Duration;
         _watch.Reset();
         _tick.Stop();
         SystemSounds.Asterisk.Play();
+        if (Mode == ClockTool.Pomodoro)
+        {
+            // La fase siguiente queda lista, pero en pausa: empieza cuando el usuario quiera.
+            CompletedPhase = Phase;
+            AdvancePhase(completed: true);
+            _accumulated = TimeSpan.Zero;
+        }
         Changed?.Invoke();
         Completed?.Invoke();
     }

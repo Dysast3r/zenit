@@ -36,17 +36,18 @@ Ideas to make Zenit the best dynamic island on Windows. Want to pick one up? Loo
 
 ## 🎨 Visual touches
 
-- [ ] Themes: "Liquid Glass", neon, minimal and a light one ([#15](https://github.com/Dysast3r/zenit/issues/15)).
+- [x] Light theme ([#15](https://github.com/Dysast3r/zenit/issues/15)) and a customizable, animated neon edge.
+- [ ] More themes: "Liquid Glass" and minimal.
 - [ ] Charging animation when the charger is plugged in ([#16](https://github.com/Dysast3r/zenit/issues/16)).
-- [ ] Album-art transition when the song changes.
+- [x] Album-art transition when the song changes.
 
 ## 🧩 Integrations
 
 - [x] Per-app volume control.
-- [ ] Audio output picker (speakers, headphones, Bluetooth).
+- [x] Audio output picker (speakers, headphones, Bluetooth).
 - [x] Outlook or Google calendar: "Meeting in 5 min".
 - [ ] Discord: who's talking in the voice channel.
-- [ ] Pomodoro with stats.
+- [x] Pomodoro with stats.
 
 ## 🧑‍💻 Community
 

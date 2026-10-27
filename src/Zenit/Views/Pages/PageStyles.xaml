@@ -5,8 +5,8 @@
   <Style x:Key="RoundButton" TargetType="Button">
     <Setter Property="Focusable" Value="False" />
     <Setter Property="Cursor" Value="Hand" />
-    <Setter Property="Foreground" Value="White" />
-    <Setter Property="Background" Value="#33FFFFFF" />
+    <Setter Property="Foreground" Value="{DynamicResource Ink}" />
+    <Setter Property="Background" Value="{DynamicResource Ink33}" />
     <Setter Property="FontFamily" Value="Segoe Fluent Icons, Segoe MDL2 Assets" />
     <Setter Property="FontSize" Value="15" />
     <Setter Property="Width" Value="46" />
@@ -17,7 +17,7 @@
           <Grid x:Name="Root" RenderTransformOrigin="0.5,0.5">
             <Grid.RenderTransform><ScaleTransform x:Name="Scale" /></Grid.RenderTransform>
             <Ellipse Fill="{TemplateBinding Background}" />
-            <Ellipse x:Name="Hover" Fill="White" Opacity="0" />
+            <Ellipse x:Name="Hover" Fill="{DynamicResource Ink}" Opacity="0" />
             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
           </Grid>
           <ControlTemplate.Triggers>
@@ -59,8 +59,8 @@
   <Style x:Key="ChipButton" TargetType="Button">
     <Setter Property="Focusable" Value="False" />
     <Setter Property="Cursor" Value="Hand" />
-    <Setter Property="Foreground" Value="#E6FFFFFF" />
-    <Setter Property="Background" Value="#1AFFFFFF" />
+    <Setter Property="Foreground" Value="{DynamicResource InkE6}" />
+    <Setter Property="Background" Value="{DynamicResource Ink1A}" />
     <Setter Property="FontSize" Value="12" />
     <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="Padding" Value="11,4" />
@@ -86,7 +86,7 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="RepeatButton">
-          <Border Height="5" CornerRadius="2.5" Background="White" />
+          <Border Height="5" CornerRadius="2.5" Background="{DynamicResource Ink}" />
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -112,7 +112,7 @@
       <Setter.Value>
         <ControlTemplate TargetType="Slider">
           <Grid Height="22" Background="Transparent">
-            <Border Height="5" CornerRadius="2.5" Background="#33FFFFFF" VerticalAlignment="Center" />
+            <Border Height="5" CornerRadius="2.5" Background="{DynamicResource Ink33}" VerticalAlignment="Center" />
             <Track x:Name="PART_Track">
               <Track.DecreaseRepeatButton>
                 <RepeatButton Command="Slider.DecreaseLarge" Style="{StaticResource SliderFill}" />
@@ -124,7 +124,7 @@
                 <Thumb Focusable="False">
                   <Thumb.Template>
                     <ControlTemplate TargetType="Thumb">
-                      <Ellipse x:Name="Knob" Width="12" Height="12" Fill="White" />
+                      <Ellipse x:Name="Knob" Width="12" Height="12" Fill="{DynamicResource Ink}" />
                       <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                           <Setter TargetName="Knob" Property="Width" Value="15" />

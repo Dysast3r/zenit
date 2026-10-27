@@ -3,16 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Width="430" Height="204">
   <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,12">
-    <TextBlock HorizontalAlignment="Center" Foreground="White" Typography.NumeralAlignment="Tabular"
+    <TextBlock HorizontalAlignment="Center" Foreground="{DynamicResource Ink}" Typography.NumeralAlignment="Tabular"
                FontFamily="Segoe UI Variable Display, Segoe UI">
-      <Run x:Name="TimeRun" FontSize="58" FontWeight="Light" /><Run x:Name="SecondsRun" FontSize="24" FontWeight="Light" Foreground="#80FFFFFF" />
+      <Run x:Name="TimeRun" FontSize="58" FontWeight="Light" /><Run x:Name="SecondsRun" FontSize="24" FontWeight="Light" Foreground="{DynamicResource Ink80}" />
     </TextBlock>
-    <TextBlock x:Name="DateText" FontSize="14" FontWeight="SemiBold" Foreground="#E6FFFFFF"
+    <TextBlock x:Name="DateText" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource InkE6}"
                HorizontalAlignment="Center" Margin="0,-6,0,0" />
 
     <!-- Avance del día -->
     <Grid Width="200" Height="3" Margin="0,12,0,0">
-      <Border CornerRadius="1.5" Background="#26FFFFFF" />
+      <Border CornerRadius="1.5" Background="{DynamicResource Ink26}" />
       <Border x:Name="DayFill" CornerRadius="1.5" HorizontalAlignment="Left" Width="0">
         <Border.Background>
           <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
@@ -23,6 +23,6 @@
         </Border.Background>
       </Border>
     </Grid>
-    <TextBlock x:Name="DayInfoText" FontSize="11" Foreground="#73FFFFFF" HorizontalAlignment="Center" Margin="0,7,0,0" />
+    <TextBlock x:Name="DayInfoText" FontSize="11" Foreground="{DynamicResource Ink73}" HorizontalAlignment="Center" Margin="0,7,0,0" />
   </StackPanel>
 </UserControl>

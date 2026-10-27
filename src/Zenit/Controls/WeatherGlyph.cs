@@ -32,14 +32,19 @@ public sealed class WeatherGlyph : FrameworkElement
 
     private static readonly Brush SunBrush = Freeze(new RadialGradientBrush(Color.FromRgb(0xFF, 0xE0, 0x6B), Color.FromRgb(0xFF, 0x9F, 0x1C)));
     private static readonly Pen RayPen = Freeze(new Pen(new SolidColorBrush(Color.FromRgb(0xFF, 0xC8, 0x3D)), 0.055) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round });
-    private static readonly Brush MoonBrush = Freeze(new LinearGradientBrush(Color.FromRgb(0xF4, 0xF1, 0xE8), Color.FromRgb(0xC9, 0xCF, 0xE8), 45));
-    private static readonly Brush CloudBrush = Freeze(new LinearGradientBrush(Color.FromRgb(0xFF, 0xFF, 0xFF), Color.FromRgb(0xC7, 0xD0, 0xDD), 90));
+    // Con el tema claro, las nubes, la nieve y la luna se oscurecen un poco para no perderse en el fondo.
+    private static readonly Brush MoonBrush = Freeze(IslandTheme.IsLight
+        ? new LinearGradientBrush(Color.FromRgb(0xC9, 0xCF, 0xE8), Color.FromRgb(0x8E, 0x98, 0xBE), 45)
+        : new LinearGradientBrush(Color.FromRgb(0xF4, 0xF1, 0xE8), Color.FromRgb(0xC9, 0xCF, 0xE8), 45));
+    private static readonly Brush CloudBrush = Freeze(IslandTheme.IsLight
+        ? new LinearGradientBrush(Color.FromRgb(0xDD, 0xE3, 0xEC), Color.FromRgb(0x9C, 0xA8, 0xBA), 90)
+        : new LinearGradientBrush(Color.FromRgb(0xFF, 0xFF, 0xFF), Color.FromRgb(0xC7, 0xD0, 0xDD), 90));
     private static readonly Brush DarkCloudBrush = Freeze(new LinearGradientBrush(Color.FromRgb(0xB4, 0xBC, 0xC8), Color.FromRgb(0x6B, 0x74, 0x82), 90));
     private static readonly Pen RainPen = Freeze(new Pen(new SolidColorBrush(Color.FromRgb(0x5A, 0xB4, 0xFF)), 0.05) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round });
     private static readonly Pen FogPen = Freeze(new Pen(new SolidColorBrush(Color.FromArgb(0xDD, 0xD5, 0xDB, 0xE5)), 0.07) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round });
-    private static readonly Brush SnowBrush = Freeze(new SolidColorBrush(Colors.White));
+    private static readonly Brush SnowBrush = Freeze(new SolidColorBrush(IslandTheme.IsLight ? Color.FromRgb(0x8F, 0xA7, 0xC4) : Colors.White));
     private static readonly Brush BoltBrush = Freeze(new SolidColorBrush(Color.FromRgb(0xFF, 0xD2, 0x3F)));
-    private static readonly Brush StarBrush = Freeze(new SolidColorBrush(Color.FromRgb(0xF4, 0xF1, 0xE8)));
+    private static readonly Brush StarBrush = Freeze(new SolidColorBrush(IslandTheme.IsLight ? Color.FromRgb(0x8E, 0x98, 0xBE) : Color.FromRgb(0xF4, 0xF1, 0xE8)));
 
     private static readonly Geometry Cloud = Freeze(new GeometryGroup
     {

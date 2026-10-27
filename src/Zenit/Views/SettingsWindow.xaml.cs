@@ -147,6 +147,23 @@ public partial class SettingsWindow : Window
             (AppLanguage.English, "English"),
             (AppLanguage.Portuguese, "Português"));
 
+        Fill(ThemeCombo,
+            (IslandColorScheme.Dark, Strings.T("Oscuro", "Dark")),
+            (IslandColorScheme.Light, Strings.T("Claro", "Light")),
+            (IslandColorScheme.System, Strings.T("Según Windows", "Follow Windows")));
+
+        Fill(GlowToneCombo,
+            (GlowTone.Accent, Strings.T("Color de acento", "Accent color")),
+            (GlowTone.Custom, Strings.T("Un color", "One color")),
+            (GlowTone.Gradient, Strings.T("Degradado", "Gradient")));
+        Fill(GlowAnimationCombo,
+            (GlowAnimation.None, Strings.T("Sin animación", "No animation")),
+            (GlowAnimation.Pulse, Strings.T("Pulso", "Pulse")),
+            (GlowAnimation.Spin, Strings.T("Giro", "Spin")),
+            (GlowAnimation.Rainbow, Strings.T("Arcoíris", "Rainbow")));
+        BuildGlowSwatches(GlowSwatches, second: false);
+        BuildGlowSwatches(GlowSwatches2, second: true);
+
         Fill(IdleCombo,
             (IdleContent.Nothing, Strings.T("Nada (notch clásico)", "Nothing (classic notch)")),
             (IdleContent.Time, Strings.T("Hora", "Time")),
@@ -234,6 +251,7 @@ public partial class SettingsWindow : Window
         var s = _settings;
 
         Select(LanguageCombo, s.Language);
+        Select(ThemeCombo, s.ColorScheme);
         StyleNotch.IsChecked = s.Style == IslandStyle.Notch;
         StyleFloating.IsChecked = s.Style == IslandStyle.Floating;
         Select(IdleCombo, s.Idle);
@@ -242,6 +260,9 @@ public partial class SettingsWindow : Window
         OffsetSlider.Value = s.TopOffset;
         Select(AccentCombo, s.AccentMode);
         HoverSwitch.IsChecked = s.ExpandOnHover;
+        GlowSwitch.IsChecked = s.ShowGlow;
+        Select(GlowToneCombo, s.GlowTone);
+        Select(GlowAnimationCombo, s.GlowAnimation);
         HideIdleSwitch.IsChecked = s.HideWhenIdle;
         FullscreenSwitch.IsChecked = s.HideInFullscreen;
         CaptureSwitch.IsChecked = s.HideFromCapture;
@@ -325,6 +346,17 @@ public partial class SettingsWindow : Window
         ApplyLanguage();
     }
 
+    /// <summary>Los colores de la isla se fijan al crearla: cambiar de tema guarda y reinicia la app.</summary>
+    private void Theme_Changed(object sender, SelectionChangedEventArgs e)
+    {
+        if (_loading) return;
+        var scheme = Selected(ThemeCombo, _settings.ColorScheme);
+        if (scheme == _settings.ColorScheme) return;
+        _settings.ColorScheme = scheme;
+        SaveNow();
+        if (Application.Current is App app) app.Restart();
+    }
+
     /// <summary>Si el idioma efectivo cambió, guarda y reinicia para que toda la interfaz cambie de una vez.</summary>
     private void ApplyLanguage()
     {
@@ -348,6 +380,9 @@ public partial class SettingsWindow : Window
         s.TopOffset = OffsetSlider.Value;
         s.AccentMode = Selected(AccentCombo, s.AccentMode);
         s.ExpandOnHover = HoverSwitch.IsChecked == true;
+        s.ShowGlow = GlowSwitch.IsChecked == true;
+        s.GlowTone = Selected(GlowToneCombo, s.GlowTone);
+        s.GlowAnimation = Selected(GlowAnimationCombo, s.GlowAnimation);
         s.HideWhenIdle = HideIdleSwitch.IsChecked == true;
         s.HideInFullscreen = FullscreenSwitch.IsChecked == true;
         s.HideFromCapture = CaptureSwitch.IsChecked == true;
@@ -412,6 +447,12 @@ public partial class SettingsWindow : Window
         _settings.Save();
     }
 
+    private void CenterIsland_Click(object sender, RoutedEventArgs e)
+    {
+        _settings.HorizontalPosition = 0.5;
+        SaveNow();
+    }
+
     private void UpdateLabels()
     {
         ScaleLabel.Text = $"{ScaleSlider.Value * 100:0}%";
@@ -427,6 +468,37 @@ public partial class SettingsWindow : Window
         Swatches.Opacity = _settings.AccentMode == AccentMode.Custom ? 1 : 0.45;
         foreach (Button swatch in Swatches.Children)
             swatch.BorderThickness = new Thickness(string.Equals((string)swatch.Tag, _settings.CustomAccent, StringComparison.OrdinalIgnoreCase) && _settings.AccentMode == AccentMode.Custom ? 2 : 0);
+
+        GlowOptions.IsEnabled = _settings.ShowGlow;
+        GlowOptions.Opacity = _settings.ShowGlow ? 1 : 0.45;
+        GlowColorsCard.Visibility = _settings.GlowTone == GlowTone.Accent ? Visibility.Collapsed : Visibility.Visible;
+        GlowSwatches2.Visibility = _settings.GlowTone == GlowTone.Gradient ? Visibility.Visible : Visibility.Collapsed;
+        foreach (Button swatch in GlowSwatches.Children)
+            swatch.BorderThickness = new Thickness(string.Equals((string)swatch.Tag, _settings.GlowColor, StringComparison.OrdinalIgnoreCase) ? 2 : 0);
+        foreach (Button swatch in GlowSwatches2.Children)
+            swatch.BorderThickness = new Thickness(string.Equals((string)swatch.Tag, _settings.GlowColor2, StringComparison.OrdinalIgnoreCase) ? 2 : 0);
+    }
+
+    /// <summary>Fila de colores para el neón; la segunda es el otro extremo del degradado.</summary>
+    private void BuildGlowSwatches(Panel host, bool second)
+    {
+        foreach (var color in SwatchColors)
+        {
+            var swatch = new Button
+            {
+                Width = 22, Height = 22, Margin = new Thickness(3, 0, 3, 0), Padding = new Thickness(0), Tag = color,
+                Cursor = System.Windows.Input.Cursors.Hand, ToolTip = color,
+                Template = SwatchTemplate((Color)ColorConverter.ConvertFromString(color)),
+            };
+            swatch.Click += (_, _) =>
+            {
+                if (second) _settings.GlowColor2 = color;
+                else _settings.GlowColor = color;
+                UpdateLabels();
+                ScheduleSave();
+            };
+            host.Children.Add(swatch);
+        }
     }
 
     private void UpdatePreviews()

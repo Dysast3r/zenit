@@ -43,6 +43,7 @@ public partial class IslandWindow
 
     private void Island_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
+        if (_rightDown) return;
         _pointerDown = true;
         _dragging = false;
         _downPoint = e.GetPosition(this);
@@ -57,6 +58,11 @@ public partial class IslandWindow
 
     private void Island_MouseMove(object sender, MouseEventArgs e)
     {
+        if (_rightDown)
+        {
+            MoveIsland(e);
+            return;
+        }
         if (!_pointerDown) return;
         var x = e.GetPosition(this).X;
         var dx = (x - _downPoint.X) / _settings.Scale;
@@ -126,6 +132,13 @@ public partial class IslandWindow
 
     private void Island_LostMouseCapture(object sender, MouseEventArgs e)
     {
+        if (_rightDown)
+        {
+            // Se perdió el mouse a mitad del arrastre (p. ej. Alt+Tab): vuelve a donde estaba.
+            EndMove();
+            PositionWindow();
+            return;
+        }
         if (!_pointerDown) return;
         _pointerDown = _dragging = false;
         _shift.Target = 0;
@@ -134,10 +147,73 @@ public partial class IslandWindow
         EnsureLoop();
     }
 
+    // Clic derecho: si se suelta sin moverse abre el menú; si se arrastra, desliza la isla por el borde superior.
+
+    private void Island_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        e.Handled = true;
+        if (_pointerDown) return;
+        _rightDown = true;
+        _moving = false;
+        _moveStartCursor = PointToScreen(e.GetPosition(this)).X;
+        _moveStartCenter = PointToScreen(new Point(ActualWidth / 2, 0)).X;
+        _hoverTimer.Stop();
+        Island.CaptureMouse();
+    }
+
+    private void MoveIsland(MouseEventArgs e)
+    {
+        if (CurrentScreen is not { } screen) return;
+        var x = PointToScreen(e.GetPosition(this)).X;
+        if (!_moving)
+        {
+            if (Math.Abs(x - _moveStartCursor) < 8) return;
+            _moving = true;
+            _collapseTimer.Stop();
+            Mouse.OverrideCursor = Cursors.SizeWE;
+        }
+
+        var work = screen.WorkingArea;
+        var position = (_moveStartCenter + x - _moveStartCursor - work.Left) / work.Width;
+        // Se imanta al centro para poder volver a dejarla exactamente como venía.
+        var snap = 24 * NativeMethods.DpiScaleAt(work.Left + work.Width / 2, work.Top) / work.Width;
+        if (Math.Abs(position - 0.5) < snap) position = 0.5;
+        _movePosition = Math.Clamp(position, 0, 1);
+        PositionWindow();
+    }
+
     private void Island_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
     {
         e.Handled = true;
-        MenuRequested?.Invoke();
+        if (!_rightDown)
+        {
+            MenuRequested?.Invoke();
+            return;
+        }
+
+        var moved = _moving;
+        var position = _movePosition;
+        EndMove();
+        Island.ReleaseMouseCapture();
+
+        if (!moved)
+        {
+            MenuRequested?.Invoke();
+        }
+        else if (position is { } value)
+        {
+            // Guardar avisa a todas las islas (modo "todas las pantallas") para que tomen la nueva posición.
+            _settings.HorizontalPosition = value;
+            _settings.Save();
+        }
+    }
+
+    private void EndMove()
+    {
+        _rightDown = _moving = false;
+        _movePosition = null;
+        Mouse.OverrideCursor = null;
+        if (!_hovering && _mode == IslandMode.Expanded) _collapseTimer.Start();
     }
 
     private void OnHorizontalWheel(int delta)
