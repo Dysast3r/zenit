@@ -2,6 +2,11 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project uses [semantic versioning](https://semver.org/).
 
+## [1.2.2] - 2026-10-27
+
+### Added
+- Taskbar style: the island lives inside the Windows taskbar as a pill centered in the bar, with a hairline edge that blends in with it. When it expands or shows an alert, it rises with a spring and floats above the bar like the Windows 11 flyouts, then settles back into it. Drag it along the bar with the right mouse button; it starts in a free spot depending on how your taskbar icons are aligned.
+
 ## [1.2.1] - 2026-10-27
 
 ### Changed
@@ -120,6 +125,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Verifiable releases: build provenance attestation, SHA-256 sums, CodeQL, OpenSSF Scorecard and optional code signing.
 - Distribution through winget, a website at [danidev.cl/zenit](https://danidev.cl/zenit) and a translation catalog for Crowdin.
 
+[1.2.2]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.2
 [1.2.1]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.1
 [1.2.0]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.0
 [1.1.9]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.9
