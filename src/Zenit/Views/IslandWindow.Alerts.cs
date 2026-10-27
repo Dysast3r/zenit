@@ -349,7 +349,7 @@ public partial class IslandWindow
     private void ShowAlert(IslandAlert alert, bool force = false)
     {
         if (!force && _mode == IslandMode.Expanded) return;
-        if (_fullscreen && _settings.HideInFullscreen) return;
+        if (HiddenByFullscreen) return;
         // En "No molestar" solo pasa lo que pidió el usuario (volumen) y las alarmas (temporizador, batería baja).
         if (!force && alert.Kind is "notification" or "music" or "calendar" && Quiet) return;
 

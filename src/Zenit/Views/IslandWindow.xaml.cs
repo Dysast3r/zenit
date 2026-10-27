@@ -182,7 +182,11 @@ public partial class IslandWindow : Window
         {
             // Arrastrar un deslizador (volumen) puede sacar el cursor de la isla: no se cierra a mitad del gesto.
             var dragging = Mouse.Captured is DependencyObject captured && Island.IsAncestorOf(captured);
-            if (!_hovering && !_pointerDown && !_scrubbing && !dragging) RequestExpand(false);
+            if (_hovering || _pointerDown || _scrubbing || dragging) return;
+            // En la barra de tareas la isla expandida sube sobre la barra y el cursor que la abrió queda debajo:
+            // mientras siga en ese hueco no se cierra, y se vuelve a mirar hasta que salga o entre en la isla.
+            if (PointerBelowLiftedIsland()) _collapseTimer!.Start();
+            else RequestExpand(false);
         });
         _peekTimer = OneShot(3000, () =>
         {
@@ -205,7 +209,7 @@ public partial class IslandWindow : Window
         _calendarTimer.Tick += (_, _) => _ = services.Calendar.RefreshAsync();
         _taskbarTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(300), DispatcherPriority.Background, (_, _) =>
         {
-            if (_hwnd != 0) NativeMethods.KeepTopmost(_hwnd);
+            if (_hwnd != 0 && !HiddenByFullscreen) NativeMethods.KeepTopmost(_hwnd);
         }, Dispatcher);
         // Este constructor arranca el timer: solo debe correr con la isla en la barra de tareas (ApplySettings).
         _taskbarTimer.Stop();
@@ -520,9 +524,11 @@ public partial class IslandWindow : Window
         UpdateCompact();
         CheckMeeting();
         if (_mode == IslandMode.Expanded) RefreshPages();
-        if (_hwnd != 0) NativeMethods.KeepTopmost(_hwnd);
+        if (_hwnd != 0 && !HiddenByFullscreen) NativeMethods.KeepTopmost(_hwnd);
 
-        var fullscreen = NativeMethods.IsFullscreenAppRunning();
+        // Cada isla mira su propia pantalla: un juego en el otro monitor no la oculta.
+        var fullscreen = CurrentScreen is { Bounds: var bounds }
+            && NativeMethods.IsFullscreenAppRunning(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom);
         if (fullscreen != _fullscreen)
         {
             _fullscreen = fullscreen;

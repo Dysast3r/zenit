@@ -395,7 +395,8 @@
                          Description="{s:Tr Es='Si se desactiva, se abre con un clic', En='When off, click to open'}">
             <CheckBox x:Name="HoverSwitch" Style="{StaticResource Switch}" Click="Any_Changed" />
           </c:SettingCard>
-          <c:SettingCard Glyph="&#xED1A;" Header="{s:Tr Es='Ocultar cuando no hay música', En='Hide when nothing is playing'}">
+          <c:SettingCard Glyph="&#xED1A;" Header="{s:Tr Es='Ocultar cuando no hay música', En='Hide when nothing is playing'}"
+                         Description="{s:Tr Es='Con una canción en pausa sigue a la vista', En='It stays in view while a song is paused'}">
             <CheckBox x:Name="HideIdleSwitch" Style="{StaticResource Switch}" Click="Any_Changed" />
           </c:SettingCard>
           <c:SettingCard Glyph="&#xE740;" Header="{s:Tr Es='Ocultar en pantalla completa', En='Hide in full screen'}"

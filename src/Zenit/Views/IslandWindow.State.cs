@@ -38,6 +38,9 @@ public partial class IslandWindow
     /// </summary>
     private bool MusicLive => _snapshot is not null && _musicActive;
 
+    /// <summary>Hay un juego, video o presentación a pantalla completa en esta pantalla y el usuario pidió ocultarla.</summary>
+    private bool HiddenByFullscreen => _fullscreen && _settings.HideInFullscreen;
+
     private void OnMediaChanged(MediaSnapshot? snapshot)
     {
         var previousKey = _trackKey;
@@ -104,11 +107,13 @@ public partial class IslandWindow
     private void Evaluate()
     {
         IslandMode next;
-        if (_fullscreen && _settings.HideInFullscreen) next = IslandMode.Hidden;
+        if (HiddenByFullscreen) next = IslandMode.Hidden;
         else if (_expandRequested) next = IslandMode.Expanded;
         else if (_alert is not null && DateTime.UtcNow < _peekUntil) next = IslandMode.Peek;
         else if (MusicLive || HasLiveActivity) next = IslandMode.Compact;
-        else next = _settings.HideWhenIdle ? IslandMode.Hidden : IslandMode.Idle;
+        // "Ocultar cuando no hay música" solo oculta sin ninguna app de música abierta: con una canción en pausa
+        // la isla queda en reposo, a mano para volver a reproducirla.
+        else next = _settings.HideWhenIdle && _snapshot is null ? IslandMode.Hidden : IslandMode.Idle;
         SetMode(next);
     }
 

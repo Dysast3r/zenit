@@ -15,6 +15,7 @@ using Zenit.Interop;
 using Zenit.Services;
 using Zenit.Views.Pages;
 using Microsoft.Win32;
+using Forms = System.Windows.Forms;
 
 namespace Zenit.Views;
 
@@ -27,9 +28,19 @@ public partial class IslandWindow
     {
         _hovering = true;
         _collapseTimer.Stop();
-        if (_settings.ExpandOnHover && (MusicLive || HasLiveActivity) && _mode != IslandMode.Expanded) _hoverTimer.Start();
+        // Con la música en pausa también se abre: es la forma de volver a darle play.
+        if (_settings.ExpandOnHover && (_snapshot is not null || HasLiveActivity) && _mode != IslandMode.Expanded) _hoverTimer.Start();
         _scale.Target = RestingScale();
         EnsureLoop();
+    }
+
+    /// <summary>En la barra de tareas: el cursor está bajo la isla expandida, entre ella y el borde inferior de la pantalla.</summary>
+    private bool PointerBelowLiftedIsland()
+    {
+        if (_settings.Style != IslandStyle.Taskbar || _mode != IslandMode.Expanded || _hwnd == 0) return false;
+        var island = Island.TransformToAncestor(this).TransformBounds(new Rect(Island.RenderSize));
+        var cursor = PointFromScreen(new Point(Forms.Cursor.Position.X, Forms.Cursor.Position.Y));
+        return cursor.X >= island.Left && cursor.X <= island.Right && cursor.Y >= island.Top && cursor.Y <= ActualHeight;
     }
 
     private void Island_MouseLeave(object sender, MouseEventArgs e)

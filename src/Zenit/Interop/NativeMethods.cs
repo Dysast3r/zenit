@@ -58,9 +58,61 @@ internal static partial class NativeMethods
     public static void KeepTopmost(nint hwnd)
         => SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
-    /// <summary>Juego, video o presentación a pantalla completa (QUNS_BUSY, D3D o modo presentación).</summary>
-    public static bool IsFullscreenAppRunning()
-        => SHQueryUserNotificationState(out var state) == 0 && state is 2 or 3 or 4;
+    private const int GWL_STYLE = -16;
+    private const long WS_CAPTION = 0x00C00000;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct RECT
+    {
+        public int Left, Top, Right, Bottom;
+    }
+
+    [LibraryImport("user32.dll")]
+    private static partial nint GetForegroundWindow();
+
+    [LibraryImport("user32.dll")]
+    private static partial nint GetShellWindow();
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool IsIconic(nint hWnd);
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool IsZoomed(nint hWnd);
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool GetWindowRect(nint hWnd, out RECT rect);
+
+    [LibraryImport("user32.dll", EntryPoint = "GetClassNameW", StringMarshalling = StringMarshalling.Utf16)]
+    private static partial int GetClassName(nint hWnd, [Out] char[] name, int maxCount);
+
+    /// <summary>
+    /// Juego, video o presentación a pantalla completa en el monitor indicado (en píxeles físicos).
+    /// Mira la ventana en primer plano: los juegos en "pantalla completa sin bordes" no avisan a Windows
+    /// (QUNS_BUSY), y ese aviso tampoco dice en qué monitor está. Se suman el modo D3D exclusivo y el de presentación.
+    /// </summary>
+    public static bool IsFullscreenAppRunning(int left, int top, int right, int bottom)
+    {
+        if (SHQueryUserNotificationState(out var state) == 0 && state is 3 or 4) return true;
+
+        var window = GetForegroundWindow();
+        if (window == 0 || window == GetShellWindow() || IsIconic(window)) return false;
+
+        // El escritorio y la barra de tareas también cubren la pantalla.
+        var buffer = new char[64];
+        var length = GetClassName(window, buffer, buffer.Length);
+        if (new string(buffer, 0, Math.Max(0, length)) is "Progman" or "WorkerW" or "Shell_TrayWnd" or "Shell_SecondaryTrayWnd")
+            return false;
+
+        // Una ventana maximizada con la barra de tareas oculta también tapa todo el monitor, pero conserva su barra de título.
+        var style = (long)GetWindowLongPtr(window, GWL_STYLE);
+        if (IsZoomed(window) && (style & WS_CAPTION) == WS_CAPTION) return false;
+
+        return GetWindowRect(window, out var rect)
+            && rect.Left <= left && rect.Top <= top && rect.Right >= right && rect.Bottom >= bottom;
+    }
 
     // ───────────────────────── Procesos ─────────────────────────
 
