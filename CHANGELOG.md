@@ -2,6 +2,12 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project uses [semantic versioning](https://semver.org/).
 
+## [1.2.1] - 2026-10-27
+
+### Changed
+- The island only switches to music mode while something is playing. Opening Spotify with a paused song no longer shows the album art or the song alert, and after pausing, the island goes back to normal 5 seconds later. It comes back as soon as playback starts.
+- The horizontal mouse wheel only changes the song while the island is in music mode.
+
 ## [1.2.0] - 2026-10-27
 
 ### Added
@@ -114,6 +120,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Verifiable releases: build provenance attestation, SHA-256 sums, CodeQL, OpenSSF Scorecard and optional code signing.
 - Distribution through winget, a website at [danidev.cl/zenit](https://danidev.cl/zenit) and a translation catalog for Crowdin.
 
+[1.2.1]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.1
 [1.2.0]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.0
 [1.1.9]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.9
 [1.1.8]: https://github.com/Dysast3r/zenit/releases/tag/v1.1.8
