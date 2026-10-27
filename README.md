@@ -21,7 +21,7 @@
 
 ---
 
-**Zenit** is a dynamic island for Windows 10 and 11, inspired by the one on the iPhone. It shows what's playing on Spotify, TIDAL or YouTube Music with album art, progress and controls, plus the weather, exchange rates, world clocks and the date, all with smooth, springy animations.
+**Zenit** is a dynamic island for Windows 10 and 11, inspired by the one on the iPhone. It shows what's playing on Spotify, TIDAL or YouTube Music with album art, progress and controls, plus the weather, exchange rates, world clocks, a Pomodoro and the date, all with smooth, springy animations. Drag it anywhere along the top edge and make it yours with a light or dark theme and an animated neon edge.
 
 It's native (C# / .NET 10), lightweight, open source, and **needs no accounts, API keys or admin rights**.
 
@@ -35,22 +35,24 @@ It's native (C# / .NET 10), lightweight, open source, and **needs no accounts, A
 
 | | |
 |---|---|
-| 🎵 **Music** | Spotify, TIDAL and YouTube Music (and optionally any other player): album art, title, a draggable progress bar and controls, with the blurred artwork as a backdrop. The equalizer reacts to the actual audio. |
+| 🎵 **Music** | Spotify, TIDAL and YouTube Music (and optionally any other player): album art, title, a draggable progress bar and controls, with the blurred artwork as a backdrop. The artwork crossfades when the song changes and the equalizer reacts to the actual audio. The island only switches to music mode while something is playing: 5 seconds after you pause, it goes back to normal. |
 | 🎤 **Synced lyrics** | The current line, right on time, from [LRCLIB](https://lrclib.net). Close the island on the lyrics page and the compact island keeps showing the current line. |
 | ⏱️ **Timer and stopwatch** | A live activity: the countdown stays visible on the compact island. |
+| 🍅 **Pomodoro** | 25 minutes of focus, 5-minute breaks and a longer 15-minute one every 4, as a live activity. Stats for today, your streak and the last 7 days, stored only on your PC. |
 | 📅 **Meetings** | Get a heads-up before every Google Calendar or Outlook meeting, with a countdown on the island. All it needs is the calendar's private iCal link: no accounts or passwords. |
-| 🎚️ **Per-app volume** | A page with the system volume and every app playing audio (Spotify, Chrome, Discord…), each with its own slider and mute. |
+| 🎚️ **Volume and audio output** | A page with the system volume and every app playing audio (Spotify, Chrome, Discord…), each with its own slider and mute. Switch the output between speakers, headphones, Bluetooth or your monitor without leaving the island. |
 | 🔔 **System alerts** | Volume (scroll over the island to change it), battery charging, green and orange camera and microphone dots, and Windows notifications in the Microsoft Store version. |
 | 🧩 **Community widgets** | Data from any public API with a plain JSON file, no code. [Make your own](widgets/README.md). |
-| 🏝️ **Two looks** | A classic notch attached to the top edge with concave curves, or a floating island. |
-| 👆 **Gestures** | Hover or click to expand · swipe to change songs · swipe the expanded island to switch pages · horizontal touchpad scrolling. |
+| 🏝️ **Two shapes** | A classic notch attached to the top edge with concave curves, or a floating island. |
+| 🎨 **Your style** | Dark or light theme (or follow Windows). A neon edge in the album art color, a color of your choice or a two-color gradient, with pulse, spin or rainbow animations, or turn it off. |
+| 👆 **Gestures** | Hover or click to expand · swipe to change songs · swipe the expanded island to switch pages · horizontal touchpad scrolling · hold the right mouse button and drag to move the island along the top edge (it snaps to the center). |
 | 🌦️ **Weather** | Your current location or any city in the world, an hourly forecast and animated vector icons. |
-| 💱 **Currencies** | 300+ currencies and cryptocurrencies with their daily change. |
+| 💱 **Currencies and indicators** | Turn on up to 8 from a list of switches: the dollar, euro, pound, yen, yuan, Latin American currencies, Bitcoin, Ethereum and Chile's UF and UTM, or add any of 300+ currencies and cryptocurrencies. Each one shows its daily change. |
 | 🕐 **Clock and date** | 12/24-hour time, seconds, six date formats plus a custom one, week and day of the year. |
 | 🌍 **World clocks** | Up to 4 cities with analog faces for day and night. |
 | 🙈 **Discreet** | Hidden from screenshots, recordings and screen sharing. It steps aside for full-screen games and videos, and respects Windows Do not disturb. |
 | 🖥️ **Multiple displays** | Choose which screen shows the island, or show it on all of them. |
-| ⚙️ **Customizable** | A Windows 11-style settings panel: language, size, position, color, pages, what the idle island shows (time, date, weather, currency or battery) and what the compact island shows in the middle (time, date, temperature or the scrolling song title), and more. |
+| ⚙️ **Customizable** | A Windows 11-style settings panel: language, theme, size, position, accent color, neon edge, pages, what the idle island shows (time, date, weather, currency or battery) and what the compact island shows in the middle (time, date, temperature or the scrolling song title), and more. |
 | 🔄 **Verified updates** | Lets you know when a new version is out and checks its SHA-256 before installing it. |
 | 🌐 **English, Spanish and Portuguese** | Follows your Windows language, or pick one yourself. Speak another language? [Help translate](CONTRIBUTING.md). |
 
@@ -84,6 +86,7 @@ Get-FileHash .\Zenit-Setup-<version>-x64.exe -Algorithm SHA256
 - **No accounts, no API keys, no telemetry.**
 - Music info is read locally through the official Windows API (`GlobalSystemMediaTransportControls`), not each service's web API. Only if you turn on the **Lyrics** page are the song title and artist sent to LRCLIB.
 - The equalizer only reads the volume **level**; it never records audio.
+- Pomodoro stats and settings stay on your PC, in `%AppData%\Zenit`.
 - It runs without elevated privileges and installs no services.
 - It only connects over HTTPS, and only when you enable the related feature:
 
@@ -92,6 +95,7 @@ Get-FileHash .\Zenit-Setup-<version>-x64.exe -Algorithm SHA256
   | Weather and city search | [Open-Meteo](https://open-meteo.com) |
   | Your location's name | [BigDataCloud](https://www.bigdatacloud.com) or [ipapi.co](https://ipapi.co) |
   | Currencies | [currency-api](https://github.com/fawazahmed0/exchange-api) (jsDelivr / Cloudflare) |
+  | UF and UTM (Chile) | [findic.cl](https://findic.cl), or [mindicador.cl](https://mindicador.cl) as a fallback |
   | Lyrics | [LRCLIB](https://lrclib.net) |
   | Updates | GitHub Releases |
   | Widgets | Only the URLs of the widgets you install |
@@ -115,9 +119,9 @@ Debug builds include shortcuts to try the UI without music: `--demo idle|compact
 ```
 src/Zenit
 ├── Animation/   Spring physics and velocity tracking for gestures
-├── Controls/    Notch shape, equalizer, weather icons, analog clock
+├── Controls/    Notch shape, neon glow, light/dark theme, equalizer, weather icons, analog clock
 ├── Interop/     Win32: overlay window, capture exclusion, full-screen detection
-├── Services/    Music, weather, location, currencies, audio, settings and languages
+├── Services/    Music, weather, location, currencies, audio, timer and Pomodoro, settings and languages
 └── Views/       Island, carousel pages, settings and tray
 ```
 
