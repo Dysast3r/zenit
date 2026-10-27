@@ -38,6 +38,7 @@ public partial class SettingsWindow : Window
     private bool _updating;
     private readonly DispatcherTimer _saveTimer, _clockTimer, _searchTimer;
     private CancellationTokenSource? _search;
+    private readonly HashSet<string> _customCurrencies = [];
     private bool _loading;
 
     public SettingsWindow(ZenitServices services)
@@ -284,7 +285,7 @@ public partial class SettingsWindow : Window
         BuildWorldList();
         BuildCalendarList();
         BuildCitiesList();
-        BuildCurrencyChips();
+        BuildIndicatorList();
         UpdateLabels();
         UpdatePreviews();
     }
@@ -301,7 +302,7 @@ public partial class SettingsWindow : Window
         LocalCurrencyCombo.SelectedItem = items.FirstOrDefault(i => i.Code == _settings.LocalCurrency);
         AddCurrencyCombo.ItemsSource = items;
         _loading = false;
-        BuildCurrencyChips();
+        BuildIndicatorList();
     }
 
     // ───────────────────────── Guardado ─────────────────────────
@@ -395,7 +396,7 @@ public partial class SettingsWindow : Window
         {
             s.LocalCurrency = local.Code;
             s.Currencies.Remove(local.Code);
-            BuildCurrencyChips();
+            BuildIndicatorList();
         }
     }
 
@@ -758,32 +759,60 @@ public partial class SettingsWindow : Window
 
     // ───────────────────────── Monedas ─────────────────────────
 
-    private void BuildCurrencyChips()
+    /// <summary>
+    /// Catálogo de indicadores con un interruptor cada uno, más las otras monedas que el usuario agregó.
+    /// Las agregadas siguen en la lista aunque se apaguen, hasta cerrar la ventana.
+    /// </summary>
+    private void BuildIndicatorList()
     {
-        CurrencyChips.Children.Clear();
+        IndicatorList.Children.Clear();
+        _customCurrencies.UnionWith(_settings.Currencies.Where(c => CurrencyService.CatalogName(c) is null));
+
         var items = LocalCurrencyCombo.ItemsSource as IEnumerable<CurrencyItem>;
-        foreach (var code in _settings.Currencies.ToList())
+        var entries = CurrencyService.Catalog
+            .Concat(_customCurrencies.Select(c => new Indicator(c, items?.FirstOrDefault(i => i.Code == c)?.Name ?? c.ToUpperInvariant())))
+            .Where(i => i.Code != _settings.LocalCurrency);
+        var full = _settings.Currencies.Count >= AppSettings.MaxCurrencies;
+
+        foreach (var indicator in entries)
         {
-            var name = items?.FirstOrDefault(i => i.Code == code)?.Name ?? "";
-            var chip = new StackPanel { Orientation = Orientation.Horizontal };
-            chip.Children.Add(new TextBlock { Text = CurrencyService.SymbolOf(code), FontWeight = FontWeights.Bold, Foreground = (Brush)FindResource("Brand"), Margin = new Thickness(0, 0, 8, 0), VerticalAlignment = VerticalAlignment.Center });
-            chip.Children.Add(new TextBlock { Text = code.ToUpperInvariant(), FontWeight = FontWeights.SemiBold, Foreground = Brushes.White, VerticalAlignment = VerticalAlignment.Center });
-            if (name.Length > 0)
-                chip.Children.Add(new TextBlock { Text = $"  {name}", Foreground = (Brush)FindResource("Muted"), VerticalAlignment = VerticalAlignment.Center, MaxWidth = 170, TextTrimming = TextTrimming.CharacterEllipsis });
-            var remove = new Button { Content = "", Style = (Style)FindResource("IconButton"), Width = 26, Height = 26, FontSize = 10, Margin = new Thickness(10, 0, 0, 0) };
-            remove.Click += (_, _) =>
+            var code = indicator.Code;
+            var active = _settings.Currencies.Contains(code);
+            var toggle = new CheckBox { Style = (Style)FindResource("Switch"), IsChecked = active, IsEnabled = active || !full, VerticalAlignment = VerticalAlignment.Center };
+            toggle.Click += (_, _) =>
             {
-                _settings.Currencies.Remove(code);
-                BuildCurrencyChips();
+                if (toggle.IsChecked == true)
+                {
+                    if (!_settings.Currencies.Contains(code)) _settings.Currencies.Add(code);
+                }
+                else
+                {
+                    _settings.Currencies.Remove(code);
+                }
+                BuildIndicatorList();
                 SaveNow();
             };
-            chip.Children.Add(remove);
 
-            CurrencyChips.Children.Add(new Border
+            var text = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(10, 0, 8, 0) };
+            text.Children.Add(new TextBlock { Text = code.ToUpperInvariant(), FontWeight = FontWeights.SemiBold, Foreground = Brushes.White });
+            text.Children.Add(new TextBlock { Text = indicator.Name, ToolTip = indicator.Name, FontSize = 12, Foreground = (Brush)FindResource("Muted"), TextTrimming = TextTrimming.CharacterEllipsis });
+
+            var row = new Grid();
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(28) });
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            row.Children.Add(new TextBlock { Text = CurrencyService.SymbolOf(code), FontWeight = FontWeights.Bold, Foreground = (Brush)FindResource("Brand"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
+            Grid.SetColumn(text, 1);
+            row.Children.Add(text);
+            Grid.SetColumn(toggle, 2);
+            row.Children.Add(toggle);
+
+            IndicatorList.Children.Add(new Border
             {
-                CornerRadius = new CornerRadius(18), Background = (Brush)FindResource("CardBrush"),
+                CornerRadius = new CornerRadius(8), Background = (Brush)FindResource("CardBrush"),
                 BorderBrush = (Brush)FindResource("CardBorder"), BorderThickness = new Thickness(1),
-                Padding = new Thickness(14, 4, 4, 4), Margin = new Thickness(0, 0, 8, 8), Child = chip,
+                Padding = new Thickness(10, 8, 12, 8), Margin = new Thickness(0, 0, 6, 6), Child = row,
+                Opacity = toggle.IsEnabled ? 1 : 0.5,
             });
         }
     }
@@ -792,11 +821,11 @@ public partial class SettingsWindow : Window
     {
         var item = AddCurrencyCombo.SelectedItem as CurrencyItem;
         var code = item?.Code ?? AddCurrencyCombo.Text.Split(' ')[0].Trim().ToLowerInvariant();
-        if (string.IsNullOrEmpty(code) || code == _settings.LocalCurrency || _settings.Currencies.Contains(code) || _settings.Currencies.Count >= 4) return;
+        if (string.IsNullOrEmpty(code) || code == _settings.LocalCurrency || _settings.Currencies.Contains(code) || _settings.Currencies.Count >= AppSettings.MaxCurrencies) return;
         _settings.Currencies.Add(code);
         AddCurrencyCombo.SelectedItem = null;
         AddCurrencyCombo.Text = "";
-        BuildCurrencyChips();
+        BuildIndicatorList();
         SaveNow();
     }
 

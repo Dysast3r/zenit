@@ -127,6 +127,9 @@ public sealed class AppSettings
     public int WeatherRefreshMinutes { get; set; } = 15;
 
     // Monedas
+    /// <summary>Cuántos indicadores caben en la página de monedas (dos filas de cuatro).</summary>
+    public const int MaxCurrencies = 8;
+
     public string LocalCurrency { get; set; } = DefaultLocalCurrency();
     public List<string> Currencies { get; set; } = [];
     public int CurrencyRefreshMinutes { get; set; } = 60;
@@ -254,9 +257,14 @@ public sealed class AppSettings
 
         if (Currencies.Count == 0)
         {
-            Currencies = LocalCurrency == "usd" ? ["eur", "gbp", "jpy", "btc"] : ["usd", "eur", "btc"];
+            Currencies = LocalCurrency switch
+            {
+                "usd" => ["eur", "gbp", "jpy", "btc"],
+                "clp" => ["usd", "eur", "uf", "btc"],
+                _ => ["usd", "eur", "btc"],
+            };
         }
-        Currencies = Currencies.Select(c => c.ToLowerInvariant()).Where(c => c != LocalCurrency).Distinct().Take(4).ToList();
+        Currencies = Currencies.Select(c => c.ToLowerInvariant()).Where(c => c != LocalCurrency).Distinct().Take(MaxCurrencies).ToList();
     }
 
     /// <summary>Copia todos los valores de otra instancia (la isla y el panel comparten esta).</summary>

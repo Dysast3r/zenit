@@ -2,6 +2,15 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project uses [semantic versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- Indicators list in Settings → Currencies: turn on the major currencies (dollar, euro, pound, yen, yuan, Swiss franc, Latin American pesos…), crypto and Chile's UF and UTM with a switch each. Other currencies can still be added by code.
+- UF and UTM come from mindicador.cl, converted to your local currency, with the change versus the previous value.
+
+### Changed
+- The currencies page shows up to 8 indicators: with more than 4 it switches to two rows of compact tiles.
+
 ## [1.1.7] - 2026-10-26
 
 ### Fixed

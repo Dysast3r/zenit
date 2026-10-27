@@ -47,25 +47,87 @@ public partial class CurrencyPage : UserControl, IIslandPage
         HeaderText.Text = Strings.F("Tipo de cambio · {0}", "Exchange rates · {0}", local);
         DateText.Text = report.Date.ToString("d MMM", CultureInfo.CurrentCulture).Replace(".", "");
 
+        // Hasta 4 caben en una fila con todo el detalle; con más se usan dos filas de fichas compactas.
+        var compact = report.Quotes.Count > 4;
+        Tiles.Rows = compact ? 2 : 1;
+        Tiles.Margin = compact ? new Thickness(18, 40, 18, 17) : new Thickness(18, 46, 18, 28);
         Tiles.Children.Clear();
-        foreach (var quote in report.Quotes) Tiles.Children.Add(BuildTile(quote, report.Local));
+        foreach (var quote in report.Quotes)
+            Tiles.Children.Add(compact ? BuildCompactTile(quote) : BuildTile(quote, report.Local));
+    }
+
+    private static Border BuildCompactTile(CurrencyQuote quote)
+    {
+        var header = new StackPanel { Orientation = Orientation.Horizontal };
+        header.Children.Add(Badge(quote.Code, 18, 9));
+        header.Children.Add(new TextBlock
+        {
+            Text = quote.Code.ToUpperInvariant(), FontSize = 11.5, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White,
+            VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(6, 0, 0, 0),
+        });
+
+        var value = new Viewbox
+        {
+            StretchDirection = StretchDirection.DownOnly, HorizontalAlignment = HorizontalAlignment.Left,
+            Margin = new Thickness(0, 4, 0, 0), Height = 18,
+            Child = new TextBlock
+            {
+                Text = CurrencyService.FormatValue(quote.Value),
+                FontFamily = new FontFamily("Segoe UI Variable Display, Segoe UI"),
+                FontSize = 16, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White,
+            },
+        };
+
+        var change = ChangeText(quote, 10);
+        change.Margin = new Thickness(0, 1, 0, 0);
+
+        var stack = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
+        stack.Children.Add(header);
+        stack.Children.Add(value);
+        stack.Children.Add(change);
+
+        return new Border
+        {
+            CornerRadius = new CornerRadius(12), Background = TileBackground,
+            Padding = new Thickness(9, 6, 9, 6), Margin = new Thickness(4, 3, 4, 3), Child = stack,
+        };
+    }
+
+    private static Grid Badge(string code, double size, double fontSize)
+    {
+        var badge = new Grid { Width = size, Height = size };
+        badge.Children.Add(new Border { CornerRadius = new CornerRadius(size / 2), Background = BadgeBrush(code) });
+        badge.Children.Add(new TextBlock
+        {
+            Text = CurrencyService.SymbolOf(code),
+            FontSize = fontSize, FontWeight = FontWeights.Bold, Foreground = Brushes.White,
+            HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center,
+        });
+        return badge;
+    }
+
+    private static TextBlock ChangeText(CurrencyQuote quote, double fontSize)
+    {
+        var change = new TextBlock { FontSize = fontSize, FontWeight = FontWeights.SemiBold };
+        if (quote.ChangePercent is { } pct)
+        {
+            change.Text = $"{(pct >= 0 ? "▲" : "▼")} {Math.Abs(pct).ToString("0.00", CultureInfo.CurrentCulture)}%";
+            change.Foreground = Math.Abs(pct) < 0.005 ? Muted : pct > 0 ? Up : Down;
+        }
+        else
+        {
+            change.Text = "—";
+            change.Foreground = Muted;
+        }
+        return change;
     }
 
     private static Border BuildTile(CurrencyQuote quote, string local)
     {
         var code = quote.Code.ToUpperInvariant();
 
-        var badge = new Grid { Width = 26, Height = 26 };
-        badge.Children.Add(new Border { CornerRadius = new CornerRadius(13), Background = BadgeBrush(quote.Code) });
-        badge.Children.Add(new TextBlock
-        {
-            Text = CurrencyService.SymbolOf(quote.Code),
-            FontSize = 12, FontWeight = FontWeights.Bold, Foreground = Brushes.White,
-            HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center,
-        });
-
         var header = new StackPanel { Orientation = Orientation.Horizontal };
-        header.Children.Add(badge);
+        header.Children.Add(Badge(quote.Code, 26, 12));
         header.Children.Add(new TextBlock
         {
             Text = code, FontSize = 13, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White,
@@ -85,17 +147,8 @@ public partial class CurrencyPage : UserControl, IIslandPage
             },
         };
 
-        var change = new TextBlock { FontSize = 11.5, FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 4, 0, 0) };
-        if (quote.ChangePercent is { } pct)
-        {
-            change.Text = $"{(pct >= 0 ? "▲" : "▼")} {Math.Abs(pct).ToString("0.00", CultureInfo.CurrentCulture)}%";
-            change.Foreground = Math.Abs(pct) < 0.005 ? Muted : pct > 0 ? Up : Down;
-        }
-        else
-        {
-            change.Text = "—";
-            change.Foreground = Muted;
-        }
+        var change = ChangeText(quote, 11.5);
+        change.Margin = new Thickness(0, 4, 0, 0);
 
         var unit = new TextBlock
         {
@@ -123,6 +176,8 @@ public partial class CurrencyPage : UserControl, IIslandPage
         if (code == "btc") hue = 30;
         if (code == "eur") hue = 220;
         if (code == "usd") hue = 145;
+        if (code == "uf") hue = 0;
+        if (code == "utm") hue = 270;
         var brush = new LinearGradientBrush(Hsv(hue, 0.65, 0.95), Hsv((hue + 40) % 360, 0.75, 0.7), 45);
         brush.Freeze();
         return brush;

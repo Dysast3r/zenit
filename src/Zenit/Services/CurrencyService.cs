@@ -8,14 +8,46 @@ public sealed record CurrencyQuote(string Code, double Value, double? ChangePerc
 
 public sealed record CurrencyReport(string Local, DateOnly Date, IReadOnlyList<CurrencyQuote> Quotes);
 
+/// <summary>Indicador del catálogo que se activa con un interruptor en ajustes.</summary>
+public sealed record Indicator(string Code, string Name);
+
 /// <summary>
 /// Tipos de cambio de más de 300 monedas y criptomonedas (proyecto abierto fawazahmed0/exchange-api,
 /// servido por jsDelivr y Cloudflare). Sin clave ni límite de uso; se actualiza a diario.
+/// La UF y la UTM vienen de mindicador.cl (valores del Banco Central de Chile y el SII, en pesos chilenos).
 /// </summary>
 public sealed class CurrencyService
 {
+    /// <summary>Indicadores chilenos: no son monedas de currency-api y se piden a mindicador.cl.</summary>
+    private static readonly string[] ChileanCodes = ["uf", "utm"];
+
     private readonly AppSettings _settings;
+    private readonly Dictionary<string, (double Value, double? Change)> _chilean = [];
     private static IReadOnlyDictionary<string, string>? _names;
+
+    /// <summary>Monedas e indicadores importantes que se ofrecen como lista de interruptores.</summary>
+    public static IReadOnlyList<Indicator> Catalog =>
+    [
+        new("usd", Strings.T("Dólar estadounidense", "US dollar")),
+        new("eur", Strings.T("Euro", "Euro")),
+        new("gbp", Strings.T("Libra esterlina", "British pound")),
+        new("jpy", Strings.T("Yen japonés", "Japanese yen")),
+        new("cny", Strings.T("Yuan chino", "Chinese yuan")),
+        new("chf", Strings.T("Franco suizo", "Swiss franc")),
+        new("cad", Strings.T("Dólar canadiense", "Canadian dollar")),
+        new("aud", Strings.T("Dólar australiano", "Australian dollar")),
+        new("brl", Strings.T("Real brasileño", "Brazilian real")),
+        new("ars", Strings.T("Peso argentino", "Argentine peso")),
+        new("mxn", Strings.T("Peso mexicano", "Mexican peso")),
+        new("cop", Strings.T("Peso colombiano", "Colombian peso")),
+        new("pen", Strings.T("Sol peruano", "Peruvian sol")),
+        new("uf", Strings.T("Unidad de Fomento (Chile)", "Unidad de Fomento (Chile)")),
+        new("utm", Strings.T("Unidad Tributaria Mensual (Chile)", "Monthly Tax Unit (Chile)")),
+        new("btc", Strings.T("Bitcoin", "Bitcoin")),
+        new("eth", Strings.T("Ethereum", "Ethereum")),
+    ];
+
+    public static bool IsChilean(string code) => ChileanCodes.Contains(code);
 
     public CurrencyService(AppSettings settings) => _settings = settings;
 
@@ -35,6 +67,7 @@ public sealed class CurrencyService
         var codes = _settings.Currencies.ToList();
         Failed = false;
 
+        var chileanTasks = codes.Where(IsChilean).ToDictionary(c => c, GetChileanAsync);
         using var today = await GetRatesAsync(local, "latest");
         if (today is null)
         {
@@ -54,22 +87,47 @@ public sealed class CurrencyService
         JsonElement previous = default;
         var hasPrevious = yesterday is not null && yesterday.RootElement.TryGetProperty(local, out previous);
 
-        var quotes = new List<CurrencyQuote>();
-        foreach (var code in codes)
-        {
-            // El archivo da "1 local = x código"; se invierte para mostrar "1 código = y local".
-            var rate = rates.Number(code);
-            if (rate is not > 0) continue;
-            var value = 1 / rate.Value;
+        // Pesos chilenos por unidad local, para pasar la UF y la UTM a la moneda local.
+        var clpPerLocal = local == "clp" ? 1 : rates.Number("clp");
 
-            double? change = null;
-            if (hasPrevious && previous.Number(code) is > 0 and var old)
-                change = (value / (1 / old) - 1) * 100;
-            quotes.Add(new CurrencyQuote(code, value, change));
+        Publish();
+
+        // Las monedas no esperan a mindicador.cl: la UF y la UTM se agregan cuando llegan.
+        if (chileanTasks.Values.Any(t => !t.IsCompleted))
+        {
+            await Task.WhenAll(chileanTasks.Values);
+            if (local == _settings.LocalCurrency) Publish();
         }
 
-        Report = new CurrencyReport(local, date, quotes);
-        Updated?.Invoke();
+        void Publish()
+        {
+            var quotes = new List<CurrencyQuote>();
+            foreach (var code in codes)
+            {
+                if (chileanTasks.TryGetValue(code, out var task))
+                {
+                    // mindicador.cl a veces no responde: se mantiene el último valor conocido.
+                    if (task.IsCompletedSuccessfully && task.Result is { } fresh) _chilean[code] = fresh;
+                    // La variación es la del indicador en pesos; no incluye el movimiento del tipo de cambio.
+                    if (_chilean.TryGetValue(code, out var known) && clpPerLocal is > 0)
+                        quotes.Add(new CurrencyQuote(code, known.Value / clpPerLocal.Value, known.Change));
+                    continue;
+                }
+
+                // El archivo da "1 local = x código"; se invierte para mostrar "1 código = y local".
+                var rate = rates.Number(code);
+                if (rate is not > 0) continue;
+                var value = 1 / rate.Value;
+
+                double? change = null;
+                if (hasPrevious && previous.Number(code) is > 0 and var old)
+                    change = (value / (1 / old) - 1) * 100;
+                quotes.Add(new CurrencyQuote(code, value, change));
+            }
+
+            Report = new CurrencyReport(local, date, quotes);
+            Updated?.Invoke();
+        }
     }
 
     private void Fail()
@@ -84,6 +142,34 @@ public sealed class CurrencyService
         return await Net.GetJsonAsync($"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@{version}/{file}")
             ?? await Net.GetJsonAsync($"https://{version}.currency-api.pages.dev/{file}");
     }
+
+    /// <summary>Valor en pesos chilenos de la UF o la UTM y su variación frente al valor anterior (día o mes).</summary>
+    private static async Task<(double Value, double? Change)?> GetChileanAsync(string code)
+    {
+        using var series = await Net.GetJsonAsync($"https://mindicador.cl/api/{code}");
+        if (series is not null && series.RootElement.TryGetProperty("serie", out var serie) && serie.ValueKind == JsonValueKind.Array)
+        {
+            // Más reciente primero; se descartan fechas futuras por si la serie trae valores ya publicados.
+            var values = serie.EnumerateArray()
+                .Select(p => (Date: DateTimeOffset.TryParse(p.Text("fecha"), CultureInfo.InvariantCulture, out var d) ? d : default, Value: p.Number("valor")))
+                .Where(p => p.Value is > 0 && p.Date != default && p.Date <= DateTimeOffset.UtcNow)
+                .OrderByDescending(p => p.Date)
+                .Select(p => p.Value!.Value)
+                .Take(2)
+                .ToList();
+            if (values.Count > 0)
+                return (values[0], values.Count > 1 ? (values[0] / values[1] - 1) * 100 : null);
+        }
+
+        // Respaldo: el resumen diario trae solo el valor actual.
+        using var summary = await Net.GetJsonAsync("https://mindicador.cl/api");
+        if (summary is not null && summary.RootElement.TryGetProperty(code, out var indicator) && indicator.Number("valor") is > 0 and var value)
+            return (value, null);
+        return null;
+    }
+
+    /// <summary>Nombre del indicador en el catálogo, o null si es otra moneda.</summary>
+    public static string? CatalogName(string code) => Catalog.FirstOrDefault(i => i.Code == code)?.Name;
 
     /// <summary>Código → nombre (en inglés) de todas las monedas disponibles.</summary>
     public static async Task<IReadOnlyDictionary<string, string>> GetNamesAsync()
@@ -106,7 +192,7 @@ public sealed class CurrencyService
         ["clp"] = "$", ["mxn"] = "$", ["ars"] = "$", ["cop"] = "$", ["brl"] = "R$", ["pen"] = "S/", ["uyu"] = "$",
         ["krw"] = "₩", ["inr"] = "₹", ["rub"] = "₽", ["try"] = "₺", ["chf"] = "Fr", ["cad"] = "$", ["aud"] = "$",
         ["ils"] = "₪", ["php"] = "₱", ["thb"] = "฿", ["ngn"] = "₦", ["uah"] = "₴", ["vnd"] = "₫", ["pyg"] = "₲",
-        ["bob"] = "Bs", ["sol"] = "◎", ["usdt"] = "₮", ["xrp"] = "✕", ["doge"] = "Ð",
+        ["bob"] = "Bs", ["sol"] = "◎", ["usdt"] = "₮", ["xrp"] = "✕", ["doge"] = "Ð", ["uf"] = "UF", ["utm"] = "UT",
     };
 
     public static string SymbolOf(string code) => Symbols.TryGetValue(code, out var s) ? s : code[..1].ToUpperInvariant();
