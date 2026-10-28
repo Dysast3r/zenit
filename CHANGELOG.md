@@ -2,6 +2,13 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project uses [semantic versioning](https://semver.org/).
 
+## [1.2.4] - 2026-10-28
+
+### Fixed
+- "Hide in full screen" works with more games: the screen size is read at the moment of the check, so games that change the resolution when going full screen are detected, and full-screen windows that Windows itself reports are now caught on their own monitor.
+- The Start menu, search, Quick Settings and Alt+Tab no longer count as full screen, which hid the island for a moment (for example when pausing music from the taskbar).
+- Pausing music no longer hides the island for a few seconds: when a music app briefly closes its media session on pause, the island waits before treating it as closed.
+
 ## [1.2.3] - 2026-10-27
 
 ### Fixed
@@ -132,6 +139,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Verifiable releases: build provenance attestation, SHA-256 sums, CodeQL, OpenSSF Scorecard and optional code signing.
 - Distribution through winget, a website at [danidev.cl/zenit](https://danidev.cl/zenit) and a translation catalog for Crowdin.
 
+[1.2.4]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.4
 [1.2.3]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.3
 [1.2.2]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.2
 [1.2.1]: https://github.com/Dysast3r/zenit/releases/tag/v1.2.1
