@@ -41,7 +41,24 @@ public partial class IslandWindow
     /// <summary>Hay un juego, video o presentación a pantalla completa en esta pantalla y el usuario pidió ocultarla.</summary>
     private bool HiddenByFullscreen => _fullscreen && _settings.HideInFullscreen;
 
+    /// <summary>
+    /// Segundos que se espera antes de dar por cerrada la app de música. Al pausar, algunas apps cierran su
+    /// sesión un momento y la vuelven a abrir (o Windows la publica sin título): ese hueco no debe ocultar la isla.
+    /// </summary>
+    private const int SessionLostGraceSeconds = 3;
+
     private void OnMediaChanged(MediaSnapshot? snapshot)
+    {
+        if (snapshot is null && _snapshot is not null)
+        {
+            if (!_sessionLostTimer.IsEnabled) _sessionLostTimer.Start();
+            return;
+        }
+        _sessionLostTimer.Stop();
+        ApplyMedia(snapshot);
+    }
+
+    private void ApplyMedia(MediaSnapshot? snapshot)
     {
         var previousKey = _trackKey;
         _snapshot = snapshot;

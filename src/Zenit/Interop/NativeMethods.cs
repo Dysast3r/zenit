@@ -60,11 +60,22 @@ internal static partial class NativeMethods
 
     private const int GWL_STYLE = -16;
     private const long WS_CAPTION = 0x00C00000;
+    private const long WS_THICKFRAME = 0x00040000;
+    private const int DWMWA_CLOAKED = 14;
+    private const int QUNS_BUSY = 2, QUNS_RUNNING_D3D_FULL_SCREEN = 3, QUNS_PRESENTATION_MODE = 4;
 
     [StructLayout(LayoutKind.Sequential)]
     private struct RECT
     {
         public int Left, Top, Right, Bottom;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MONITORINFO
+    {
+        public int Size;
+        public RECT Monitor, Work;
+        public uint Flags;
     }
 
     [LibraryImport("user32.dll")]
@@ -88,30 +99,67 @@ internal static partial class NativeMethods
     [LibraryImport("user32.dll", EntryPoint = "GetClassNameW", StringMarshalling = StringMarshalling.Utf16)]
     private static partial int GetClassName(nint hWnd, [Out] char[] name, int maxCount);
 
-    /// <summary>
-    /// Juego, video o presentación a pantalla completa en el monitor indicado (en píxeles físicos).
-    /// Mira la ventana en primer plano: los juegos en "pantalla completa sin bordes" no avisan a Windows
-    /// (QUNS_BUSY), y ese aviso tampoco dice en qué monitor está. Se suman el modo D3D exclusivo y el de presentación.
-    /// </summary>
-    public static bool IsFullscreenAppRunning(int left, int top, int right, int bottom)
+    [LibraryImport("user32.dll")]
+    private static partial uint GetWindowThreadProcessId(nint hWnd, out uint processId);
+
+    [LibraryImport("user32.dll")]
+    private static partial nint MonitorFromWindow(nint hWnd, uint flags);
+
+    [LibraryImport("user32.dll", EntryPoint = "GetMonitorInfoW")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool GetMonitorInfo(nint monitor, ref MONITORINFO info);
+
+    [LibraryImport("dwmapi.dll")]
+    private static partial int DwmGetWindowAttribute(nint hWnd, int attribute, out int value, int size);
+
+    /// <summary>Procesos del shell cuyos paneles (Inicio, búsqueda, Configuración rápida, Alt+Tab) pueden cubrir toda la pantalla.</summary>
+    private static readonly HashSet<string> ShellProcesses = new(StringComparer.OrdinalIgnoreCase)
     {
-        if (SHQueryUserNotificationState(out var state) == 0 && state is 3 or 4) return true;
+        "explorer.exe", "ShellExperienceHost.exe", "StartMenuExperienceHost.exe", "SearchHost.exe",
+        "SearchApp.exe", "ShellHost.exe", "TextInputHost.exe",
+    };
+
+    /// <summary>
+    /// Juego, video o presentación a pantalla completa en el monitor de la ventana indicada.
+    /// Mira la ventana en primer plano: los juegos en "pantalla completa sin bordes" no siempre avisan a Windows
+    /// (QUNS_BUSY), y ese aviso tampoco dice en qué monitor están. El monitor se lee en el momento, porque un juego
+    /// a pantalla completa suele cambiar la resolución. Se suman el modo D3D exclusivo y el de presentación.
+    /// </summary>
+    public static bool IsFullscreenAppRunning(nint island)
+    {
+        var known = SHQueryUserNotificationState(out var state) == 0;
+        if (known && state is QUNS_RUNNING_D3D_FULL_SCREEN or QUNS_PRESENTATION_MODE) return true;
 
         var window = GetForegroundWindow();
-        if (window == 0 || window == GetShellWindow() || IsIconic(window)) return false;
+        if (window == 0 || window == island || window == GetShellWindow() || IsIconic(window) || IsShellWindow(window)) return false;
+        if (DwmGetWindowAttribute(window, DWMWA_CLOAKED, out var cloaked, sizeof(int)) == 0 && cloaked != 0) return false;
 
-        // El escritorio y la barra de tareas también cubren la pantalla.
+        var monitor = MonitorFromWindow(island, MONITOR_DEFAULTTONEAREST);
+        if (MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST) != monitor) return false;
+
+        // Windows ya la considera a pantalla completa, y está en esta pantalla.
+        if (known && state == QUNS_BUSY) return true;
+
+        // Una ventana maximizada con la barra de tareas oculta también tapa todo el monitor, pero conserva su marco.
+        var style = (long)GetWindowLongPtr(window, GWL_STYLE);
+        if (IsZoomed(window) && ((style & WS_CAPTION) == WS_CAPTION || (style & WS_THICKFRAME) != 0)) return false;
+
+        var info = new MONITORINFO { Size = Marshal.SizeOf<MONITORINFO>() };
+        if (!GetMonitorInfo(monitor, ref info) || !GetWindowRect(window, out var rect)) return false;
+        var screen = info.Monitor;
+        return rect.Left <= screen.Left && rect.Top <= screen.Top && rect.Right >= screen.Right && rect.Bottom >= screen.Bottom;
+    }
+
+    /// <summary>El escritorio, la barra de tareas o un panel del shell: también cubren la pantalla, pero no son un juego.</summary>
+    private static bool IsShellWindow(nint window)
+    {
         var buffer = new char[64];
         var length = GetClassName(window, buffer, buffer.Length);
         if (new string(buffer, 0, Math.Max(0, length)) is "Progman" or "WorkerW" or "Shell_TrayWnd" or "Shell_SecondaryTrayWnd")
-            return false;
+            return true;
 
-        // Una ventana maximizada con la barra de tareas oculta también tapa todo el monitor, pero conserva su barra de título.
-        var style = (long)GetWindowLongPtr(window, GWL_STYLE);
-        if (IsZoomed(window) && (style & WS_CAPTION) == WS_CAPTION) return false;
-
-        return GetWindowRect(window, out var rect)
-            && rect.Left <= left && rect.Top <= top && rect.Right >= right && rect.Bottom >= bottom;
+        GetWindowThreadProcessId(window, out var processId);
+        return ProcessPath(processId) is { } path && ShellProcesses.Contains(System.IO.Path.GetFileName(path));
     }
 
     // ───────────────────────── Procesos ─────────────────────────

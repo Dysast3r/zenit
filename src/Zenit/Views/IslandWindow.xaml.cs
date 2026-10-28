@@ -111,7 +111,7 @@ public partial class IslandWindow : Window
     private double _wheelAccumulator;
     private DateTime _lastWheelAction;
 
-    private readonly DispatcherTimer _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _musicPauseTimer, _expandedVolumeTimer, _weatherTimer, _currencyTimer, _calendarTimer;
+    private readonly DispatcherTimer _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _musicPauseTimer, _sessionLostTimer, _expandedVolumeTimer, _weatherTimer, _currencyTimer, _calendarTimer;
     /// <summary>En la barra de tareas: al hacer clic en la barra, Windows la sube sobre la isla; esto la devuelve encima.</summary>
     private readonly DispatcherTimer _taskbarTimer;
     private bool _loopAttached;
@@ -193,6 +193,7 @@ public partial class IslandWindow : Window
             _alert = null;
             Evaluate();
         });
+        _sessionLostTimer = OneShot(SessionLostGraceSeconds * 1000, () => ApplyMedia(null));
         _musicPauseTimer = OneShot(MusicPauseGraceSeconds * 1000, () =>
         {
             if (_snapshot?.IsPlaying == true) return;
@@ -252,7 +253,7 @@ public partial class IslandWindow : Window
             services.Indicators.ChargingStarted -= OnChargingStarted;
             services.Indicators.BatteryLow -= OnBatteryLow;
             services.Notifications.Received -= OnNotification;
-            foreach (var timer in new[] { _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _musicPauseTimer, _weatherTimer, _currencyTimer, _calendarTimer, _taskbarTimer })
+            foreach (var timer in new[] { _clockTimer, _hoverTimer, _collapseTimer, _peekTimer, _musicPauseTimer, _sessionLostTimer, _weatherTimer, _currencyTimer, _calendarTimer, _taskbarTimer })
                 timer.Stop();
             if (_loopAttached) CompositionTarget.Rendering -= OnRendering;
             _meter.Dispose();
@@ -527,8 +528,7 @@ public partial class IslandWindow : Window
         if (_hwnd != 0 && !HiddenByFullscreen) NativeMethods.KeepTopmost(_hwnd);
 
         // Cada isla mira su propia pantalla: un juego en el otro monitor no la oculta.
-        var fullscreen = CurrentScreen is { Bounds: var bounds }
-            && NativeMethods.IsFullscreenAppRunning(bounds.Left, bounds.Top, bounds.Right, bounds.Bottom);
+        var fullscreen = _hwnd != 0 && NativeMethods.IsFullscreenAppRunning(_hwnd);
         if (fullscreen != _fullscreen)
         {
             _fullscreen = fullscreen;
